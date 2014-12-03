@@ -3,17 +3,17 @@ SpectroCoin Payment Method
 
 This module integrates [SpectroCoin](https://spectrocoin.com/) Payments with [Prestashop](http://www.prestashop.com/) to accept [Bitcoin](https://bitcoin.org) payments.
 
-**INSTALLATION**
+** INSTALLATION **
 
 1. Upload files to your PrestaShop installations modules folder.
 2. Go to your PrestaShop administration. Modules -> "SpectroCoin" click [Install]
 
-**CONFIGURATION**
+** CONFIGURATION **
 
 1. Go to your PrestaShop administration. Modules -> "SpectroCoin" click [Configure]
 2. Fill all fields
 
-**CURRENCY CONVERSION**
+** CURRENCY CONVERSION **
 
 SpectroCoin only supports EUR, BTC payments.
 
