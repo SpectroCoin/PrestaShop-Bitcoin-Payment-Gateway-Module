@@ -184,20 +184,6 @@ class SpectroCoin extends PaymentModule
           ),
           array(
             'type' => 'select',
-            'label' => $this->l('Transaction currency'),
-            'name' => 'SPECTROCOIN_CURRENCY_CODE',
-            'options' => array(
-              'query' => array(
-                array('key' => 'EUR', 'value' => 'EUR'),
-                array('key' => 'BTC', 'value' => 'BTC'),
-              ),
-              'id' => 'key',
-              'name' => 'value'
-            ),
-            'desc' => $this->l('Transactions in other currencies will be converted to this currency, so multi-currency sites must be configured to use appropriate conversion rates.'),
-          ),
-          array(
-            'type' => 'select',
             'label' => $this->l('Language for response'),
             'name' => 'SPECTROCOIN_CULTURE',
             'options' => array(

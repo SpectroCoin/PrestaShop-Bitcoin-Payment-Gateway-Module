@@ -1,24 +1,28 @@
-SpectroCoin Payment Method
+SpectroCoin Bitcoin Payment Extension
 ---------------
 
-This module integrates [SpectroCoin](https://spectrocoin.com/) Payments with [Prestashop](http://www.prestashop.com/) to accept [Bitcoin](https://bitcoin.org) payments.
+This merchant module integrates [SpectroCoin](https://spectrocoin.com/) Payments with [Prestashop](http://www.prestashop.com/) to accept [Bitcoin](https://bitcoin.org) payments.
 
-** INSTALLATION **
+**INSTALLATION**
 
 1. Upload files to your PrestaShop installations modules folder.
-2. Go to your PrestaShop administration. Modules -> "SpectroCoin" click [Install]
+2. Go to your PrestaShop administration. Modules and Services -> "SpectroCoin" click [Install]
+3. Generate private and public keys [Automatically]
+	1. Private key/Public key:
+	Go to [SpectroCoin](https://spectrocoin.com/) -> [Project list](https://spectrocoin.com/en/merchant/api/list.html)
+	Click on your project  -> Edit Project -> Click on Public key (You will get Automatically generated private key, you can download it. After that and Public key will be generated Automatically.)
 
-** CONFIGURATION **
+**CONFIGURATION**
 
 1. Go to your PrestaShop administration. Modules -> "SpectroCoin" click [Configure]
 2. Fill all fields
 
-** CURRENCY CONVERSION **
+**CURRENCY CONVERSION**
 
-SpectroCoin only supports EUR, BTC payments.
+SpectroCoin supports EUR, USD, GBP, SEK, NOK, DKK, Gold, HRK, GEL, and etc.
 
-If your store uses additional currencies, you should take additional measures,
-to be sure all orders are converted to the Transaction currency, which is supported by SpectroCoin.
+**INFORMATION** 
 
-If your store does not have "Transaction currency" configured, go to Lozalization -> Currencies and
-add new one.
+1. You can contact us e-mail: info@spectrocoin.com 
+2. You can contact us by phone: +442037697306
+3. You can contact us on Skype: spectrocoin_merchant
