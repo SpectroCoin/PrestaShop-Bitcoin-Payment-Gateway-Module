@@ -48,7 +48,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 			'Order #'.$this->module->currentOrder,
 			$this->module->culture,
 			$link->getModuleLink('spectrocoin', 'callback'),
-			$link->getModuleLink('spectrocoin', 'success'),
+			$link->getModuleLink('spectrocoin', 'validation'),
 			$link->getModuleLink('spectrocoin', 'cancel')
 		);
 
