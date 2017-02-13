@@ -1,3 +1,4 @@
+
 <?php
 
 /**
@@ -150,6 +151,7 @@ class SCMerchantClient
 				'description' => $c->getDescription(),
 				'orderRequestId' => $c->getOrderRequestId(),
 				'status' => $c->getStatus(),
+
 			);
 
 			$formHandler = new \Httpful\Handlers\FormHandler();

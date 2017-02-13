@@ -61,8 +61,13 @@ class SpectroCoin extends PaymentModule
 
   public function install()
   {
-    if (!parent::install() || !$this->registerHook('payment') || !$this->registerHook('paymentReturn'))
-      return false;
+          if (!parent::install()
+            || !$this->registerHook('payment')
+            || !$this->registerHook('displayPaymentEU')
+            || !$this->registerHook('paymentReturn')
+            || !$this->registerHook('paymentOptions')) {
+            return false;
+        }
 
     if(!Configuration::get('SPECTROCOIN_PENDING')){
       /* add pending order state */
@@ -121,6 +126,11 @@ class SpectroCoin extends PaymentModule
     $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
   }
 
+  private function displaySpectrocoin()
+  {
+	  return $this->display(__FILE__, 'infos.tpl');
+  }
+
   public function getContent()
   {
     if (Tools::isSubmit('btnSubmit'))
@@ -132,9 +142,10 @@ class SpectroCoin extends PaymentModule
         foreach ($this->_postErrors as $err)
           $this->_html .= $this->displayError($err);
     }
-    else
+    else {
       $this->_html .= '<br />';
-
+	}
+	$this->html .= $this->displaySpectrocoin();
     $this->_html .= $this->renderForm();
 
     return $this->_html;
@@ -154,6 +165,28 @@ class SpectroCoin extends PaymentModule
     ));
     return $this->display(__FILE__, 'payment.tpl');
   }
+
+  public function hookPaymentOptions($params)
+    {
+        if (!$this->active) {
+            return;
+        }
+
+        if (!$this->checkCurrency($params['cart'])) {
+            return;
+        }
+
+        $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+        $newOption->setCallToActionText('Pay with Bitcoin via SpectroCoin.com')
+                      ->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true))
+                      ->setAdditionalInformation($this->context->smarty->fetch('module:spectrocoin/views/templates/hook/spectrocoin_intro.tpl'));
+
+        $payment_options = [
+            $newOption,
+        ];
+
+        return $payment_options;
+    }
 
   public function checkCurrency($cart)
   {
