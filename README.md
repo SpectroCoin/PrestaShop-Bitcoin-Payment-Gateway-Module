@@ -3,7 +3,7 @@ SpectroCoin PrestaShop Bitcoin Payment Extension
 
 This is [SpectroCoin Bitcoin Payment Module for PrestaShop](https://spectrocoin.com/en/plugins/accept-bitcoin-prestashop.html). This extenstion allows to easily accept bitcoins (and other cryptocurrencies such as DASH) at your PrestaShop website. You can view [a tutorial how to integrate bitcoin payments for PrestaShop](https://www.youtube.com/watch?v=dURplFz_fqY).
 
-To succesfully use this plugin, you have to have a SpectroCoin Bitcoin wallet. You can get it [here](https://spectrocoin.com/en/bitcoin-wallet.html). Also you have to create a merchant project to get merchant and project IDs, to do so create a new merchant project [here](https://spectrocoin.com/en/merchant/api/create.html).
+To succesfully use this plugin, you have to have a SpectroCoin Bitcoin wallet. You can get it [here](https://spectrocoin.com/en/bitcoin-wallet.html). Also you have to create a merchant project to get Merchant and Project IDs, to do so create a new merchant project [here](https://spectrocoin.com/en/merchant/api/create.html).
 
 **INSTALLATION**
 
