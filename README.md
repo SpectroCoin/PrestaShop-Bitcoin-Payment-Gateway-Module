@@ -1,7 +1,7 @@
 SpectroCoin PrestaShop Bitcoin Payment Extension
 ---------------
 
-This is [SpectroCoin](https://spectrocoin.com/) Bitcoin Payment Module for PrestaShop. This extenstion allows to easily accept bitcoins (and other cryptocurrencies such as DASH) at your PrestaShop website. You can view [a tutorial how to integrate bitcoin payments for PrestaShop](https://www.youtube.com/watch?v=dURplFz_fqY).
+This is [SpectroCoin Bitcoin Payment Module for PrestaShop](https://spectrocoin.com/en/plugins/accept-bitcoin-prestashop.html). This extenstion allows to easily accept bitcoins (and other cryptocurrencies such as DASH) at your PrestaShop website. You can view [a tutorial how to integrate bitcoin payments for PrestaShop](https://www.youtube.com/watch?v=dURplFz_fqY).
 
 To succesfully use this plugin, you have to have a SpectroCoin Bitcoin wallet. You can get it [here](https://spectrocoin.com/en/bitcoin-wallet.html). Also you have to create a merchant project to get merchant and project IDs, to do so create a new merchant project [here](https://spectrocoin.com/en/merchant/api/create.html).
 
@@ -9,13 +9,13 @@ To succesfully use this plugin, you have to have a SpectroCoin Bitcoin wallet. Y
 
 1. Upload files to your PrestaShop modules folder.
 2. Go to your PrestaShop administration. Modules and Services -> "SpectroCoin" click [Install]
-3. Generate private and public keys
-	1. Automatically<br />
+3. Generate private and public keys<br />
+	i. Automatically<br />
 	
 	Go to [SpectroCoin](https://spectrocoin.com/) -> [Project list](https://spectrocoin.com/en/merchant/api/list.html)
 	click on your project, then select "Edit Project and then click "Generate" (next to Public key field), as a result you will get an automatically generated private key, download and save it. The matching Public key will be generated automatically and added to your project.
 	
-	2. Manually<br />
+	ii. Manually<br />
     	
 	Private key:
     ```shell
