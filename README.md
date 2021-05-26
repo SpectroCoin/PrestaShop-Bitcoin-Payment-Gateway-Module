@@ -7,7 +7,7 @@ To succesfully use this plugin, you have to have a SpectroCoin Bitcoin wallet. Y
 
 **INSTALLATION**
 
-1. Upload files to your PrestaShop modules folder.<br />
+1. Upload files to your PrestaShop `modules/spectrocoin` folder.<br />
 	OR <br />
   Navigate to PrestaShop directory and run: <br />
       <br />
