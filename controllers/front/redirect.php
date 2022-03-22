@@ -27,8 +27,8 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 
 		$scMerchantClient = new SCMerchantClient(
 			$this->module->SC_API_URL,
-			$this->module->merchantId,
-			$this->module->apiId
+			$this->module->userId,
+			$this->module->merchantApiId
 		);
 		$scMerchantClient->setPrivateMerchantKey($this->module->private_key);
 
