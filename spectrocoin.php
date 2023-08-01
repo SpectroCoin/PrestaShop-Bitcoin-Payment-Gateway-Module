@@ -145,8 +145,9 @@ class SpectroCoin extends PaymentModule
     else {
       $this->_html .= '<br />';
 	}
-	$this->html .= $this->displaySpectrocoin();
+    $this->html .= $this->displaySpectrocoin();
     $this->_html .= $this->renderForm();
+    $this->_html .= $this->renderStyle();
 
     return $this->_html;
   }
@@ -263,7 +264,12 @@ class SpectroCoin extends PaymentModule
 
     return $helper->generateForm(array($fields_form));
   }
-
+  public function renderStyle(){
+    if (Tools::getValue('configure') == $this->name) {
+      $this->context->controller->addCSS($this->_path . '/views/css/settings.css', 'all');
+    }
+  }
+  
   public function getConfigFieldsValues()
   {
     return array(
