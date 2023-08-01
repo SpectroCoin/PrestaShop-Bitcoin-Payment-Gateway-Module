@@ -233,44 +233,48 @@ class SpectroCoin extends PaymentModule
   {
     $fields_form = array(
       'form' => array(
-        'input' => array(
-          array(
-            'type' => 'text',
-            'label' => $this->l('Merchant Id'),
-            'name' => 'SPECTROCOIN_userId',
-          ),
-          array(
-            'type' => 'text',
-            'label' => $this->l('Project Id'),
-            'name' => 'SPECTROCOIN_merchantApiId',
-          ),
-          array(
-            'type' => 'select',
-            'label' => $this->l('Language for response'),
-            'name' => 'SPECTROCOIN_CULTURE',
-            'options' => array(
-              'query' => array(
-                array('key' => 'en', 'value' => 'en'),
-                array('key' => 'lt', 'value' => 'lt'),
-                array('key' => 'ru', 'value' => 'ru'),
-                array('key' => 'de', 'value' => 'de'),
+          'input' => array(
+              array(
+                  'type' => 'text',
+                  'label' => $this->l('Merchant Id'),
+                  'name' => 'SPECTROCOIN_userId',
+                  'hint' => $this->l('Enter your Merchant ID here.'),
               ),
-              'id' => 'key',
-              'name' => 'value'
-            ),
+              array(
+                  'type' => 'text',
+                  'label' => $this->l('Project Id'),
+                  'name' => 'SPECTROCOIN_merchantApiId',
+                  'hint' => $this->l('Enter your Project ID here.'),
+              ),
+              array(
+                  'type' => 'select',
+                  'label' => $this->l('Language for response'),
+                  'name' => 'SPECTROCOIN_CULTURE',
+                  'options' => array(
+                      'query' => array(
+                          array('key' => 'en', 'value' => 'en'),
+                          array('key' => 'lt', 'value' => 'lt'),
+                          array('key' => 'ru', 'value' => 'ru'),
+                          array('key' => 'de', 'value' => 'de'),
+                      ),
+                      'id' => 'key',
+                      'name' => 'value'
+                  ),
+                  'hint' => $this->l('Select the language for the response from the payment gateway.'),
+              ),
+              array(
+                  'type' => 'textarea',
+                  'label' => $this->l('Private key'),
+                  'name' => 'SPECTROCOIN_PRIVATE_KEY',
+                  'desc' => $this->l('If you have already entered your private key before, you should leave this field blank, unless you want to change the stored private key.'),
+                  'hint' => $this->l('Enter your Private Key here.'),
+              ),
           ),
-          array(
-            'type' => 'textarea',
-            'label' => $this->l('Private key'),
-            'name' => 'SPECTROCOIN_PRIVATE_KEY',
-            'desc' => $this->l('If you have already entered your private key before, you should leave this field blank, unless you want to change the stored private key.'),
-          ),
-        ),
-        'submit' => array(
-          'title' => $this->l('Save'),
-        )
+          'submit' => array(
+              'title' => $this->l('Save'),
+          )
       ),
-    );
+  );
 
     $helper = new HelperForm();
     $helper->show_toolbar = false;
