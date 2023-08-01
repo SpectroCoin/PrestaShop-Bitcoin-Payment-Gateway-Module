@@ -175,6 +175,8 @@ class SpectroCoin extends PaymentModule
     <p><b>Note:</b> Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.</p>
     </div>';
     $this->_html .= '</div>';
+    $this->_html .= '<div class = "flex-footer">
+    <h4>Still have questions?</h4><p> Contact us via skype: <a href = "skype:spectrocoin_merchant?chat">spectrocoin_merchant</a> or email: <a href = "mailto:merchant@spectrocoin.com">merchant@spectrocoin.com</a></p></div>';
     $this->_html .= '</div>';
 
     return $this->_html;

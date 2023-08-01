@@ -72,3 +72,8 @@
   align-items: center;
   justify-content: center;
 }
+
+.flex-footer {
+  padding: 10px 20px !important;
+  margin-top: 30px !important;
+}
