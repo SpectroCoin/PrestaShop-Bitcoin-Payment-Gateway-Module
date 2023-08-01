@@ -144,10 +144,19 @@ class SpectroCoin extends PaymentModule
     }
     else {
       $this->_html .= '<br />';
-	}
+	  }
+    $this->_html .= '<div class="spectrocoin-settings flex-container">';
+    $this->_html .= '<div class="flex-col-1 flex-col">';
+    $this->_html .= '<div class="form">';
     $this->html .= $this->displaySpectrocoin();
     $this->_html .= $this->renderForm();
     $this->_html .= $this->renderStyle();
+    $this->_html .= '</div>';
+    $this->_html .= '</div>';
+    $this->_html .= '<div class="flex-col-2 flex-col">';
+    $this->_html .= '<div class="introduction"></div>';
+    $this->_html .= '</div>';
+    $this->_html .= '</div>';
 
     return $this->_html;
   }

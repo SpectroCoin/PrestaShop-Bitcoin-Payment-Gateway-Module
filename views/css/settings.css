@@ -1,0 +1,26 @@
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flex-col {
+  flex-basis: 50%;
+}
+
+#content.bootstrap .panel,
+.bootstrap .panel .panel-footer {
+  background: transparent;
+  border: 0px;
+  box-shadow: 0 0 0px 0 rgba(0, 0, 0);
+}
+
+.spectrocoin-settings {
+  position: relative;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: 1px solid #dbe6e9;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.06);
+}
