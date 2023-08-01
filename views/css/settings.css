@@ -7,6 +7,10 @@
   flex-basis: 50%;
 }
 
+.flex-col-2 {
+  padding: 20px 20px;
+}
+
 #content.bootstrap .panel,
 .bootstrap .panel .panel-footer {
   background: transparent;
@@ -25,12 +29,46 @@
   box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.06);
 }
 
+.logo-container {
+  margin-bottom: 20px;
+}
+
+.page-subtitle {
+  display: none;
+}
+#module_form_submit_btn {
+  align-items: center;
+  background: #4972f4;
+  border-radius: 4px;
+  border: 2px solid #4972f4;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 16px;
+  font-weight: 500;
+  justify-content: center;
+  outline: none;
+  padding: 4px 28px;
+  text-decoration: none;
+  transition: all 0.1s, visibility 0s;
+}
+
 @media only screen and (max-width: 800px) {
   .flex-col {
     flex-basis: 100%;
   }
 }
 
-.page-subtitle {
-  display: none;
+.spectrocoin-settings .logo {
+  width: 200px;
+}
+
+.spectrocoin-settings .form-wrapper {
+  margin: 0 !important;
+}
+
+.spectrocoin-settings .panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
