@@ -157,6 +157,10 @@ class SpectroCoin extends PaymentModule
   
       $logoPath = $this->_path . '/views/img/spectrocoin-logo.svg';
 
+      if (!empty($this->_html)) {
+        echo $this->_html;
+      }
+
   ?>
 
   <div class="spectrocoin-settings flex-container">
