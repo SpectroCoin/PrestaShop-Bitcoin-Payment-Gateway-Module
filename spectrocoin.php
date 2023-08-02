@@ -126,61 +126,80 @@ class SpectroCoin extends PaymentModule
     $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
   }
 
-  private function displaySpectrocoin()
-  {
-	  return $this->display(__FILE__, 'infos.tpl');
-  }
+  // private function displaySpectrocoin()
+  // {
+	//   return $this->display(__FILE__, 'infos.tpl');
+  // }
+
 
   public function getContent()
   {
-    if (Tools::isSubmit('btnSubmit'))
-    {
-      $this->_postValidation();
-      if (!count($this->_postErrors))
-        $this->_postProcess();
-      else
-        foreach ($this->_postErrors as $err)
-          $this->_html .= $this->displayError($err);
-    }
-    else {
-      $this->_html .= '<br />';
-	  }
+      ob_start();
+  
+      if (Tools::isSubmit('btnSubmit'))
+      {
+          $this->_postValidation();
+          if (!count($this->_postErrors))
+              $this->_postProcess();
+          else
+              foreach ($this->_postErrors as $err)
+                  $this->displayError($err);
+      }
+      else {
+          echo '<br />';
+      }
+  
+      $logoPath = $this->_path . '/views/img/spectrocoin-logo.svg';
 
-    $logoPath = $this->_path . '/views/img/spectrocoin-logo.svg';
+  ?>
 
-    $this->_html .= '<div class="spectrocoin-settings flex-container">';
-    $this->_html .= '<div class="flex-col-1 flex-col">';
-    $this->_html .= '<div class="form">';
-    $this->html .= $this->displaySpectrocoin();
-    $this->_html .= $this->renderForm();
-    $this->_html .= $this->renderStyle();
-    $this->_html .= '</div>';
-    $this->_html .= '</div>';
-    $this->_html .= '<div class="flex-col-2 flex-col">';
-    $this->_html .= '<div class = "logo-container"><a href = "https://spectrocoin.com/" target = "_blank"><img class = "logo" src="' . $logoPath . '" alt="SpectroCoin Logo"></a></div>';
-    $this->_html .= '<div class="introduction">
-    <p><h4><b>Introduction</b></h4></p>
-    <p>The Spectroin plugin allows seamless integration of payment gateways into your WordPress website. To get started, you will need to obtain the essential credentials: Merchant ID, Project ID, and Private Key. These credentials are required to enable secure transactions between your website and the payment gateway. Follow the step-by-step tutorial below to acquire these credentials:</p>
-    <ul>
-    <li>1. <a href="https://auth.spectrocoin.com/signup" target="_blank">Sign up</a> for a Spectroin Account.</li>
-    <li>2. <a href="https://auth.spectrocoin.com/login" target="_blank">Log in</a> to your Spectroin account.</li>
-    <li>3. On the dashboard, locate the <b>"<a href = "https://spectrocoin.com/en/merchants/projects" target="_blank">Business<a></a>"</b> tab and click on it.</li>
-    <li>4. Click on <b>"<a href = "https://spectrocoin.com/en/merchants/projects/new" target="_blank">New project</a>."</b></li>
-    <li>5. Fill in the project details and select desired settings (settings can be changed).</li>
-    <li>6. The <b>Private Key</b> can be obtained by switching on the Public key radio button (Private key will not be visible in the settings window, and it will have to be regenerated in settings). Copy or download the newly generated private key. </li>
-    <li>7. Click <b>"Submit"</b>.</li>
-    <li>8. Copy and paste the Merchant ID and Project ID.</li>
-    <br>
-    </ul>
-    <p><b>Note:</b> Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.</p>
-    </div>';
-    $this->_html .= '</div>';
-    $this->_html .= '<div class = "flex-footer">
-    <h4>Still have questions?</h4><p> Contact us via skype: <a href = "skype:spectrocoin_merchant?chat">spectrocoin_merchant</a> or email: <a href = "mailto:merchant@spectrocoin.com">merchant@spectrocoin.com</a></p></div>';
-    $this->_html .= '</div>';
+  <div class="spectrocoin-settings flex-container">
+      <div class="flex-col-1 flex-col">
+          <div>
+              <h4><b>Configuration</b></h4>
+          </div>
+          <div class="form">
+              <?php
+                  //echo $this->displaySpectrocoin();
+                  echo $this->renderForm();
+                  echo $this->renderStyle();
+              ?>
+          </div>
+      </div>
+      <div class="flex-col-2 flex-col">
+          <div class="logo-container">
+              <a href="https://spectrocoin.com/" target="_blank">
+                  <img class="logo" src="<?php echo $logoPath; ?>" alt="SpectroCoin Logo">
+              </a>
+          </div>
+          <div class="introduction">
+              <p><h4><b>Introductions</b></h4></p>
+              <p>The Spectroin plugin allows seamless integration of payment gateways into your WordPress website. To get started, you will need to obtain the essential credentials: Merchant ID, Project ID, and Private Key. These credentials are required to enable secure transactions between your website and the payment gateway. Follow the step-by-step tutorial below to acquire these credentials:</p>
+              <ul>
+                  <li>1. <a href="https://auth.spectrocoin.com/signup" target="_blank">Sign up</a> for a Spectroin Account.</li>
+                  <li>2. <a href="https://auth.spectrocoin.com/login" target="_blank">Log in</a> to your Spectroin account.</li>
+                  <li>3. On the dashboard, locate the "<b><a href="https://spectrocoin.com/en/merchants/projects" target="_blank">Business</a></b>" tab and click on it.</li>
+                  <li>4. Click on "<b><a href="https://spectrocoin.com/en/merchants/projects/new" target="_blank">New project</a></b>".</li>
+                  <li>5. Fill in the project details and select desired settings (settings can be changed).</li>
+                  <li>6. The <b>Private Key</b> can be obtained by switching on the Public key radio button (Private key will not be visible in the settings window, and it will have to be regenerated in settings). Copy or download the newly generated private key.</li>
+                  <li>7. Click "<b>Submit</b>".</li>
+                  <li>8. Copy and paste the Merchant ID and Project ID.</li>
+              </ul>
+              <p><b>Note:</b> Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.</p>
+          </div>
+      </div>
+      <div class="flex-footer">
+          <h4>Still have questions?</h4>
+          <p> Contact us via skype: <a href="skype:spectrocoin_merchant?chat">spectrocoin_merchant</a> or email: <a href="mailto:merchant@spectrocoin.com">merchant@spectrocoin.com</a></p>
+      </div>
+  </div>
+  
+  <?php
 
-    return $this->_html;
+      $content = ob_get_clean();
+      return $content;
   }
+  
 
   public function hookPayment($params)
   {
@@ -249,6 +268,26 @@ class SpectroCoin extends PaymentModule
                   'hint' => $this->l('Enter your Project ID here.'),
               ),
               array(
+                  'type' => 'textarea',
+                  'label' => $this->l('Private key'),
+                  'name' => 'SPECTROCOIN_PRIVATE_KEY',
+                  'desc' => $this->l('If you have already entered your private key before, you should leave this field blank, unless you want to change the stored private key.'),
+                  'hint' => $this->l('Enter your Private Key here.'),
+                  'class' => 'resizable-textarea'
+              ),
+              array(
+                  'type' => 'text',
+                  'label' => $this->l('Title'),
+                  'name' => 'SPECTROCOIN_title',
+                  'hint' => $this->l('This controls the title which the user sees during checkout. If left blank will display default title'),
+              ),
+              array(
+                  'type' => 'textarea',
+                  'label' => $this->l('Description'),
+                  'name' => 'SPECTROCOIN_description',
+                  'hint' => $this->l('This controls the description which the user sees during checkout. If left blank then will not be displayed'),
+              ),
+              array(
                   'type' => 'select',
                   'label' => $this->l('Language for response'),
                   'name' => 'SPECTROCOIN_CULTURE',
@@ -264,19 +303,13 @@ class SpectroCoin extends PaymentModule
                   ),
                   'hint' => $this->l('Select the language for the response from the payment gateway.'),
               ),
-              array(
-                  'type' => 'textarea',
-                  'label' => $this->l('Private key'),
-                  'name' => 'SPECTROCOIN_PRIVATE_KEY',
-                  'desc' => $this->l('If you have already entered your private key before, you should leave this field blank, unless you want to change the stored private key.'),
-                  'hint' => $this->l('Enter your Private Key here.'),
-              ),
           ),
           'submit' => array(
               'title' => $this->l('Save'),
-          )
+          ),
       ),
   );
+  
 
     $helper = new HelperForm();
     $helper->show_toolbar = false;
