@@ -227,7 +227,7 @@ class SpectroCoin extends PaymentModule
   }
 
   public function hookPaymentOptions($params)
-  {
+{
     if (!$this->active) {
         return;
     }
@@ -244,12 +244,17 @@ class SpectroCoin extends PaymentModule
         ->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true))
         ->setAdditionalInformation($description);
 
+    // Add the icon to the payment option
+    $iconUrl = $this->_path . '/views/img/bitcoin.png';
+    //$iconUrl = $moduleBaseUrl . '/views/img/bitcoin.png';
+    $newOption->setLogo($iconUrl);
+
     $payment_options = [
         $newOption,
     ];
 
     return $payment_options;
-  }   
+}
 
   public function checkCurrency($cart)
   {
