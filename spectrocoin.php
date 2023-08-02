@@ -324,6 +324,20 @@ class SpectroCoin extends PaymentModule
                   ),
                   'hint' => $this->l('Select the language for the response from the payment gateway.'),
               ),
+              array(
+                'type' => 'checkbox',
+                'label' => $this->l('Display logo'),
+                'name' => 'SPECTROCOIN_display_logo',
+                'values' => array(
+                    'query' => array(
+                        array('id' => 'active_on'),
+                    ),
+                    'id' => 'id',
+                    'name' => 'name'
+                ),
+                'hint' => $this->l('Check if you want SpectroCoin logo displayed in the checkout page'),
+              ),
+            
           ),
           'submit' => array(
               'title' => $this->l('Save'),
