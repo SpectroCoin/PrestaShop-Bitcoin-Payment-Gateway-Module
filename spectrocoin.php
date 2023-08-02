@@ -113,24 +113,30 @@ class SpectroCoin extends PaymentModule
 
   private function _postProcess()
   {
-    if (Tools::isSubmit('btnSubmit'))
-    {
-      Configuration::updateValue('SPECTROCOIN_userId', Tools::getValue('SPECTROCOIN_userId'));
-      Configuration::updateValue('SPECTROCOIN_merchantApiId', Tools::getValue('SPECTROCOIN_merchantApiId'));
-      Configuration::updateValue('SPECTROCOIN_CURRENCY_CODE', Tools::getValue('SPECTROCOIN_CURRENCY_CODE'));
-      Configuration::updateValue('SPECTROCOIN_CULTURE', Tools::getValue('SPECTROCOIN_CULTURE'));
-      if(Tools::getValue('SPECTROCOIN_PRIVATE_KEY')){
-        Configuration::updateValue('SPECTROCOIN_PRIVATE_KEY', Tools::getValue('SPECTROCOIN_PRIVATE_KEY'));
+      if (Tools::isSubmit('btnSubmit'))
+      {
+          Configuration::updateValue('SPECTROCOIN_userId', Tools::getValue('SPECTROCOIN_userId'));
+          Configuration::updateValue('SPECTROCOIN_merchantApiId', Tools::getValue('SPECTROCOIN_merchantApiId'));
+          Configuration::updateValue('SPECTROCOIN_CURRENCY_CODE', Tools::getValue('SPECTROCOIN_CURRENCY_CODE'));
+          Configuration::updateValue('SPECTROCOIN_CULTURE', Tools::getValue('SPECTROCOIN_CULTURE'));
+          if (Tools::getValue('SPECTROCOIN_PRIVATE_KEY')) {
+              Configuration::updateValue('SPECTROCOIN_PRIVATE_KEY', Tools::getValue('SPECTROCOIN_PRIVATE_KEY'));
+          }
+          if (Tools::getValue('SPECTROCOIN_title')) {
+            Configuration::updateValue('SPECTROCOIN_title', Tools::getValue('SPECTROCOIN_title'));
+          }
+          else{
+            Configuration::updateValue('SPECTROCOIN_title', "Pay with SpectroCoin");
+          }
+          if (Tools::getValue('SPECTROCOIN_description')) {
+            Configuration::updateValue('SPECTROCOIN_description', Tools::getValue('SPECTROCOIN_description'));
+          }
+          else {
+            Configuration::updateValue('SPECTROCOIN_description', '');
+          }
       }
-    }
-    $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
+      $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
   }
-
-  // private function displaySpectrocoin()
-  // {
-	//   return $this->display(__FILE__, 'infos.tpl');
-  // }
-
 
   public function getContent()
   {
@@ -217,26 +223,29 @@ class SpectroCoin extends PaymentModule
   }
 
   public function hookPaymentOptions($params)
-    {
-        if (!$this->active) {
-            return;
-        }
-
-        if (!$this->checkCurrency($params['cart'])) {
-            return;
-        }
-
-        $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-        $newOption->setCallToActionText('Pay with Bitcoin via SpectroCoin.com')
-                      ->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true))
-                      ->setAdditionalInformation($this->context->smarty->fetch('module:spectrocoin/views/templates/hook/spectrocoin_intro.tpl'));
-
-        $payment_options = [
-            $newOption,
-        ];
-
-        return $payment_options;
+  {
+    if (!$this->active) {
+        return;
     }
+
+    if (!$this->checkCurrency($params['cart'])) {
+        return;
+    }
+
+    $title = Configuration::get('SPECTROCOIN_title', $this->l('Pay with SpectroCoin'));
+    $description = Configuration::get('SPECTROCOIN_description', '');
+
+    $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+    $newOption->setCallToActionText($title)
+        ->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true))
+        ->setAdditionalInformation($description);
+
+    $payment_options = [
+        $newOption,
+    ];
+
+    return $payment_options;
+  }   
 
   public function checkCurrency($cart)
   {
@@ -280,12 +289,15 @@ class SpectroCoin extends PaymentModule
                   'label' => $this->l('Title'),
                   'name' => 'SPECTROCOIN_title',
                   'hint' => $this->l('This controls the title which the user sees during checkout. If left blank will display default title'),
+                  'desc' => $this->l('Default: "Pay with SpectroCoin"')
               ),
               array(
                   'type' => 'textarea',
                   'label' => $this->l('Description'),
                   'name' => 'SPECTROCOIN_description',
+                  'desc' => $this->l('Max: 70 characters.'),
                   'hint' => $this->l('This controls the description which the user sees during checkout. If left blank then will not be displayed'),
+                  'maxlength' => 70
               ),
               array(
                   'type' => 'select',
@@ -345,6 +357,9 @@ class SpectroCoin extends PaymentModule
       'SPECTROCOIN_CURRENCY_CODE' => Tools::getValue('SPECTROCOIN_CURRENCY_CODE', Configuration::get('SPECTROCOIN_CURRENCY_CODE', 'EUR')),
       'SPECTROCOIN_CULTURE' => Tools::getValue('SPECTROCOIN_CULTURE', Configuration::get('SPECTROCOIN_CULTURE', 'en')),
       'SPECTROCOIN_PRIVATE_KEY' => Tools::getValue('SPECTROCOIN_PRIVATE_KEY', ''),
+      'SPECTROCOIN_title' => Tools::getValue('SPECTROCOIN_title', Configuration::get('SPECTROCOIN_title', '')),
+      'SPECTROCOIN_description' => Tools::getValue('SPECTROCOIN_description', Configuration::get('SPECTROCOIN_description', '')),
     );
   }
+
 }
