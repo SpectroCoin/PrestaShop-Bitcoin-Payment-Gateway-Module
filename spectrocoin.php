@@ -134,6 +134,7 @@ class SpectroCoin extends PaymentModule
           else {
             Configuration::updateValue('SPECTROCOIN_description', '');
           }
+          Configuration::updateValue('SPECTROCOIN_CHECKBOX', (int)Tools::getValue('SPECTROCOIN_CHECKBOX'));
       }
       $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
   }
@@ -227,34 +228,38 @@ class SpectroCoin extends PaymentModule
   }
 
   public function hookPaymentOptions($params)
-{
-    if (!$this->active) {
-        return;
-    }
-
-    if (!$this->checkCurrency($params['cart'])) {
-        return;
-    }
-
-    $title = Configuration::get('SPECTROCOIN_title', $this->l('Pay with SpectroCoin'));
-    $description = Configuration::get('SPECTROCOIN_description', '');
-
-    $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-    $newOption->setCallToActionText($title)
-        ->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true))
-        ->setAdditionalInformation($description);
-
-    // Add the icon to the payment option
-    $iconUrl = $this->_path . '/views/img/bitcoin.png';
-    //$iconUrl = $moduleBaseUrl . '/views/img/bitcoin.png';
-    $newOption->setLogo($iconUrl);
-
-    $payment_options = [
-        $newOption,
-    ];
-
-    return $payment_options;
-}
+  {
+      if (!$this->active) {
+          return;
+      }
+  
+      if (!$this->checkCurrency($params['cart'])) {
+          return;
+      }
+  
+      $title = Configuration::get('SPECTROCOIN_title', $this->l('Pay with SpectroCoin'));
+      $description = Configuration::get('SPECTROCOIN_description', '');
+      $iconUrl = $this->_path . '/views/img/bitcoin.png';
+  
+      // Get the checkbox value from the database
+      $showLogo = Configuration::get('SPECTROCOIN_CHECKBOX', 0) == 1 ? true : false;
+  
+      $newOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+      $newOption->setCallToActionText($title)
+          ->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true))
+          ->setAdditionalInformation($description);
+  
+      if ($showLogo) {
+          $newOption->setLogo($iconUrl);
+      }
+  
+      $payment_options = [
+          $newOption,
+      ];
+  
+      return $payment_options;
+  }
+  
 
   public function checkCurrency($cart)
   {
@@ -304,9 +309,9 @@ class SpectroCoin extends PaymentModule
                   'type' => 'textarea',
                   'label' => $this->l('Description'),
                   'name' => 'SPECTROCOIN_description',
-                  'desc' => $this->l('Max: 70 characters.'),
+                  'desc' => $this->l('Max: 80 characters.'),
                   'hint' => $this->l('This controls the description which the user sees during checkout. If left blank then will not be displayed'),
-                  'maxlength' => 70
+                  'maxlength' => 80
               ),
               array(
                   'type' => 'select',
@@ -325,19 +330,23 @@ class SpectroCoin extends PaymentModule
                   'hint' => $this->l('Select the language for the response from the payment gateway.'),
               ),
               array(
-                'type' => 'checkbox',
+                'type' => 'switch',
                 'label' => $this->l('Display logo'),
-                'name' => 'SPECTROCOIN_display_logo',
+                'name' => 'SPECTROCOIN_CHECKBOX',
+                'is_bool' => true,
+                'hint' => $this->l('Check if you want the SpectroCoin logo to be displayed in checkout.'),
                 'values' => array(
-                    'query' => array(
-                        array('id' => 'active_on'),
-                    ),
-                    'id' => 'id',
-                    'name' => 'name'
+                  array(
+                    'id' => 'active_on',
+                    'value' => 1,
+                  ),
+                  array(
+                    'id' => 'active_off',
+                    'value' => 0,
+                  )
                 ),
-                'hint' => $this->l('Check if you want SpectroCoin logo displayed in the checkout page'),
               ),
-            
+
           ),
           'submit' => array(
               'title' => $this->l('Save'),
@@ -347,6 +356,7 @@ class SpectroCoin extends PaymentModule
   
 
     $helper = new HelperForm();
+    $helper->fields_value['SPECTROCOIN_CHECKBOX'] = Configuration::get('SPECTROCOIN_CHECKBOX', 0);
     $helper->show_toolbar = false;
     $helper->table =  $this->table;
     $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
@@ -382,6 +392,7 @@ class SpectroCoin extends PaymentModule
       'SPECTROCOIN_PRIVATE_KEY' => Tools::getValue('SPECTROCOIN_PRIVATE_KEY', ''),
       'SPECTROCOIN_title' => Tools::getValue('SPECTROCOIN_title', Configuration::get('SPECTROCOIN_title', '')),
       'SPECTROCOIN_description' => Tools::getValue('SPECTROCOIN_description', Configuration::get('SPECTROCOIN_description', '')),
+      'SPECTROCOIN_CHECKBOX' => Tools::getValue('SPECTROCOIN_CHECKBOX', Configuration::get('SPECTROCOIN_CHECKBOX', 0)),
     );
   }
 
