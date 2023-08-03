@@ -103,7 +103,10 @@ class SCMerchantClient
 		$s = openssl_sign($data, $signature, $pkeyid, OPENSSL_ALGO_SHA1);
 		$encodedSignature = base64_encode($signature);
 		// free the key from memory
-		openssl_free_key($pkeyid);
+		if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+			// Call the deprecated function for PHP versions lower than 8
+			openssl_free_key($pkeyid);
+		}
 
 		return $encodedSignature;
 	}
@@ -173,7 +176,10 @@ class SCMerchantClient
 		$publicKey = file_get_contents($this->publicSpectroCoinCertLocation);
 		$public_key_pem = openssl_pkey_get_public($publicKey);
 		$r = openssl_verify($data, $sig, $public_key_pem, OPENSSL_ALGO_SHA1);
-		openssl_free_key($public_key_pem);
+		if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+			// Use the deprecated function for PHP versions lower than 8
+			openssl_free_key($public_key_pem);
+		}
 
 		return $r;
 	}
