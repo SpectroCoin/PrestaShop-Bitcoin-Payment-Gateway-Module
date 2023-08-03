@@ -20,7 +20,7 @@ class SpectroCoin extends PaymentModule
   {
     $this->name = 'spectrocoin';
     $this->tab = 'payments_gateways';
-    $this->version = '0.1';
+    $this->version = '1.0';
     $this->author = 'UAB Spectro Finance';
     $this->controllers = array('payment', 'redirect', 'callback');
 
@@ -184,7 +184,7 @@ class SpectroCoin extends PaymentModule
               </a>
           </div>
           <div class="introduction">
-              <p><h4><b>Introductions</b></h4></p>
+              <p><h4><b>Introduction</b></h4></p>
               <p>The Spectroin plugin allows seamless integration of payment gateways into your WordPress website. To get started, you will need to obtain the essential credentials: Merchant ID, Project ID, and Private Key. These credentials are required to enable secure transactions between your website and the payment gateway. Follow the step-by-step tutorial below to acquire these credentials:</p>
               <ul>
                   <li>1. <a href="https://auth.spectrocoin.com/signup" target="_blank">Sign up</a> for a Spectroin Account.</li>
