@@ -40,9 +40,9 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 			$total,
 			'Order #'.$this->module->currentOrder,
 			$this->module->culture,
-			$link->getModuleLink('spectrocoin', 'callback'),
-			$link->getModuleLink('spectrocoin', 'validation'),
-			$link->getModuleLink('spectrocoin', 'cancel')
+			$this->context->link->getModuleLink('spectrocoin', 'callback'),
+			$this->context->link->getModuleLink('spectrocoin', 'validation'),
+			$this->context->link->getModuleLink('spectrocoin', 'cancel')
 		);
 		$createOrderResponse = $scMerchantClient->createOrder($createOrderRequest);
 		if ($createOrderResponse instanceof ApiError) {
