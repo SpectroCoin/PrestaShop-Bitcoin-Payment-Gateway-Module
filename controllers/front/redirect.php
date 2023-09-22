@@ -46,10 +46,58 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 		);
 		$createOrderResponse = $scMerchantClient->createOrder($createOrderRequest);
 		if ($createOrderResponse instanceof ApiError) {
-			die('Error occurred. '.$createOrderResponse->getCode().': '.$createOrderResponse->getMessage());
+			$this->renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage());
+			//die("tavo mamama");
+			//renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage());
+			//die('Error occurred. '.$createOrderResponse->getCode().': '.$createOrderResponse->getMessage());
+			//die(renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage()));
 		} else if ($createOrderResponse instanceof CreateOrderResponse) {
 			Tools::redirect($createOrderResponse->getRedirectUrl());
 		}
 
 	}
+
+	/**
+     * Function to render error response HTML.
+     *
+     * @param int    $errorCode    The error code.
+     * @param string $errorMessage The error message.
+     */
+    protected function renderResponseErrorCode($errorCode, $errorMessage)
+    {
+		$this->context->controller->addCSS($this->_path . '/views/css/error-response.css', 'all');
+		echo '<link rel="stylesheet" href="http://localhost/modules/spectrocoin/views/css/error-response.css" type="text/css" media="all" />';
+        // Echo the HTML content for error display
+        echo '
+            <div class="container">
+                <div class="content_container">
+                    <div class="header_container">
+                        <h3>Error</h3>
+                    </div>
+                    <div class="content_content">
+                        <div class="form_body">
+                            <div class="form_content response_code">
+                                <span class="form-header">Response code:</span>
+                                <span class="form-text">' . $errorCode . ' ' . $errorMessage . '</span>
+                            </div>
+                            <div class="form_content possible_cause">
+                                <span class="form-header">Possible causes:</span>
+                                <span class="form-text"></span>
+                            </div>
+                            <div class="form_content general_cause">
+                                <span class="form-header">General causes:</span>
+                                <span class="form-text"></span>
+                            </div>
+                            <button>Return to shop</button>
+                        </div>
+                    </div>
+                    <div class="footer_container">
+                        <div class="footer_link">
+                            <a>Contact support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+    }
+
 }

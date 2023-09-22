@@ -66,9 +66,9 @@ class SCMerchantClient
 			'receiveAmount' => $request->getReceiveAmount(),
 			'description' => $request->getDescription(),
 			'culture' => $request->getCulture(),
-			'callbackUrl' => $request->getCallbackUrl(),
-			'successUrl' => $request->getSuccessUrl(),
-			'failureUrl' => $request->getFailureUrl()
+			'callbackUrl' => 'http://localhost.com',
+			'successUrl' => 'http://localhost.com',
+			'failureUrl' => 'http://localhost.com'
 		);
 
 		$formHandler = new \Httpful\Handlers\FormHandler();
@@ -95,15 +95,14 @@ class SCMerchantClient
 
 	private function generateSignature($data)
 	{
-		// fetch private key from file and ready it
 		$privateKey = $this->privateMerchantKey != null ? $this->privateMerchantKey : file_get_contents($this->privateMerchantCertLocation);
 		$pkeyid = openssl_pkey_get_private($privateKey);
 
-		// compute signature
 		$s = openssl_sign($data, $signature, $pkeyid, OPENSSL_ALGO_SHA1);
 		$encodedSignature = base64_encode($signature);
-		// free the key from memory
-		openssl_free_key($pkeyid);
+		if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+			openssl_free_key($pkeyid);
+		}
 
 		return $encodedSignature;
 	}
@@ -173,7 +172,9 @@ class SCMerchantClient
 		$publicKey = file_get_contents($this->publicSpectroCoinCertLocation);
 		$public_key_pem = openssl_pkey_get_public($publicKey);
 		$r = openssl_verify($data, $sig, $public_key_pem, OPENSSL_ALGO_SHA1);
-		openssl_free_key($public_key_pem);
+		if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+			openssl_free_key($public_key_pem);
+		}
 
 		return $r;
 	}
