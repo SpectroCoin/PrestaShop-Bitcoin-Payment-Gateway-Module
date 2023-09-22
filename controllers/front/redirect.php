@@ -47,10 +47,6 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 		$createOrderResponse = $scMerchantClient->createOrder($createOrderRequest);
 		if ($createOrderResponse instanceof ApiError) {
 			$this->renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage());
-			//die("tavo mamama");
-			//renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage());
-			//die('Error occurred. '.$createOrderResponse->getCode().': '.$createOrderResponse->getMessage());
-			//die(renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage()));
 		} else if ($createOrderResponse instanceof CreateOrderResponse) {
 			Tools::redirect($createOrderResponse->getRedirectUrl());
 		}
