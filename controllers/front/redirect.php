@@ -73,13 +73,13 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 		$errorCode = 99;
 
 		$shopLink = Context::getContext()->link->getPageLink('index');
-
-		echo '<link rel="stylesheet" href="http://localhost/specPresta/modules/spectrocoin/views/css/error-response.css" type="text/css" media="all" />';
+		
+		echo '<link rel="stylesheet" href="' . MODULE_ROOT_DIR . 'modules/spectrocoin/views/css/error-response.css" type="text/css" media="all" />';
 		echo '
 			<div class="container">
 				<div class="content_container">
 					<div class="header_container">
-						<h3>Error: '. $errorCode . ' ' . $errorMessage .'</h3>
+						<h3>Error: '. $errorCode . ' ' . $errorMessage . '</h3>
 					</div>
 					<div class="content_content">
 						<div class="form_body">';

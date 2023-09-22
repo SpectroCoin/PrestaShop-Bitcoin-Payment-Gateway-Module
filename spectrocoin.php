@@ -1,5 +1,7 @@
 <?php
 
+//spectrocoin.php
+
 if (!defined('_PS_VERSION_'))
   exit;
 
@@ -14,10 +16,16 @@ class SpectroCoin extends PaymentModule
   public $culture;
   public $private_key;
 
+  public $moduleRootDir;
   public $SC_API_URL = 'https://spectrocoin.com/api/merchant/1';
 
   public function __construct()
   {
+    $shop = Context::getContext()->shop;
+    $baseURL = $shop->getBaseURL();
+
+    define('MODULE_ROOT_DIR',  $baseURL);
+
     $this->name = 'spectrocoin';
     $this->tab = 'payments_gateways';
     $this->version = '1.0';
