@@ -65,8 +65,8 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
      */
     protected function renderResponseErrorCode($errorCode, $errorMessage)
     {
+		$shopLink = Context::getContext()->link->getPageLink('index');
 		echo '<link rel="stylesheet" href="http://localhost/specPresta/modules/spectrocoin/views/css/error-response.css" type="text/css" media="all" />';
-        // Echo the HTML content for error display
         echo '
             <div class="container">
                 <div class="content_container">
@@ -79,20 +79,12 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
                                 <span class="form-header">Response code:</span>
                                 <span class="form-text">' . $errorCode . ' ' . $errorMessage . '</span>
                             </div>
-                            <div class="form_content possible_cause">
-                                <span class="form-header">Possible causes:</span>
-                                <span class="form-text"></span>
-                            </div>
-                            <div class="form_content general_cause">
-                                <span class="form-header">General causes:</span>
-                                <span class="form-text"></span>
-                            </div>
-                            <button><a>Return to shop</a></button>
+                            <a href = '. $shopLink .'><button>Return to shop</button></a>
                         </div>
                     </div>
                     <div class="footer_container">
                         <div class="footer_link">
-                            <a>Contact support</a>
+                            <a href = "mailto:merchant@spectrocoin.com">Contact support</a>
                         </div>
                     </div>
                 </div>
