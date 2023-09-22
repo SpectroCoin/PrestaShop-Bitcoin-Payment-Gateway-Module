@@ -65,8 +65,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
      */
     protected function renderResponseErrorCode($errorCode, $errorMessage)
     {
-		$this->context->controller->addCSS($this->_path . '/views/css/error-response.css', 'all');
-		echo '<link rel="stylesheet" href="http://localhost/modules/spectrocoin/views/css/error-response.css" type="text/css" media="all" />';
+		echo '<link rel="stylesheet" href="http://localhost/specPresta/modules/spectrocoin/views/css/error-response.css" type="text/css" media="all" />';
         // Echo the HTML content for error display
         echo '
             <div class="container">
@@ -88,7 +87,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
                                 <span class="form-header">General causes:</span>
                                 <span class="form-text"></span>
                             </div>
-                            <button>Return to shop</button>
+                            <button><a>Return to shop</a></button>
                         </div>
                     </div>
                     <div class="footer_container">
