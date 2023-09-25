@@ -67,7 +67,8 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 			6 => '<li>Check your merchantApiId and userId</li>',
 			99 => '<li>Incorrect url</li>
 			<li>Incorrect Parameters or Data Format</li>
-			<li>Required Parameters Missing</li>'
+			<li>Required Parameters Missing</li>
+			<li>Unsupported </li>'
 		);
 
 		$shopLink = Context::getContext()->link->getPageLink('index');

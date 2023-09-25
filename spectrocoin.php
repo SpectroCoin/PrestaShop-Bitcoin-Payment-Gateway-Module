@@ -19,6 +19,8 @@ class SpectroCoin extends PaymentModule
   public $moduleRootDir;
   public $SC_API_URL = 'https://spectrocoin.com/api/merchant/1';
 
+  public $acceptedCurrencies = array();
+
   public function __construct()
   {
     $shop = Context::getContext()->shop;
