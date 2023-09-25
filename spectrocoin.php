@@ -152,9 +152,6 @@ class SpectroCoin extends PaymentModule
     $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
   }
 
-  
-
-
 
   public function getContent()
   {
@@ -235,7 +232,6 @@ class SpectroCoin extends PaymentModule
     return $content;
   }
 
-
   public function hookPayment($params)
   {
     if (!$this->active)
@@ -288,14 +284,17 @@ class SpectroCoin extends PaymentModule
 
   public function checkCurrency($cart)
   {
-    $currency_order = new Currency($cart->id_currency);
-    $currencies_module = $this->getCurrency($cart->id_currency);
+      $currentCurrencyIsoCode = (new Currency($cart->id_currency))->iso_code;
+  
+      $jsonFile = file_get_contents(_PS_MODULE_DIR_ . $this->name . '/SCMerchantClient/data/acceptedCurrencies.JSON');
+      $acceptedCurrencies = json_decode($jsonFile, true);
 
-    if (is_array($currencies_module))
-      foreach ($currencies_module as $currency_module)
-        if ($currency_order->id == $currency_module['id_currency'])
-          return true;
-    return false;
+      if (in_array($currentCurrencyIsoCode, $acceptedCurrencies)) {
+        return true;
+      } else {
+        return false;
+      }
+
   }
 
   public function renderForm()

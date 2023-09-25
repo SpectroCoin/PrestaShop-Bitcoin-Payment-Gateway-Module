@@ -68,7 +68,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 			99 => '<li>Incorrect url</li>
 			<li>Incorrect Parameters or Data Format</li>
 			<li>Required Parameters Missing</li>
-			<li>Unsupported </li>'
+			<li>Unsupported currency</li>'
 		);
 
 		$shopLink = Context::getContext()->link->getPageLink('index');
