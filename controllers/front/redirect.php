@@ -70,8 +70,6 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 			<li>Required Parameters Missing</li>'
 		);
 
-		$errorCode = 99;
-
 		$shopLink = Context::getContext()->link->getPageLink('index');
 		
 		echo '<link rel="stylesheet" href="' . MODULE_ROOT_DIR . 'modules/spectrocoin/views/css/error-response.css" type="text/css" media="all" />';
