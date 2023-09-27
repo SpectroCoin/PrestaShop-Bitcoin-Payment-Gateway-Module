@@ -6,6 +6,9 @@ Integrate cryptocurrency payments seamlessly into your PrestaShop store with the
 
 1. Download module files from [github](https://github.com/SpectroCoin/PrestaShop-Bitcoin-Payment-Gateway-Module).
 2. Extract and upload module folder to your PrestaShop <em>/modules</em> folder.<br />
+   OR<br>
+   Upload <em>spectrocoin.zip</em> in "Module manager" -> "Upload a module".<br />
+   Note: the module name has to be <em>spectrocoin</em> for the plugin to work properly.<br />
 3. Go to your PrestaShop administration. "Module Manager" -> locate "SpectroCoin Crypto Payment Gateway" module -> "Configure".
 
 ## Setting up

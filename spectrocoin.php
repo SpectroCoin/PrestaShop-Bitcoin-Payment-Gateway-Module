@@ -31,7 +31,7 @@ class SpectroCoin extends PaymentModule
     $this->name = 'spectrocoin';
     $this->tab = 'payments_gateways';
     $this->version = '1.0.0';
-    $this->author = 'Spectrocoin.com';
+    $this->author = 'Spectrocoin';
     $this->controllers = array('payment', 'redirect', 'callback');
 
     $this->currencies = true;
