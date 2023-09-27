@@ -30,8 +30,8 @@ class SpectroCoin extends PaymentModule
 
     $this->name = 'spectrocoin';
     $this->tab = 'payments_gateways';
-    $this->version = '1.0';
-    $this->author = 'UAB Spectro Finance';
+    $this->version = '1.0.0';
+    $this->author = 'Spectrocoin.com';
     $this->controllers = array('payment', 'redirect', 'callback');
 
     $this->currencies = true;
@@ -61,8 +61,8 @@ class SpectroCoin extends PaymentModule
     $this->bootstrap = true;
     parent::__construct();
 
-    $this->displayName = $this->l('SpectroCoin Bitcoin Payment Gateway');
-    $this->description = $this->l('Easily accept payments for your products by enabling SpectroCoin\'s seamless bitcoin transfer option.');
+    $this->displayName = $this->l('SpectroCoin Crypto Payment Gateway');
+    $this->description = $this->l('Easily accept payments for your products by enabling SpectroCoin\'s seamless cryptocurrency transfer option.');
     $this->confirmUninstall = $this->l('Are you sure you want to uninstall');
     if (!count(Currency::checkPaymentCurrencies($this->id)))
       $this->warning = $this->l('No currency has been set for this module.');
@@ -281,12 +281,12 @@ class SpectroCoin extends PaymentModule
     return $payment_options;
   }
 
-
+  //TODO when sc API will be updated, get currencies from API
   public function checkCurrency($cart)
   {
       $currentCurrencyIsoCode = (new Currency($cart->id_currency))->iso_code;
   
-      $jsonFile = file_get_contents(_PS_MODULE_DIR_ . $this->name . '/SCMerchantClient/data/acceptedCurrencies.JSON');
+      $jsonFile = file_get_contents(_PS_MODULE_DIR_ . $this->name . '/SCMerchantClient/data/acceptedCurrencies.JSON'); 
       $acceptedCurrencies = json_decode($jsonFile, true);
 
       if (in_array($currentCurrencyIsoCode, $acceptedCurrencies)) {
