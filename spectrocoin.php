@@ -125,7 +125,7 @@ class SpectroCoin extends PaymentModule
     }
   }
 
-  
+
 
   private function _postProcess()
   {
@@ -216,7 +216,7 @@ class SpectroCoin extends PaymentModule
           </ul>
           <p><b>Note:</b> Keep in mind that if you want to use the business services of SpectroCoin, your account has to be
             verified.</p>
-           
+            
 
 
 
@@ -289,7 +289,7 @@ class SpectroCoin extends PaymentModule
   public function checkCurrency($cart)
   {
       $currentCurrencyIsoCode = (new Currency($cart->id_currency))->iso_code;
-  
+
       $jsonFile = file_get_contents(_PS_MODULE_DIR_ . $this->name . '/SCMerchantClient/data/acceptedCurrencies.JSON'); 
       $acceptedCurrencies = json_decode($jsonFile, true);
 

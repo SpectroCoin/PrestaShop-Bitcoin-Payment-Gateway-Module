@@ -8,9 +8,13 @@
       ],
     "license": "GPL-3.0-or-later",
       "config": {
-        "prepend-autoloader": false
+        "prepend-autoloader": false,
+        "allow-plugins": {
+            "composer/installers": true
+        }
     },
     "require": {
-        "composer/installers": "^1.10"
+        "composer/installers": "^1.10",
+        "guzzlehttp/guzzle": "^7.8"
     }
 }
