@@ -42,7 +42,7 @@ class SpectroCoin extends PaymentModule
         'SPECTROCOIN_userId',
         'SPECTROCOIN_merchantApiId',
         'SPECTROCOIN_CURRENCY_CODE',
-        'SPECTROCOIN_CULTURE',
+        'SPECTROCOIN_LANG',
         'SPECTROCOIN_PRIVATE_KEY',
       )
     );
@@ -53,8 +53,8 @@ class SpectroCoin extends PaymentModule
       $this->merchantApiId = $config['SPECTROCOIN_merchantApiId'];
     if (!empty($config['SPECTROCOIN_CURRENCY_CODE']))
       $this->currency_code = $config['SPECTROCOIN_CURRENCY_CODE'];
-    if (!empty($config['SPECTROCOIN_CULTURE']))
-      $this->culture = $config['SPECTROCOIN_CULTURE'];
+    if (!empty($config['SPECTROCOIN_LANG']))
+      $this->culture = $config['SPECTROCOIN_LANG'];
     if (!empty($config['SPECTROCOIN_PRIVATE_KEY']))
       $this->private_key = $config['SPECTROCOIN_PRIVATE_KEY'];
 
@@ -107,7 +107,7 @@ class SpectroCoin extends PaymentModule
       !Configuration::deleteByName('SPECTROCOIN_userId')
       || !Configuration::deleteByName('SPECTROCOIN_merchantApiId')
       || !Configuration::deleteByName('SPECTROCOIN_CURRENCY_CODE')
-      || !Configuration::deleteByName('SPECTROCOIN_CULTURE')
+      || !Configuration::deleteByName('SPECTROCOIN_LANG')
       || !Configuration::deleteByName('SPECTROCOIN_PRIVATE_KEY')
       || !parent::uninstall()
     )
@@ -133,7 +133,7 @@ class SpectroCoin extends PaymentModule
       Configuration::updateValue('SPECTROCOIN_userId', Tools::getValue('SPECTROCOIN_userId'));
       Configuration::updateValue('SPECTROCOIN_merchantApiId', Tools::getValue('SPECTROCOIN_merchantApiId'));
       Configuration::updateValue('SPECTROCOIN_CURRENCY_CODE', Tools::getValue('SPECTROCOIN_CURRENCY_CODE'));
-      Configuration::updateValue('SPECTROCOIN_CULTURE', Tools::getValue('SPECTROCOIN_CULTURE'));
+      Configuration::updateValue('SPECTROCOIN_LANG', Tools::getValue('SPECTROCOIN_LANG'));
       if (Tools::getValue('SPECTROCOIN_PRIVATE_KEY')) {
         Configuration::updateValue('SPECTROCOIN_PRIVATE_KEY', Tools::getValue('SPECTROCOIN_PRIVATE_KEY'));
       }
@@ -344,18 +344,22 @@ class SpectroCoin extends PaymentModule
           array(
             'type' => 'select',
             'label' => $this->l('Language for response'),
-            'name' => 'SPECTROCOIN_CULTURE',
+            'name' => 'SPECTROCOIN_LANG',
             'options' => array(
               'query' => array(
                 array('key' => 'en', 'value' => 'en'),
-                array('key' => 'lt', 'value' => 'lt'),
+                array('key' => 'et', 'value' => 'et'),
+                array('key' => 'es', 'value' => 'es'),
+                array('key' => 'ar', 'value' => 'ar'),
+                array('key' => 'it', 'value' => 'it'),
+                array('key' => 'fr', 'value' => 'fr'),
                 array('key' => 'ru', 'value' => 'ru'),
-                array('key' => 'de', 'value' => 'de'),
+                array('key' => 'lt', 'value' => 'lt'),
               ),
               'id' => 'key',
               'name' => 'value'
             ),
-            'hint' => $this->l('Select the language for the response from the payment gateway.'),
+            'hint' => $this->l('Select the language, which will be displayed in pre-order view.'),
           ),
           array(
             'type' => 'switch',
@@ -418,7 +422,7 @@ class SpectroCoin extends PaymentModule
       'SPECTROCOIN_userId' => Tools::getValue('SPECTROCOIN_userId', Configuration::get('SPECTROCOIN_userId')),
       'SPECTROCOIN_merchantApiId' => Tools::getValue('SPECTROCOIN_merchantApiId', Configuration::get('SPECTROCOIN_merchantApiId')),
       'SPECTROCOIN_CURRENCY_CODE' => Tools::getValue('SPECTROCOIN_CURRENCY_CODE', Configuration::get('SPECTROCOIN_CURRENCY_CODE', 'EUR')),
-      'SPECTROCOIN_CULTURE' => Tools::getValue('SPECTROCOIN_CULTURE', Configuration::get('SPECTROCOIN_CULTURE', 'en')),
+      'SPECTROCOIN_LANG' => Tools::getValue('SPECTROCOIN_LANG', Configuration::get('SPECTROCOIN_LANG', 'en')),
       'SPECTROCOIN_PRIVATE_KEY' => Tools::getValue('SPECTROCOIN_PRIVATE_KEY', ''),
       'SPECTROCOIN_title' => Tools::getValue('SPECTROCOIN_title', Configuration::get('SPECTROCOIN_title', '')),
       'SPECTROCOIN_description' => Tools::getValue('SPECTROCOIN_description', Configuration::get('SPECTROCOIN_description', '')),
