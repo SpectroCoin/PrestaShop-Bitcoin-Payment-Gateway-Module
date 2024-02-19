@@ -13,7 +13,6 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 
 		parent::initContent();
 
-		global $link, $cookie;
 		$cart = $this->context->cart;
 		if (!$this->module->checkCurrency($cart)) {
 			Tools::redirect('index.php?controller=order');
@@ -26,28 +25,29 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 		$this->module->validateOrder($cart->id, Configuration::get('SPECTROCOIN_PENDING'), $total, $this->module->displayName, NULL, NULL, $currency->id);
 
 		$scMerchantClient = new SCMerchantClient(
-			$this->module->SC_API_URL,
-			$this->module->userId,
-			$this->module->merchantApiId
-		);
-		$scMerchantClient->setPrivateMerchantKey($this->module->private_key);
+            $this->module->merchant_api_url,
+            $this->module->project_id,
+            $this->module->client_id,
+            $this->module->client_secret,
+            $this->module->auth_url
+          );
 
-		$createOrderRequest = new CreateOrderRequest(
+		$createOrderRequest = new SpectroCoin_CreateOrderRequest(
 			$this->module->currentOrder,
 			'BTC',
 			NULL,
 			$currency->iso_code,
 			$total,
 			'Order #'.$this->module->currentOrder,
-			$this->module->culture,
+			$this->module->lang, // PRIES TAI BUVO $this->module->culture,
 			$this->context->link->getModuleLink('spectrocoin', 'callback'),
 			$this->context->link->getModuleLink('spectrocoin', 'validation'),
 			$this->context->link->getModuleLink('spectrocoin', 'cancel')
 		);
-		$createOrderResponse = $scMerchantClient->createOrder($createOrderRequest);
-		if ($createOrderResponse instanceof ApiError) {
+		$createOrderResponse = $scMerchantClient->spectrocoin_create_order($createOrderRequest);
+		if ($createOrderResponse instanceof SpectroCoin_ApiError) {
 			$this->renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage());
-		} else if ($createOrderResponse instanceof CreateOrderResponse) {
+		} else if ($createOrderResponse instanceof SpectroCoin_CreateOrderResponse) {
 			Tools::redirect($createOrderResponse->getRedirectUrl());
 		}
 
@@ -61,16 +61,6 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
      */
     protected function renderResponseErrorCode($errorCode, $errorMessage)
 	{
-		$errorCauses = array(
-			2 => '<li>Check your private key</li>',
-			3 => '<li>Your shop FIAT currency is not supported by SpectroCoin, change it if possible</li>',
-			6 => '<li>Check your merchantApiId and userId</li>',
-			99 => '<li>Incorrect url</li>
-			<li>Incorrect Parameters or Data Format</li>
-			<li>Required Parameters Missing</li>
-			<li>Unsupported currency</li>'
-		);
-
 		$shopLink = Context::getContext()->link->getPageLink('index');
 		
 		echo '<link rel="stylesheet" href="' . MODULE_ROOT_DIR . 'modules/spectrocoin/views/css/error-response.css" type="text/css" media="all" />';
@@ -82,14 +72,6 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 					</div>
 					<div class="content_content">
 						<div class="form_body">';
-
-		if (!empty($errorCauses[$errorCode])) {
-			echo '
-				<div class="form_content possible_cause">
-					<span class="form-header">Possible causes:</span>
-					<ul class="form-causes-list">' . $errorCauses[$errorCode] . '</ul>
-				</div>';
-		}
 
 		echo '
 							<a href=' . $shopLink . '><button>Return to shop</button></a>
