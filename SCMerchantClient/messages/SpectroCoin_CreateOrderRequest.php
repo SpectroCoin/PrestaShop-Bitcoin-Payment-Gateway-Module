@@ -24,7 +24,7 @@ class SpectroCoin_CreateOrderRequest
 	 * @param $successUrl
 	 * @param $failureUrl
 	 */
-	function __construct($orderId,  $description, $payAmount, $payCurrencyCode, $receiveAmount, $receiveCurrencyCode, $callbackUrl, $successUrl, $failureUrl, $lang = 'en')
+	function __construct($orderId, $description, $payAmount, $payCurrencyCode, $receiveAmount, $receiveCurrencyCode, $callbackUrl, $successUrl, $failureUrl, $lang = 'en')
 	{
 		$this->orderId = $orderId;
 		$this->description = $description;

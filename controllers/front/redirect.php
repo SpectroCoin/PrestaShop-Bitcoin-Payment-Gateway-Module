@@ -33,16 +33,16 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
           );
 
 		$createOrderRequest = new SpectroCoin_CreateOrderRequest(
-			$this->module->currentOrder,
-			'BTC',
-			NULL,
-			$currency->iso_code,
-			$total,
-			'Order #'.$this->module->currentOrder,
+			$this->module->currentOrder, // order id
+			'Order #'.$this->module->currentOrder, // description
+			NULL, // pay amount
+			'BTC', // pay currency code
+			$total, // receive amount
+			$currency->iso_code, // receive currency code
+			$this->context->link->getModuleLink('spectrocoin', 'callback'), // callback url
+			$this->context->link->getModuleLink('spectrocoin', 'validation'), // success url
+			$this->context->link->getModuleLink('spectrocoin', 'cancel'), // failure url
 			$this->module->lang,
-			$this->context->link->getModuleLink('spectrocoin', 'callback'),
-			$this->context->link->getModuleLink('spectrocoin', 'validation'),
-			$this->context->link->getModuleLink('spectrocoin', 'cancel')
 		);
 		$createOrderResponse = $scMerchantClient->spectrocoin_create_order($createOrderRequest);
 		if ($createOrderResponse instanceof SpectroCoin_ApiError) {

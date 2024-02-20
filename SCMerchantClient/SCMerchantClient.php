@@ -1,11 +1,12 @@
 <?php
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use PrestaShop\PrestaShop\Adapter\Configuration;
 
-include_once('components/SpectroCoin_FormattingUtil.php');
+
+include_once('components/SpectroCoin_Utilities.php');
 include_once('data/SpectroCoin_ApiError.php');
 include_once('data/SpectroCoin_OrderStatusEnum.php');
 include_once('data/SpectroCoin_OrderCallback.php');
@@ -24,9 +25,10 @@ class SCMerchantClient
 	
 	private $access_token_data;
 	private $encryption_key;
-	private $access_token_transient_key;
+	private $access_token_config_key;
 	private $public_spectrocoin_cert_location;
 	protected $guzzle_client;
+	protected $configuration;
 
 	/**
 	 * @param $merchant_api_url
@@ -44,9 +46,10 @@ class SCMerchantClient
 		$this->auth_url = $auth_url;
 
 		$this->guzzle_client = new Client();
-		$this->encryption_key = hash('sha256', AUTH_KEY . SECURE_AUTH_KEY . LOGGED_IN_KEY . NONCE_KEY);
-		$this->access_token_transient_key = "spectrocoin_transient_key";
-		$this->public_spectrocoin_cert_location = "https://test.spectrocoin.com/public.pem"; PROD:https://spectrocoin.com/files/merchant.public.pem
+		$this->encryption_key = hash('sha256', _COOKIE_KEY_);
+		$this->access_token_config_key = 'SPECTROCOIN_ACCESS_TOKEN';
+		$this->public_spectrocoin_cert_location = "https://test.spectrocoin.com/public.pem";// PROD:https://spectrocoin.com/files/merchant.public.pem
+		$this->configuration = new Configuration();
 	}
 
 	/**
@@ -75,9 +78,10 @@ class SCMerchantClient
 			"payCurrencyCode" => $request->getPayCurrencyCode(),
 			"receiveAmount" => $request->getReceiveAmount(),
 			"receiveCurrencyCode" => $request->getReceiveCurrencyCode(),
-			'callbackUrl' => $request->getCallbackUrl(),
-			'successUrl' => $request->getSuccessUrl(),
-			'failureUrl' => $request->getFailureUrl()
+			'callbackUrl' => 'http://localhost.com',
+			'successUrl' => 'http://localhost.com',
+			'failureUrl' => 'http://localhost.com',
+			'lang' => $request->getLang()
 		);
 
 		$sanitized_payload = $this->spectrocoin_sanitize_create_order_payload($payload);
@@ -124,22 +128,22 @@ class SCMerchantClient
 	}
 	
 	/**
-	 * Retrieves the current access token data, checking if it's still valid based on its expiration time. If the token is expired or not present, it attempts to refresh the token.
-	 * The function uses WordPress transients for token storage, providing a reliable and persistent storage mechanism within WordPress environments.
-	 *
-	 * @return array|null Returns the access token data array if the token is valid or has been refreshed successfully. Returns null if the token is not present and cannot be refreshed.
-	 */
-	private function spectrocoin_get_access_token_data() {
-        $currentTime = time();
-		$encryptedAccessTokenData = get_transient($this->access_token_transient_key);
-		if ($encryptedAccessTokenData) {
-			$accessTokenData = json_decode(SpectroCoin_Utilities::spectrocoin_decrypt_auth_data($encryptedAccessTokenData, $this->encryption_key), true);
-			$this->access_token_data = $accessTokenData;
-			if ($this->spectrocoin_is_token_valid($currentTime)) {
-				return $this->access_token_data;
-			}
-		}
-        return $this->spectrocoin_refresh_access_token($currentTime);
+     * Retrieves the current access token data from PrestaShop's configuration.
+     * If the token is expired or not present, attempts to refresh it.
+     * 
+     * @return array|null The access token data array if valid or successfully refreshed, null otherwise.
+     */
+    private function spectrocoin_get_access_token_data()
+    {
+        $encryptedAccessTokenData = $this->configuration->get($this->access_token_config_key);
+        if ($encryptedAccessTokenData) {
+            $accessTokenData = json_decode(SpectroCoin_Utilities::spectrocoin_decrypt_auth_data($encryptedAccessTokenData, $this->encryption_key), true);
+            $this->access_token_data = $accessTokenData;
+            if ($this->spectrocoin_is_token_valid(time())) {
+                return $this->access_token_data;
+            }
+        }
+        return $this->spectrocoin_refresh_access_token(time());
     }
 
 	/**
