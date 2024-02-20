@@ -141,15 +141,15 @@ class SpectroCoin extends PaymentModule
       if (Tools::getValue('SPECTROCOIN_CLIENT_SECRET')) {
         Configuration::updateValue('SPECTROCOIN_CLIENT_SECRET', Tools::getValue('SPECTROCOIN_CLIENT_SECRET'));
       }
-      if (Tools::getValue('SPECTROCOIN_title')) {
-        Configuration::updateValue('SPECTROCOIN_title', Tools::getValue('SPECTROCOIN_title'));
+      if (Tools::getValue('SPECTROCOIN_TITLE')) {
+        Configuration::updateValue('SPECTROCOIN_TITLE', Tools::getValue('SPECTROCOIN_TITLE'));
       } else {
-        Configuration::updateValue('SPECTROCOIN_title', "Pay with SpectroCoin");
+        Configuration::updateValue('SPECTROCOIN_TITLE', "Pay with SpectroCoin");
       }
-      if (Tools::getValue('SPECTROCOIN_description')) {
-        Configuration::updateValue('SPECTROCOIN_description', Tools::getValue('SPECTROCOIN_description'));
+      if (Tools::getValue('SPECTROCOIN_DESCRIPTION')) {
+        Configuration::updateValue('SPECTROCOIN_DESCRIPTION', Tools::getValue('SPECTROCOIN_DESCRIPTION'));
       } else {
-        Configuration::updateValue('SPECTROCOIN_description', '');
+        Configuration::updateValue('SPECTROCOIN_DESCRIPTION', '');
       }
       Configuration::updateValue('SPECTROCOIN_CHECKBOX', (int) Tools::getValue('SPECTROCOIN_CHECKBOX'));
     }
@@ -201,13 +201,13 @@ class SpectroCoin extends PaymentModule
           <p>
           <h4><b>Introduction</b></h4>
           </p>
-          <p>The Spectroin plugin allows seamless integration of payment gateways into your WordPress website. To get
-            started, you will need to obtain the essential credentials: Merchant ID, Project ID, and Private Key. These
+          <p>The Spectroin plugin allows seamless integration of payment gateways into your Prestashop website. To get
+            started, you will need to obtain the essential credentials: project id, client id, and client secret. These
             credentials are required to enable secure transactions between your website and the payment gateway. Follow the
             step-by-step tutorial below to acquire these credentials:</p>
           <ul>
-            <li>1. <a href="https://auth.spectrocoin.com/signup" target="_blank">Sign up</a> for a Spectroin Account.</li>
-            <li>2. <a href="https://auth.spectrocoin.com/login" target="_blank">Log in</a> to your Spectroin account.</li>
+            <li>1. <b><a href="https://auth.spectrocoin.com/signup" target="_blank">Sign up</a></b> for a Spectroin Account.</li>
+            <li>2. <b><a href="https://auth.spectrocoin.com/login" target="_blank">Log in</a></b> to your Spectroin account.</li>
             <li>3. On the dashboard, locate the "<b><a href="https://spectrocoin.com/en/merchants/projects"
                   target="_blank">Business</a></b>" tab and click on it.</li>
             <li>4. Click on "<b><a href="https://spectrocoin.com/en/merchants/projects/new" target="_blank">New
@@ -267,8 +267,8 @@ class SpectroCoin extends PaymentModule
       return;
     }
 
-    $title = Configuration::get('SPECTROCOIN_title', $this->l('Pay with SpectroCoin'));
-    $description = Configuration::get('SPECTROCOIN_description', '');
+    $title = Configuration::get('SPECTROCOIN_TITLE', $this->l('Pay with SpectroCoin'));
+    $description = Configuration::get('SPECTROCOIN_DESCRIPTION', '');
     $iconUrl = $this->_path . '/views/img/bitcoin.png';
 
     $showLogo = Configuration::get('SPECTROCOIN_CHECKBOX', 0) == 1 ? true : false;
@@ -333,14 +333,14 @@ class SpectroCoin extends PaymentModule
           array(
             'type' => 'text',
             'label' => $this->l('Title'),
-            'name' => 'SPECTROCOIN_title',
+            'name' => 'SPECTROCOIN_TITLE',
             'hint' => $this->l('This controls the title which the user sees during checkout. If left blank will display default title'),
             'desc' => $this->l('Default: "Pay with SpectroCoin"')
           ),
           array(
             'type' => 'textarea',
             'label' => $this->l('Description'),
-            'name' => 'SPECTROCOIN_description',
+            'name' => 'SPECTROCOIN_DESCRIPTION',
             'desc' => $this->l('Max: 80 characters.'),
             'hint' => $this->l('This controls the description which the user sees during checkout. If left blank then will not be displayed'),
             'maxlength' => 80
@@ -428,8 +428,8 @@ class SpectroCoin extends PaymentModule
       'SPECTROCOIN_CURRENCY_CODE' => Tools::getValue('SPECTROCOIN_CURRENCY_CODE', Configuration::get('SPECTROCOIN_CURRENCY_CODE', 'EUR')),
       'SPECTROCOIN_LANG' => Tools::getValue('SPECTROCOIN_LANG', Configuration::get('SPECTROCOIN_LANG', 'en')),
       'SPECTROCOIN_CLIENT_SECRET' => Tools::getValue('SPECTROCOIN_CLIENT_SECRET', ''),
-      'SPECTROCOIN_title' => Tools::getValue('SPECTROCOIN_title', Configuration::get('SPECTROCOIN_title', '')),
-      'SPECTROCOIN_description' => Tools::getValue('SPECTROCOIN_description', Configuration::get('SPECTROCOIN_description', '')),
+      'SPECTROCOIN_TITLE' => Tools::getValue('SPECTROCOIN_TITLE', Configuration::get('SPECTROCOIN_TITLE', '')),
+      'SPECTROCOIN_DESCRIPTION' => Tools::getValue('SPECTROCOIN_DESCRIPTION', Configuration::get('SPECTROCOIN_DESCRIPTION', '')),
       'SPECTROCOIN_CHECKBOX' => Tools::getValue('SPECTROCOIN_CHECKBOX', Configuration::get('SPECTROCOIN_CHECKBOX', 0)),
     );
   }
