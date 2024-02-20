@@ -39,7 +39,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 			$currency->iso_code,
 			$total,
 			'Order #'.$this->module->currentOrder,
-			$this->module->lang, // PRIES TAI BUVO $this->module->culture,
+			$this->module->lang,
 			$this->context->link->getModuleLink('spectrocoin', 'callback'),
 			$this->context->link->getModuleLink('spectrocoin', 'validation'),
 			$this->context->link->getModuleLink('spectrocoin', 'cancel')
