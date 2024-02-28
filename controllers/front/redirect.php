@@ -1,5 +1,7 @@
 <?php
 
+use PrestaShop\PrestaShop\Core\Foundation\Logging\Logger;
+
 /**
  * @since 1.5.0
  */
@@ -42,10 +44,19 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 			$this->context->link->getModuleLink('spectrocoin', 'callback'), // callback url
 			$this->context->link->getModuleLink('spectrocoin', 'validation'), // success url
 			$this->context->link->getModuleLink('spectrocoin', 'cancel'), // failure url
-			$this->module->lang,
+			$this->module->lang, // lang
 		);
 		$createOrderResponse = $scMerchantClient->spectrocoin_create_order($createOrderRequest);
 		if ($createOrderResponse instanceof SpectroCoin_ApiError) {
+			$logMessage = sprintf(
+				'Error in SpectroCoin module: %s (Code: %s)',
+				$createOrderResponse->getMessage(),
+				$createOrderResponse->getCode()
+			);
+
+			$logger = new Logger();
+    		$logger->addLog($logMessage, 3, null, 'SpectroCoinRedirectModuleFrontController', $cart->id, true);	
+
 			$this->renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage());
 		} else if ($createOrderResponse instanceof SpectroCoin_CreateOrderResponse) {
 			Tools::redirect($createOrderResponse->getRedirectUrl());

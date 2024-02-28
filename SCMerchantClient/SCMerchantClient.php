@@ -171,8 +171,7 @@ class SCMerchantClient
             $data['expires_at'] = time() + $data['expires_in'];
             $this->access_token_data = $data;
 			$encryptedAccessTokenData = SpectroCoin_Utilities::spectrocoin_encrypt_auth_data(json_encode($data), $this->encryption_key);
-			set_transient($this->access_token_transient_key, $encryptedAccessTokenData, $data['expires_in']);
-			$this->access_token_data = $data;
+			$this->configuration->set($this->access_token_config_key, $encryptedAccessTokenData);
             return $this->access_token_data;
         } catch (GuzzleException $e) {
             return new SpectroCoin_ApiError('Failed to refresh access token', $e->getMessage());
@@ -199,19 +198,20 @@ class SCMerchantClient
      */
     private function spectrocoin_sanitize_create_order_payload($payload) {
 		$sanitized_payload = [
-			'orderId' => sanitize_text_field($payload['orderId']),
-			'projectId' => sanitize_text_field($payload['projectId']), // Assuming you need to sanitize this as well
-			'description' => sanitize_text_field($payload['description']),
-			'payAmount' => filter_var($payload['payAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
-			'payCurrencyCode' => sanitize_text_field($payload['payCurrencyCode']),
-			'receiveAmount' => filter_var($payload['receiveAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
-			'receiveCurrencyCode' => sanitize_text_field($payload['receiveCurrencyCode']),
-			'callbackUrl' => filter_var($payload['callbackUrl'], FILTER_SANITIZE_URL),
-			'successUrl' => filter_var($payload['successUrl'], FILTER_SANITIZE_URL),
-			'failureUrl' => filter_var($payload['failureUrl'], FILTER_SANITIZE_URL),
+			'orderId' => htmlspecialchars(trim($payload['orderId'])), // Removes any HTML tags and trims whitespace
+			'projectId' => htmlspecialchars(trim($payload['projectId'])), // Removes any HTML tags and trims whitespace
+			'description' => htmlspecialchars(trim($payload['description'])), // Removes any HTML tags and trims whitespace
+			'payAmount' => filter_var($payload['payAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION), // Sanitizes to a float
+			'payCurrencyCode' => htmlspecialchars(trim($payload['payCurrencyCode'])), // Removes any HTML tags and trims whitespace
+			'receiveAmount' => filter_var($payload['receiveAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION), // Sanitizes to a float
+			'receiveCurrencyCode' => htmlspecialchars(trim($payload['receiveCurrencyCode'])), // Removes any HTML tags and trims whitespace
+			'callbackUrl' => filter_var($payload['callbackUrl'], FILTER_SANITIZE_URL), // Sanitizes URL
+			'successUrl' => filter_var($payload['successUrl'], FILTER_SANITIZE_URL), // Sanitizes URL
+			'failureUrl' => filter_var($payload['failureUrl'], FILTER_SANITIZE_URL), // Sanitizes URL
+			'lang' => htmlspecialchars(trim($payload['lang'])) // Removes any HTML tags and trims whitespace
 		];
 		return $sanitized_payload;
-    }
+	}
 
     /**
      * Payload data validation for create order
@@ -229,7 +229,8 @@ class SCMerchantClient
 			$sanitized_payload['receiveCurrencyCode'],
 			$sanitized_payload['callbackUrl'],
 			$sanitized_payload['successUrl'],
-			$sanitized_payload['failureUrl']
+			$sanitized_payload['failureUrl'],
+			$sanitized_payload['lang']
 		) &&
 		!empty($sanitized_payload['orderId']) &&
 		!empty($sanitized_payload['projectId']) && 
@@ -240,6 +241,7 @@ class SCMerchantClient
 		filter_var($sanitized_payload['callbackUrl'], FILTER_VALIDATE_URL) &&
 		filter_var($sanitized_payload['successUrl'], FILTER_VALIDATE_URL) &&
 		filter_var($sanitized_payload['failureUrl'], FILTER_VALIDATE_URL) &&
+		!empty($sanitized_payload['lang']) &&
 		($sanitized_payload['payAmount'] > 0 || $sanitized_payload['receiveAmount'] > 0);
 	}
 		
@@ -271,20 +273,20 @@ class SCMerchantClient
 	 */
 	public function spectrocoin_sanitize_callback($post_data) {
 		return [
-            'userId' => sanitize_text_field($post_data['userId']),
-			'merchantApiId' => sanitize_text_field($post_data['merchantApiId']),
-            'merchantId' => sanitize_text_field($post_data['merchantId']),
-            'apiId' => sanitize_text_field($post_data['apiId']),
-			'orderId' => sanitize_text_field($post_data['orderId']),
-			'payCurrency' => sanitize_text_field($post_data['payCurrency']),
+			'userId' => htmlspecialchars(trim($post_data['userId'])),
+			'merchantApiId' => htmlspecialchars(trim($post_data['merchantApiId'])),
+			'merchantId' => htmlspecialchars(trim($post_data['merchantId'])),
+			'apiId' => htmlspecialchars(trim($post_data['apiId'])),
+			'orderId' => htmlspecialchars(trim($post_data['orderId'])),
+			'payCurrency' => htmlspecialchars(trim($post_data['payCurrency'])),
 			'payAmount' => filter_var($post_data['payAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
-			'receiveCurrency' => sanitize_text_field($post_data['receiveCurrency']),
+			'receiveCurrency' => htmlspecialchars(trim($post_data['receiveCurrency'])),
 			'receiveAmount' => filter_var($post_data['receiveAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
 			'receivedAmount' => filter_var($post_data['receivedAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
-			'description' => sanitize_text_field($post_data['description']),
+			'description' => htmlspecialchars(trim($post_data['description'])),
 			'orderRequestId' => filter_var($post_data['orderRequestId'], FILTER_SANITIZE_NUMBER_INT),
-			'status' => sanitize_text_field($post_data['status']),
-			'sign' => sanitize_text_field($post_data['sign']),
+			'status' => htmlspecialchars(trim($post_data['status'])),
+			'sign' => htmlspecialchars(trim($post_data['sign'])),
 		];
 	}
 
