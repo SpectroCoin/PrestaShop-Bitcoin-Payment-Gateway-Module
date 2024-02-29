@@ -30,7 +30,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
             $this->module->merchant_api_url,
             $this->module->project_id,
             $this->module->client_id,
-            $this->module->client_secret,
+            $this->module->client_secret, 
             $this->module->auth_url
           );
 

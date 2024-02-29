@@ -18,7 +18,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController {
 
         try {
 
-          if (empty($_POST)) {
+          if (empty($_REQUEST)) { //TO-DO: Check if this is the correct way to check for POST data
             exit('Invalid request!');
           }
 
@@ -27,8 +27,8 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController {
           $post_data = [];
       
           foreach ($expected_keys as $key) {
-            if (isset($_POST[$key])) {
-              $post_data[$key] = $_POST[$key];
+            if (isset($_REQUEST[$key])) {
+              $post_data[$key] = $_REQUEST[$key];
             }
           }
 

@@ -135,10 +135,10 @@ class SCMerchantClient
      */
     private function spectrocoin_get_access_token_data()
     {
-        $encryptedAccessTokenData = $this->configuration->get($this->access_token_config_key);
-        if ($encryptedAccessTokenData) {
-            $accessTokenData = json_decode(SpectroCoin_Utilities::spectrocoin_decrypt_auth_data($encryptedAccessTokenData, $this->encryption_key), true);
-            $this->access_token_data = $accessTokenData;
+        $encrypted_access_token_data = $this->configuration->get($this->access_token_config_key);
+        if ($encrypted_access_token_data) {
+            $access_token_data = json_decode(SpectroCoin_Utilities::spectrocoin_decrypt_auth_data($encrypted_access_token_data, $this->encryption_key), true);
+            $this->access_token_data = $access_token_data;
             if ($this->spectrocoin_is_token_valid(time())) {
                 return $this->access_token_data;
             }
@@ -170,8 +170,8 @@ class SCMerchantClient
             }
             $data['expires_at'] = time() + $data['expires_in'];
             $this->access_token_data = $data;
-			$encryptedAccessTokenData = SpectroCoin_Utilities::spectrocoin_encrypt_auth_data(json_encode($data), $this->encryption_key);
-			$this->configuration->set($this->access_token_config_key, $encryptedAccessTokenData);
+			$encrypted_access_token_data = SpectroCoin_Utilities::spectrocoin_encrypt_auth_data(json_encode($data), $this->encryption_key);
+			$this->configuration->set($this->access_token_config_key, $encrypted_access_token_data);
             return $this->access_token_data;
         } catch (GuzzleException $e) {
             return new SpectroCoin_ApiError('Failed to refresh access token', $e->getMessage());
@@ -254,9 +254,9 @@ class SCMerchantClient
 	public function spectrocoin_process_callback($post_data) {
 		if ($post_data != null) {
 			$sanitized_data = $this->spectrocoin_sanitize_callback($post_data);
-			$isValid = $this->spectrocoin_validate_callback($sanitized_data);
-			if ($isValid) {
-				$order_callback = new SpectroCoin_OrderCallback($sanitized_data['userId'], $sanitized_data['merchantApiId'], $sanitized_data['merchantId'], $sanitized_data['apiId'], $sanitized_data['orderId'], $sanitized_data['payCurrency'], $sanitized_data['payAmount'], $sanitized_data['receiveCurrency'], $sanitized_data['receiveAmount'], $sanitized_data['receivedAmount'], $sanitized_data['description'], $sanitized_data['orderRequestId'], $sanitized_data['status'], $sanitized_data['sign']);
+			$is_valid = $this->spectrocoin_validate_callback($sanitized_data);
+			if ($is_valid) {
+				$order_callback = new SpectroCoin_OrderCallback($sanitized_data['userId'], $sanitized_data['merchantApiId'], $sanitized_data['merchantId'], $sanitized_data['apiId'], $sanitized_data['orderId'], $sanitized_data['payCurrencyCode'], $sanitized_data['payAmount'], $sanitized_data['receiveCurrencyCode'], $sanitized_data['receiveAmount'], $sanitized_data['receivedAmount'], $sanitized_data['description'], $sanitized_data['orderRequestId'], $sanitized_data['status'], $sanitized_data['sign']);
 				if ($this->spectrocoin_validate_callback_payload($order_callback)) {
 					return $order_callback;
 				}
@@ -278,9 +278,9 @@ class SCMerchantClient
 			'merchantId' => htmlspecialchars(trim($post_data['merchantId'])),
 			'apiId' => htmlspecialchars(trim($post_data['apiId'])),
 			'orderId' => htmlspecialchars(trim($post_data['orderId'])),
-			'payCurrency' => htmlspecialchars(trim($post_data['payCurrency'])),
+			'payCurrencyCode' => htmlspecialchars(trim($post_data['payCurrencyCode'])),
 			'payAmount' => filter_var($post_data['payAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
-			'receiveCurrency' => htmlspecialchars(trim($post_data['receiveCurrency'])),
+			'receiveCurrencyCode' => htmlspecialchars(trim($post_data['receiveCurrencyCode'])),
 			'receiveAmount' => filter_var($post_data['receiveAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
 			'receivedAmount' => filter_var($post_data['receivedAmount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
 			'description' => htmlspecialchars(trim($post_data['description'])),
@@ -296,8 +296,8 @@ class SCMerchantClient
 	 * @return bool
 	 */
 	public function spectrocoin_validate_callback($sanitized_data) {
-		$isValid = true;
-		$failedFields = [];
+		$is_valid = true;
+		$failed_fields = [];
 
 		if (!isset(
             $sanitized_data['userId'], 
@@ -305,9 +305,9 @@ class SCMerchantClient
             $sanitized_data['merchantId'], 
             $sanitized_data['apiId'],
 			$sanitized_data['orderId'], 
-			$sanitized_data['payCurrency'], 
+			$sanitized_data['payCurrencyCode'], 
 			$sanitized_data['payAmount'], 
-			$sanitized_data['receiveCurrency'], 
+			$sanitized_data['receiveCurrencyCode'], 
 			$sanitized_data['receiveAmount'], 
 			$sanitized_data['receivedAmount'], 
 			$sanitized_data['description'], 
@@ -315,66 +315,66 @@ class SCMerchantClient
 			$sanitized_data['status'], 
 			$sanitized_data['sign']
 		)) {
-			$isValid = false;
-			$failedFields[] = 'One or more required fields are missing.';
+			$is_valid = false;
+			$failed_fields[] = 'One or more required fields are missing.';
 		} else {
             if (empty($sanitized_data['userId'])) {
-				$isValid = false;
-				$failedFields[] = 'userId is empty.';
+				$is_valid = false;
+				$failed_fields[] = 'userId is empty.';
 			}
 			if (empty($sanitized_data['merchantApiId'])) {
-				$isValid = false;
-				$failedFields[] = 'merchantApiId is empty.';
+				$is_valid = false;
+				$failed_fields[] = 'merchantApiId is empty.';
 			}
             if (empty($sanitized_data['merchantId'])) {
-                $isValid = false;
-                $failedFields[] = 'merchantId is empty.';
+                $is_valid = false;
+                $failed_fields[] = 'merchantId is empty.';
             }
             if (empty($sanitized_data['apiId'])) {
-                $isValid = false;
-                $failedFields[] = 'apiId is empty.';
+                $is_valid = false;
+                $failed_fields[] = 'apiId is empty.';
             }
-			if (strlen($sanitized_data['payCurrency']) !== 3) {
-				$isValid = false;
-				$failedFields[] = 'payCurrency is not 3 characters long.';
+			if (strlen($sanitized_data['payCurrencyCode']) !== 3) {
+				$is_valid = false;
+				$failed_fields[] = 'payCurrencyCode is not 3 characters long.';
 			}
-			if (strlen($sanitized_data['receiveCurrency']) !== 3) {
-				$isValid = false;
-				$failedFields[] = 'receiveCurrency is not 3 characters long.';
+			if (strlen($sanitized_data['receiveCurrencyCode']) !== 3) {
+				$is_valid = false;
+				$failed_fields[] = 'receiveCurrencyCode is not 3 characters long.';
 			}
 			if (!is_numeric($sanitized_data['payAmount']) || $sanitized_data['payAmount'] <= 0) {
-				$isValid = false;
-				$failedFields[] = 'payAmount is not a valid positive number.';
+				$is_valid = false;
+				$failed_fields[] = 'payAmount is not a valid positive number.';
 			}
 			if (!is_numeric($sanitized_data['receiveAmount']) || $sanitized_data['receiveAmount'] <= 0) {
-				$isValid = false;
-				$failedFields[] = 'receiveAmount is not a valid positive number.';
+				$is_valid = false;
+				$failed_fields[] = 'receiveAmount is not a valid positive number.';
 			}
 			if ($sanitized_data['status'] == 6) {
 				if (!is_numeric($sanitized_data['receivedAmount'])) {
-					$isValid = false;
-					$failedFields[] = 'receivedAmount is not a valid number.';
+					$is_valid = false;
+					$failed_fields[] = 'receivedAmount is not a valid number.';
 				}
 			} else {
 				if (!is_numeric($sanitized_data['receivedAmount']) || $sanitized_data['receivedAmount'] < 0) {
-					$isValid = false;
-					$failedFields[] = 'receivedAmount is not a valid non-negative number.';
+					$is_valid = false;
+					$failed_fields[] = 'receivedAmount is not a valid non-negative number.';
 				}
 			}
 			if (!is_numeric($sanitized_data['orderRequestId']) || $sanitized_data['orderRequestId'] <= 0) {
-				$isValid = false;
-				$failedFields[] = 'orderRequestId is not a valid positive number.';
+				$is_valid = false;
+				$failed_fields[] = 'orderRequestId is not a valid positive number.';
 			}
 			if (!is_numeric($sanitized_data['status']) || $sanitized_data['status'] <= 0) {
-				$isValid = false;
-				$failedFields[] = 'status is not a valid positive number.';
+				$is_valid = false;
+				$failed_fields[] = 'status is not a valid positive number.';
 			}
 		}
 
-		if (!$isValid) {
-			error_log('SpectroCoin error: Callback validation failed fields: ' . implode(', ', $failedFields));
+		if (!$is_valid) {
+			error_log('SpectroCoin error: Callback validation failed fields: ' . implode(', ', $failed_fields));
 		}
-		return $isValid;
+		return $is_valid;
 	}
 
 	/**
@@ -390,9 +390,9 @@ class SCMerchantClient
 				'merchantId' => $order_callback->getMerchantId(),
 				'apiId' => $order_callback->getApiId(),
 				'orderId' => $order_callback->getOrderId(),
-				'payCurrency' => $order_callback->getPayCurrency(),
+				'payCurrencyCode' => $order_callback->getPayCurrency(),
 				'payAmount' => $order_callback->getPayAmount(),
-				'receiveCurrency' => $order_callback->getReceiveCurrency(),
+				'receiveCurrencyCode' => $order_callback->getReceiveCurrency(),
 				'receiveAmount' => $order_callback->getReceiveAmount(),
 				'receivedAmount' => $order_callback->getReceivedAmount(),
 				'description' => $order_callback->getDescription(),
