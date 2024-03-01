@@ -26,9 +26,9 @@ class SpectroCoin extends PaymentModule
   public function __construct()
   {
     $shop = Context::getContext()->shop;
-    $baseURL = $shop->getBaseURL();
+    $base_URL = $shop->getBaseURL();
 
-    define('MODULE_ROOT_DIR',  $baseURL);
+    define('MODULE_ROOT_DIR',  $base_URL);
 
     $this->name = 'spectrocoin';
     $this->tab = 'payments_gateways';
