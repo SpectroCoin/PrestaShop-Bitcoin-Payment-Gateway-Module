@@ -1,20 +1,30 @@
 {
-    "name": "spectrocoin/prestashop-merchant",
-    "description": "SpectroCoin cryptocurrency payment gateway for Presta shop",
-    "type": "prestashop-module",
-     "version": "1.0.0",
-    "keywords": [
-        "bitcoin", "btc", "xem", "dash", "spectrocoin", "merchant", "prestashop", "gateway", "payment", "altcoin"
-      ],
-    "license": "GPL-3.0-or-later",
-      "config": {
-        "prepend-autoloader": false,
-        "allow-plugins": {
-            "composer/installers": true
-        }
-    },
-    "require": {
-        "composer/installers": "^1.10",
-        "guzzlehttp/guzzle": "^7.8"
+  "name": "spectrocoin/prestashop-merchant",
+  "description": "SpectroCoin cryptocurrency payment gateway for Presta shop",
+  "type": "prestashop-module",
+  "version": "1.0.0",
+  "keywords": [
+    "bitcoin",
+    "btc",
+    "xem",
+    "dash",
+    "spectrocoin",
+    "merchant",
+    "prestashop",
+    "gateway",
+    "payment",
+    "altcoin"
+  ],
+  "license": "GPL-3.0-or-later",
+  "config": {
+    "prepend-autoloader": false,
+    "allow-plugins": {
+      "composer/installers": true
     }
+  },
+  "require": {
+    "php": "^7.0 || ^8.0",
+    "composer/installers": "^1.10",
+    "guzzlehttp/guzzle": "^7.8"
+  }
 }
