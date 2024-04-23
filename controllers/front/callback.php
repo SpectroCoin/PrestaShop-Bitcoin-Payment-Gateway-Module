@@ -40,7 +40,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController {
             $this->module->auth_url
           );
 
-          $callback = $scMerchantClient->spectrocoin_process_callback($post_data);
+          $callback = $scMerchantClient->spectrocoinProcessCallback($post_data);
 
           if ($callback){
 

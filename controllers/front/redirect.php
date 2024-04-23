@@ -46,7 +46,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 			$this->context->link->getModuleLink('spectrocoin', 'cancel'), // failure url
 			$this->module->lang, // lang
 		);
-		$createOrderResponse = $scMerchantClient->spectrocoin_create_order($createOrderRequest);
+		$createOrderResponse = $scMerchantClient->spectrocoinCreateOrder($createOrderRequest);
 		if ($createOrderResponse instanceof SpectroCoin_ApiError) {
 			$logMessage = sprintf(
 				'Error in SpectroCoin module: %s (Code: %s)',
