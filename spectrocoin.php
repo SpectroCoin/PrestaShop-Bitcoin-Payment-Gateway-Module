@@ -78,7 +78,6 @@ class SpectroCoin extends PaymentModule
     if (
       !parent::install()
       || !$this->registerHook('payment')
-      || !$this->registerHook('displayPaymentEU')
       || !$this->registerHook('paymentReturn')
       || !$this->registerHook('paymentOptions')
     ) {
@@ -298,11 +297,6 @@ class SpectroCoin extends PaymentModule
 
     return $payment_options;
   }
-
-  public function hookDisplayPaymentEU($params)
-{
-    return $this->display(__FILE__, 'displayPaymentEU.tpl');
-}
 
   //TODO when sc API will be updated, get currencies from API
   public function checkCurrency($cart)
