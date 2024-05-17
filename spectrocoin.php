@@ -78,7 +78,6 @@ class SpectroCoin extends PaymentModule
     if (
       !parent::install()
       || !$this->registerHook('payment')
-      || !$this->registerHook('paymentReturn')
       || !$this->registerHook('paymentOptions')
     ) {
       return false;
