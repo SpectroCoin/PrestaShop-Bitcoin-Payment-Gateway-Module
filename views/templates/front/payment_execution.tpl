@@ -10,11 +10,11 @@
   <p class="warning">{l s='Your shopping cart is empty.' mod='spectrocoin'}</p>
 {else}
 
-<h3>{l s='Bitcoin provided by SpectroCoin' mod='spectrocoin'}</h3>
+<h3>{l s='Crypto provided by SpectroCoin' mod='spectrocoin'}</h3>
 <form action="{$link->getModuleLink('spectrocoin', 'redirect', [], true)|escape:'html'}" method="post">
   <p>
-    <img src="{$this_path_bw}bitcoin.png" alt="{l s='SpectroCoin' mod='spectrocoin'}" width="129" height="49" style="float:left; margin: 0px 10px 5px 0px;" />
-    {l s='You have chosen to pay by Bitcoin.' mod='spectrocoin'}
+    <img src="{$this_path_bw}spectrocoin-logo.svg" alt="{l s='SpectroCoin' mod='spectrocoin'}" width="129" height="49" style="float:left; margin: 0px 10px 5px 0px;" />
+    {l s='You have chosen to pay by crypto.' mod='spectrocoin'}
     <br/><br />
     {l s='Here is a short summary of your order:' mod='spectrocoin'}
   </p>
