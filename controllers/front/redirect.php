@@ -1,7 +1,5 @@
 <?php
 
-use PrestaShop\PrestaShop\Core\Foundation\Logging\Logger;
-
 /**
  * @since 1.5.0
  */
@@ -54,8 +52,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 				$createOrderResponse->getCode()
 			);
 
-			$logger = new Logger();
-    		$logger->addLog($logMessage, 3, null, 'SpectroCoinRedirectModuleFrontController', $cart->id, true);	
+			PrestaShopLogger::addLog($logMessage, 3, null, 'SpectroCoinRedirectModuleFrontController', $cart->id, true);
 
 			$this->renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage());
 		} else if ($createOrderResponse instanceof SpectroCoin_CreateOrderResponse) {
