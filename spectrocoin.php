@@ -277,7 +277,7 @@ class SpectroCoin extends PaymentModule
 
     $title = Configuration::get('SPECTROCOIN_TITLE', $this->l('Pay with SpectroCoin'));
     $description = Configuration::get('SPECTROCOIN_DESCRIPTION', '');
-    $iconUrl = $this->_path . '/views/img/bitcoin.png';
+    $iconUrl = $this->_path . '/views/img/spectrocoin-logo.svg';
 
     $showLogo = Configuration::get('SPECTROCOIN_CHECKBOX', 0) == 1 ? true : false;
 
