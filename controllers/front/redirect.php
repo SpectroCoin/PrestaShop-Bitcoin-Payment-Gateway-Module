@@ -39,9 +39,8 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 			'BTC', // pay currency code
 			$total, // receive amount
 			$currency->iso_code, // receive currency code
-			"https://cms-prestashop.bankera.cloud/module/spectrocoin/callback",
-			// $this->context->link->getModuleLink('spectrocoin', 'callback'), // callback url
-			$this->context->link->getModuleLink('spectrocoin', 'callback'), // callback url 	// debug 
+			"https://cms-prestashop.bankera.cloud/module/spectrocoin/callback",// debug 
+			// $this->context->link->getModuleLink('spectrocoin', 'callback'), // callback url 	
 			$this->context->link->getModuleLink('spectrocoin', 'validation'), // success url
 			$this->context->link->getModuleLink('spectrocoin', 'cancel'), // failure url
 			$this->module->lang, // lang
