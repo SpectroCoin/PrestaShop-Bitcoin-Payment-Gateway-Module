@@ -11,6 +11,8 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController {
     public $ssl = true;
     public function postProcess()
     {
+        PrestaShopLogger::addLog("SpectroCoin Callback: Incoming callback request.", 1); // Debug
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             PrestaShopLogger::addLog("SpectroCoin Callback: Invalid request method: " . $_SERVER['REQUEST_METHOD'], 3);
             exit('Invalid request method!');
@@ -21,8 +23,8 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController {
         $post_data = [];
 
         foreach ($expected_keys as $key) {
-            if (isset($_REQUEST[$key])) {
-                $post_data[$key] = $_REQUEST[$key];
+            if (isset($_POST[$key])) {
+                $post_data[$key] = $_POST[$key];
             } else {
                 PrestaShopLogger::addLog("SpectroCoin Callback: Missing expected key: " . $key, 3);
             }
@@ -31,6 +33,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController {
         PrestaShopLogger::addLog("SpectroCoin Callback: Received callback data: " . print_r($post_data, true), 1); // Debug
 
         try {
+            PrestaShopLogger::addLog("SpectroCoin Callback: Initializing SCMerchantClient.", 1); // Debug
             $scMerchantClient = new SCMerchantClient(
                 $this->module->merchant_api_url,
                 $this->module->project_id,
@@ -39,11 +42,14 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController {
                 $this->module->auth_url
             );
 
+            PrestaShopLogger::addLog("SpectroCoin Callback: Processing callback data.", 1); // Debug
             $callback = $scMerchantClient->spectrocoinProcessCallback($post_data);
 
             if ($callback) {
                 $history = new OrderHistory();
                 $history->id_order = $post_data['orderId'];
+
+                PrestaShopLogger::addLog("SpectroCoin Callback: Callback status: " . $callback->getStatus(), 1); // Debug
 
                 switch ($callback->getStatus()) {
                     case SpectroCoin_OrderStatusEnum::$New:
