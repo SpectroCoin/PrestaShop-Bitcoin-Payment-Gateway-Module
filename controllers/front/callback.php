@@ -36,19 +36,9 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
             }
         }
 
-        PrestaShopLogger::addLog("SpectroCoin Callback: Received callback data: " . print_r($post_data, true),1);
 
         try {
-            PrestaShopLogger::addLog("SpectroCoin Callback: Initializing SCMerchantClient.",1);
-
-             // Additional logging to check configuration values
-             PrestaShopLogger::addLog("SpectroCoin Callback: merchant_api_url: " . $this->module->merchant_api_url,1);
-             PrestaShopLogger::addLog("SpectroCoin Callback: project_id: " . $this->module->project_id,1);
-             PrestaShopLogger::addLog("SpectroCoin Callback: client_id: " . $this->module->client_id,1);
-             PrestaShopLogger::addLog("SpectroCoin Callback: client_secret: " . $this->module->client_secret,1);
-             PrestaShopLogger::addLog("SpectroCoin Callback: auth_url: " . $this->module->auth_url,1);
-
-
+            require_once $this->module->getLocalPath().'/SCMerchantClient/SCMerchantClient.php'; // remove later when adding autoloading
             $scMerchantClient = new SCMerchantClient(
                 $this->module->merchant_api_url,
                 $this->module->project_id,
