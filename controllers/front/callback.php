@@ -1,8 +1,5 @@
 <?php
 
-use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
-use Psr\Log\LoggerInterface;
-
 /**
  * @since 1.5.0
  */
@@ -14,16 +11,6 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
     public $display_footer = false;
     public $ssl = true;
 
-    /** @var LoggerInterface */
-    private $logger;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $container = SymfonyContainer::getInstance();
-        $this->logger = $container->get('monolog.logger');
-    }
-
     public function postProcess()
     {
 
@@ -32,7 +19,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
          ini_set('display_errors', 1);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->logger->error("SpectroCoin Callback: Invalid request method: " . $_SERVER['REQUEST_METHOD']);
+            PrestaShopLogger::addLog("SpectroCoin Callback: Invalid request method: " . $_SERVER['REQUEST_METHOD'],3);
             http_response_code(405);
             exit('Invalid request method!');
         }
@@ -41,7 +28,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
         $post_data = json_decode($input, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->logger->error("SpectroCoin Callback: Invalid JSON data.");
+            PrestaShopLogger::addLog("SpectroCoin Callback: Invalid JSON data.",3);
             http_response_code(400);
             exit('Invalid JSON data!');
         }
@@ -50,23 +37,23 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
         foreach ($expected_keys as $key) {
             if (!isset($post_data[$key])) {
-                $this->logger->error("SpectroCoin Callback: Missing expected key: " . $key);
+                PrestaShopLogger::addLog("SpectroCoin Callback: Missing expected key: " . $key,3);
                 http_response_code(400);
                 exit('Missing required data!');
             }
         }
 
-        $this->logger->info("SpectroCoin Callback: Received callback data: " . print_r($post_data, true));
+        PrestaShopLogger::addLog("SpectroCoin Callback: Received callback data: " . print_r($post_data, true),1);
 
         try {
-            $this->logger->info("SpectroCoin Callback: Initializing SCMerchantClient.");
+            PrestaShopLogger::addLog("SpectroCoin Callback: Initializing SCMerchantClient.",1);
 
              // Additional logging to check configuration values
-             $this->logger->info("SpectroCoin Callback: merchant_api_url: " . $this->module->merchant_api_url);
-             $this->logger->info("SpectroCoin Callback: project_id: " . $this->module->project_id);
-             $this->logger->info("SpectroCoin Callback: client_id: " . $this->module->client_id);
-             $this->logger->info("SpectroCoin Callback: client_secret: " . $this->module->client_secret);
-             $this->logger->info("SpectroCoin Callback: auth_url: " . $this->module->auth_url);
+             PrestaShopLogger::addLog("SpectroCoin Callback: merchant_api_url: " . $this->module->merchant_api_url,1);
+             PrestaShopLogger::addLog("SpectroCoin Callback: project_id: " . $this->module->project_id,1);
+             PrestaShopLogger::addLog("SpectroCoin Callback: client_id: " . $this->module->client_id,1);
+             PrestaShopLogger::addLog("SpectroCoin Callback: client_secret: " . $this->module->client_secret,1);
+             PrestaShopLogger::addLog("SpectroCoin Callback: auth_url: " . $this->module->auth_url,1);
 
 
             $scMerchantClient = new SCMerchantClient(
@@ -77,7 +64,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
                 $this->module->auth_url
             );
 
-            $this->logger->info("SpectroCoin Callback: Processing callback data.");
+            PrestaShopLogger::addLog("SpectroCoin Callback: Processing callback data.",1);
             $callback = $scMerchantClient->spectrocoinProcessCallback($post_data);
 
             if ($callback) {
@@ -85,7 +72,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
                 $history->id_order = $post_data['orderId'];
 
                 $status = $callback->getStatus();
-                $this->logger->info("SpectroCoin Callback: Callback status: " . $status);
+                PrestaShopLogger::addLog("SpectroCoin Callback: Callback status: " . $status,1);
 
                 switch ($status) {
                     case SpectroCoin_OrderStatusEnum::$New:
@@ -103,19 +90,19 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
                         $history->addWithemail(true, ['order_name' => $post_data['orderId']]);
                         break;
                     default:
-                        $this->logger->error("SpectroCoin Callback: Unknown order status: " . $status);
+                        PrestaShopLogger::addLog("SpectroCoin Callback: Unknown order status: " . $status,3);
                         http_response_code(400);
                         exit('Unknown order status: ' . $status);
                 }
                 http_response_code(200);
                 exit('*ok*');
             } else {
-                $this->logger->error("SpectroCoin Callback: Invalid callback data processed.");
+                PrestaShopLogger::addLog("SpectroCoin Callback: Invalid callback data processed.",3);
                 http_response_code(400);
                 exit('Invalid callback!');
             }
         } catch (Exception $e) {
-            $this->logger->error("SpectroCoin Callback Exception: " . get_class($e) . ': ' . $e->getMessage());
+            PrestaShopLogger::addLog("SpectroCoin Callback Exception: " . get_class($e) . ': ' . $e->getMessage(),3);
             http_response_code(500);
             exit(get_class($e) . ': ' . $e->getMessage());
         }
