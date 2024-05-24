@@ -26,7 +26,10 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
-        $this->logger->info("SpectroCoin Callback: Incoming callback request.");
+
+         // Enable all PHP errors
+         error_reporting(E_ALL);
+         ini_set('display_errors', 1);
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->logger->error("SpectroCoin Callback: Invalid request method: " . $_SERVER['REQUEST_METHOD']);
@@ -57,6 +60,15 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
         try {
             $this->logger->info("SpectroCoin Callback: Initializing SCMerchantClient.");
+
+             // Additional logging to check configuration values
+             $this->logger->info("SpectroCoin Callback: merchant_api_url: " . $this->module->merchant_api_url);
+             $this->logger->info("SpectroCoin Callback: project_id: " . $this->module->project_id);
+             $this->logger->info("SpectroCoin Callback: client_id: " . $this->module->client_id);
+             $this->logger->info("SpectroCoin Callback: client_secret: " . $this->module->client_secret);
+             $this->logger->info("SpectroCoin Callback: auth_url: " . $this->module->auth_url);
+
+
             $scMerchantClient = new SCMerchantClient(
                 $this->module->merchant_api_url,
                 $this->module->project_id,
