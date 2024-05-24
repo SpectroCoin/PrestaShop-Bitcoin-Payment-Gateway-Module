@@ -24,22 +24,15 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
             exit('Invalid request method!');
         }
 
-        $input = file_get_contents("php://input");
-        $post_data = json_decode($input, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            PrestaShopLogger::addLog("SpectroCoin Callback: Invalid JSON data.",3);
-            http_response_code(400);
-            exit('Invalid JSON data!');
-        }
-
         $expected_keys = ['userId', 'merchantApiId', 'merchantId', 'apiId', 'orderId', 'payCurrency', 'payAmount', 'receiveCurrency', 'receiveAmount', 'receivedAmount', 'description', 'orderRequestId', 'status', 'sign'];
 
+        $post_data = [];
+
         foreach ($expected_keys as $key) {
-            if (!isset($post_data[$key])) {
-                PrestaShopLogger::addLog("SpectroCoin Callback: Missing expected key: " . $key,3);
-                http_response_code(400);
-                exit('Missing required data!');
+            if (isset($_POST[$key])) {
+                $post_data[$key] = $_POST[$key];
+            } else {
+                PrestaShopLogger::addLog("SpectroCoin Callback: Missing expected key: " . $key, 3);
             }
         }
 
