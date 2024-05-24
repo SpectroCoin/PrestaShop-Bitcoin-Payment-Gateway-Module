@@ -13,11 +13,6 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
-
-         // Enable all PHP errors
-         error_reporting(E_ALL);
-         ini_set('display_errors', 1);
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             PrestaShopLogger::addLog("SpectroCoin Callback: Invalid request method: " . $_SERVER['REQUEST_METHOD'],3);
             http_response_code(405);
@@ -47,7 +42,6 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
                 $this->module->auth_url
             );
 
-            PrestaShopLogger::addLog("SpectroCoin Callback: Processing callback data.",1);
             $callback = $scMerchantClient->spectrocoinProcessCallback($post_data);
 
             if ($callback) {
@@ -55,7 +49,6 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
                 $history->id_order = $post_data['orderId'];
 
                 $status = $callback->getStatus();
-                PrestaShopLogger::addLog("SpectroCoin Callback: Callback status: " . $status,1);
 
                 switch ($status) {
                     case SpectroCoin_OrderStatusEnum::$New:
