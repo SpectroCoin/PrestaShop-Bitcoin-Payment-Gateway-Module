@@ -1,5 +1,11 @@
 <?php
 
+declare (strict_types = 1);
+
+namespace SpectroCoin\Controllers\Front;
+
+use PrestaShop\PrestaShop\Core\Module\ModuleFrontController;
+
 /**
  * @since 1.5.0
  */
@@ -30,7 +36,6 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
                 PrestaShopLogger::addLog("SpectroCoin Callback: Missing expected key: " . $key, 3);
             }
         }
-
 
         try {
             require_once $this->module->getLocalPath().'/SCMerchantClient/SCMerchantClient.php'; // remove later when adding autoloading
