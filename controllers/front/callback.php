@@ -1,17 +1,20 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace SpectroCoin\Controllers\Front;
 
 use SpectroCoin\SCMerchantClient\SCMerchantClient;
 use SpectroCoin\SCMerchantClient\Enum\OrderStatus;
-use SpectroCoin\SCMerchantClient\Exception\ApiError;
-use SpectroCoin\SCMerchantClient\Exception\GenericError;
+use SpectroCoin\SCMerchantClient\Http\OrderCallback;
 
 use Exception;
+use InvalidArgumentException;
+
+use GuzzleHttp\Exception\RequestException;
 
 use PrestaShop\PrestaShop\Core\Module\ModuleFrontController;
+use PrestaShopLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -26,12 +29,13 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
     public $ssl = true;
     private SCMerchantClient $sc_merchant_client;
 
-    public function postProcess()
+    public function postProcess(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            PrestaShopLogger::addLog("SpectroCoin Callback: Invalid request method: " . $_SERVER['REQUEST_METHOD'],3);
+            $logMessage = "SpectroCoin Callback: Invalid request method: " . $_SERVER['REQUEST_METHOD'];
+            PrestaShopLogger::addLog($logMessage, 3);
             http_response_code(405);
-            exit('Invalid request method!');
+            exit($logMessage);
         }
 
         $expected_keys = ['userId', 'merchantApiId', 'merchantId', 'apiId', 'orderId', 'payCurrency', 'payAmount', 'receiveCurrency', 'receiveAmount', 'receivedAmount', 'description', 'orderRequestId', 'status', 'sign'];
@@ -47,51 +51,78 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
         }
 
         try {
-            $scMerchantClient = new SCMerchantClient(
-                $this->module->project_id,
-                $this->module->client_id,
-                $this->module->client_secret
-            );
+            $order_callback = $this->initCallbackFromPost();
 
-            $callback = $scMerchantClient->spectrocoinProcessCallback($post_data);
-
-            if ($callback) {
+            if ($order_callback) {
                 $history = new OrderHistory();
-                $history->id_order = $post_data['orderId'];
-
-                $status = $callback->getStatus();
-
+                $history->id_order = (int)$post_data['orderId'];
+                $status = $order_callback->getStatus();
                 switch ($status) {
-                    case SpectroCoin_OrderStatusEnum::$New:
-                    case SpectroCoin_OrderStatusEnum::$Pending:
-                        // No action needed for these statuses
+                    case OrderStatus::New->value:
+                    case OrderStatus::Pending->value:
                         break;
-                    case SpectroCoin_OrderStatusEnum::$Expired:
-                        $history->changeIdOrderState((int)Configuration::get('PS_OS_CANCELED'), $post_data['orderId']);
+                    case OrderStatus::Expired->value:
+                        $history->changeIdOrderState((int)Configuration::get('PS_OS_CANCELED'), (int)$post_data['orderId']);
                         break;
-                    case SpectroCoin_OrderStatusEnum::$Failed:
-                        $history->changeIdOrderState((int)Configuration::get('PS_OS_ERROR'), $post_data['orderId']);
+                    case OrderStatus::Failed->value:
+                        $history->changeIdOrderState((int)Configuration::get('PS_OS_ERROR'), (int)$post_data['orderId']);
                         break;
-                    case SpectroCoin_OrderStatusEnum::$Paid:
-                        $history->changeIdOrderState((int)Configuration::get('PS_OS_PAYMENT'), $post_data['orderId']);
+                    case OrderStatus::Paid->value:
+                        $history->changeIdOrderState((int)Configuration::get('PS_OS_PAYMENT'), (int)$post_data['orderId']);
                         $history->addWithemail(true, ['order_name' => $post_data['orderId']]);
                         break;
                     default:
-                        PrestaShopLogger::addLog("SpectroCoin Callback: Unknown order status: " . $status,3);
+                        $logMessage = "SpectroCoin Callback: Unknown order status: " . $status;
+                        PrestaShopLogger::addLog($logMessage, 3);
                         http_response_code(400);
-                        exit('Unknown order status: ' . $status);
+                        exit($logMessage);
                 }
                 http_response_code(200);
                 exit('*ok*');
             } else {
-                PrestaShopLogger::addLog("SpectroCoin Callback: Invalid callback data processed.",3);
+                $logMessage = "SpectroCoin Callback: Invalid callback data processed.";
+                PrestaShopLogger::addLog($logMessage, 3);
                 http_response_code(400);
-                exit('Invalid callback!');
+                exit($logMessage);
             }
+        } catch (RequestException $e) {
+            $logMessage = "Callback API error: {$e->getMessage()}";
+            PrestaShopLogger::addLog($logMessage, 3);
+            http_response_code(500); // Internal Server Error
+            exit($logMessage);
+        } catch (InvalidArgumentException $e) {
+            $logMessage = "Error processing callback: {$e->getMessage()}";
+            PrestaShopLogger::addLog($logMessage, 3);
+            http_response_code(400); // Bad Request
+            exit($logMessage);
         } catch (Exception $e) {
-            PrestaShopLogger::addLog("SpectroCoin Callback Exception: " . get_class($e) . ': ' . $e->getMessage(),3);
+            $logMessage = "SpectroCoin Callback Exception: " . get_class($e) . ': ' . $e->getMessage();
+            PrestaShopLogger::addLog($logMessage, 3);
             http_response_code(500);
-            exit(get_class($e) . ': ' . $e->getMessage());
+            exit($logMessage);
         }
+    }
+
+    /**
+     * Initializes the callback data from POST request.
+     * 
+     * @return OrderCallback|null Returns an OrderCallback object if data is valid, null otherwise.
+     */
+    private function initCallbackFromPost(): ?OrderCallback
+    {
+        $expected_keys = ['userId', 'merchantApiId', 'merchantId', 'apiId', 'orderId', 'payCurrency', 'payAmount', 'receiveCurrency', 'receiveAmount', 'receivedAmount', 'description', 'orderRequestId', 'status', 'sign'];
+
+        $callback_data = [];
+        foreach ($expected_keys as $key) {
+            if (isset($_POST[$key])) {
+                $callback_data[$key] = $_POST[$key];
+            }
+        }
+
+        if (empty($callback_data)) {
+            PrestaShopLogger::addLog("No data received in callback", 3);
+            return null;
+        }
+        return new OrderCallback($callback_data);
     }
 }
