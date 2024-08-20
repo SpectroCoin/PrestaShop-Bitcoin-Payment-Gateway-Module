@@ -12,7 +12,7 @@ class SpectrocoinCancelModuleFrontController extends ModuleFrontController {
     /**
      * @see FrontController::postProcess()
      */
-    public function postProcess() {
+    public function postProcess(): void {
         Tools::redirect('index.php?controller=order&step=1');
     }
 }
