@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SpectroCoin\Controllers\Front;
 
-use SpectroCoin\SCMerchantClient\SCMerchantClient;
 use SpectroCoin\SCMerchantClient\Enum\OrderStatus;
 use SpectroCoin\SCMerchantClient\Http\OrderCallback;
 
@@ -27,7 +26,6 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
     public $display_header = false;
     public $display_footer = false;
     public $ssl = true;
-    private SCMerchantClient $sc_merchant_client;
 
     public function postProcess(): void
     {

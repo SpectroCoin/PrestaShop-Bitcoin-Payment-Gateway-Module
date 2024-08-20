@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace SpectroCoin\Controllers\Front;
 
+use SpectroCoin\SCMerchantClient\Exception\ApiError;
+use SpectroCoin\SCMerchantClient\Exception\GenericError;
+use SpectroCoin\SCMerchantClient\SCMerchantClient;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -29,39 +33,37 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController {
 
 		$this->module->validateOrder($cart->id, Configuration::get('SPECTROCOIN_PENDING'), $total, $this->module->displayName, NULL, NULL, $currency->id);
 
-		$scMerchantClient = new SCMerchantClient(
-            $this->module->merchant_api_url,
+		$sc_merchant_client = new SCMerchantClient(
             $this->module->project_id,
             $this->module->client_id,
             $this->module->client_secret, 
-            $this->module->auth_url
           );
 
-		$createOrderRequest = new SpectroCoin_CreateOrderRequest(
-			$this->module->currentOrder, // order id
-			'Order #'.$this->module->currentOrder, // description
-			NULL, // pay amount
-			'BTC', // pay currency code
-			$total, // receive amount
-			$currency->iso_code, // receive currency code
-			$this->context->link->getModuleLink('spectrocoin', 'callback'), // callback url 	// debug 
-			$this->context->link->getModuleLink('spectrocoin', 'validation'), // success url
-			$this->context->link->getModuleLink('spectrocoin', 'cancel'), // failure url
-			$this->module->lang, // lang
-		);
-		$createOrderResponse = $scMerchantClient->spectrocoinCreateOrder($createOrderRequest);
-		if ($createOrderResponse instanceof SpectroCoin_ApiError) {
+		$order_data = [
+            'orderId' => $this->module->currentOrder,
+            'Order #'.$this->module->currentOrder,
+            'receiveAmount' => $total,
+            'receiveCurrencyCode' => $currency->iso_code,
+            'callbackUrl' => $this->context->link->getModuleLink('spectrocoin', 'callback'),
+            'successUrl' => $this->context->link->getModuleLink('spectrocoin', 'validation'),
+            'failureUrl' => $this->context->link->getModuleLink('spectrocoin', 'cancel'),
+        ];
+
+		$response = $sc_merchant_client->createOrder($order_data);
+
+		if ($response instanceof ApiError || $response instanceof GenericError) {
 			$logMessage = sprintf(
 				'Error in SpectroCoin module: %s (Code: %s)',
-				$createOrderResponse->getMessage(),
-				$createOrderResponse->getCode()
+				$response->getMessage(),
+				$response->getCode()
 			);
 
 			PrestaShopLogger::addLog($logMessage, 3, null, 'SpectroCoinRedirectModuleFrontController', $cart->id, true);
 
-			$this->renderResponseErrorCode($createOrderResponse->getCode(), $createOrderResponse->getMessage());
-		} else if ($createOrderResponse instanceof SpectroCoin_CreateOrderResponse) {
-			Tools::redirect($createOrderResponse->getRedirectUrl());
+			$this->renderResponseErrorCode($response->getCode(), $response->getMessage());
+		}
+		else {
+			Tools::redirect($response->getRedirectUrl());
 		}
 
 	}
