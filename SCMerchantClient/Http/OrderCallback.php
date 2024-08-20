@@ -9,8 +9,8 @@ use SpectroCoin\SCMerchantClient\Config;
 use Exception;
 use InvalidArgumentException;
 
-if (!defined("WHMCS")) {
-    die('Access denied.');
+if (!defined('_PS_VERSION_')) {
+    exit;
 }
 
 class OrderCallback

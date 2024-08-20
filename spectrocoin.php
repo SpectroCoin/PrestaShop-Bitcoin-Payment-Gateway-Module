@@ -2,8 +2,9 @@
 
 //spectrocoin.php
 
-if (!defined('_PS_VERSION_'))
+if (!defined('_PS_VERSION_')) {
   exit;
+}
 
 class SpectroCoin extends PaymentModule
 {

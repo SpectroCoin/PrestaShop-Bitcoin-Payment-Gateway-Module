@@ -7,8 +7,8 @@ namespace SpectroCoin\SCMerchantClient\Http;
 use InvalidArgumentException;
 use SpectroCoin\SCMerchantClient\Utils;
 
-if (!defined("WHMCS")) {
-    die('Access denied.');
+if (!defined('_PS_VERSION_')) {
+    exit;
 }
 
 class CreateOrderResponse

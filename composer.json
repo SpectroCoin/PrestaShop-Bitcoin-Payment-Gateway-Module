@@ -26,5 +26,11 @@
     "php": "^7.0 || ^8.0",
     "composer/installers": "^1.10",
     "guzzlehttp/guzzle": "^7.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "SpectroCoin\\SCMerchantClient\\": "SCMerchantClient/",
+      "SpectroCoin\\Controllers\\Front\\": "controllers/front/"
+    }
   }
 }

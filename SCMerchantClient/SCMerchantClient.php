@@ -21,8 +21,8 @@ use InvalidArgumentException;
 use Exception;
 use RuntimeException;
 
-if (!defined('ABSPATH')) {
-    die('Access denied.');
+if (!defined('_PS_VERSION_')) {
+    exit;
 }
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -33,7 +33,6 @@ class SCMerchantClient
     private string $client_id;
     private string $client_secret;
     private string $encryption_key;
-    private string $access_token_config_key;
     protected Client $http_client;
     protected Configuration $configuration;
 
@@ -51,7 +50,6 @@ class SCMerchantClient
         $this->client_secret = $client_secret;
 
         $this->encryption_key = hash('sha256', _COOKIE_KEY_);
-        $this->access_token_config_key = 'SPECTROCOIN_ACCESS_TOKEN';
         $this->http_client = new Client();
         $this->configuration = new Configuration();
     }
@@ -137,7 +135,7 @@ class SCMerchantClient
     public function getAccessTokenData()
     {
         $current_time = time();
-        $encrypted_access_token_data = $this->configuration->get($this->access_token_config_key);
+        $encrypted_access_token_data = $this->configuration->get(Config::SPECTROCOIN_ACCESS_TOKEN_CONFIG_KEY);
         if ($encrypted_access_token_data) {
             $access_token_data = json_decode(Utils::DecryptAuthData($encrypted_access_token_data, $this->encryption_key), true);
             if ($this->isTokenValid($access_token_data, $current_time)) {
@@ -173,7 +171,7 @@ class SCMerchantClient
             $access_token_data['expires_at'] = $current_time + $access_token_data['expires_in'];
             $encrypted_access_token_data = Utils::EncryptAuthData(json_encode($access_token_data), $this->encryption_key);
 
-            $this->configuration->set($this->access_token_config_key, $encrypted_access_token_data);
+            $this->configuration->set(Config::SPECTROCOIN_ACCESS_TOKEN_CONFIG_KEY, $encrypted_access_token_data);
 
             return $access_token_data;
 

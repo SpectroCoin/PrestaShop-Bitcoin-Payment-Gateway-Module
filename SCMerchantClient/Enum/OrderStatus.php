@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace SpectroCoin\SCMerchantClient\Enum;
 
-if (!defined("WHMCS")) {
-    die('Access denied.');
+if (!defined('_PS_VERSION_')) {
+    exit;
 }
 
 enum OrderStatus: int {

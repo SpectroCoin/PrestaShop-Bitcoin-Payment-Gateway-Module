@@ -4,11 +4,19 @@ declare (strict_types = 1);
 
 namespace SpectroCoin\Controllers\Front;
 
+use SpectroCoin\SCMerchantClient\SCMerchantClient;
+use SpectroCoin\SCMerchantClient\Enum\OrderStatus;
+use SpectroCoin\SCMerchantClient\Exception\ApiError;
+use SpectroCoin\SCMerchantClient\Exception\GenericError;
+
+use Exception;
+
 use PrestaShop\PrestaShop\Core\Module\ModuleFrontController;
 
-/**
- * @since 1.5.0
- */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 {
     public $display_column_left = false;
@@ -16,6 +24,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
     public $display_header = false;
     public $display_footer = false;
     public $ssl = true;
+    private SCMerchantClient $sc_merchant_client;
 
     public function postProcess()
     {
@@ -38,13 +47,10 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
         }
 
         try {
-            require_once $this->module->getLocalPath().'/SCMerchantClient/SCMerchantClient.php'; // remove later when adding autoloading
             $scMerchantClient = new SCMerchantClient(
-                $this->module->merchant_api_url,
                 $this->module->project_id,
                 $this->module->client_id,
-                $this->module->client_secret,
-                $this->module->auth_url
+                $this->module->client_secret
             );
 
             $callback = $scMerchantClient->spectrocoinProcessCallback($post_data);

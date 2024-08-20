@@ -1,7 +1,13 @@
 <?php
-/**
- * @since 1.5.0
- */
+
+declare(strict_types=1);
+
+namespace SpectroCoin\Controllers\Front;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SpectrocoinCancelModuleFrontController extends ModuleFrontController {
     /**
      * @see FrontController::postProcess()

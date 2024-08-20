@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SpectroCoin\SCMerchantClient\Exception;
 
-if (!defined("WHMCS")) {
-    die('Access denied.');
+if (!defined('_PS_VERSION_')) {
+    exit;
 }
 
 class ApiError extends GenericError
