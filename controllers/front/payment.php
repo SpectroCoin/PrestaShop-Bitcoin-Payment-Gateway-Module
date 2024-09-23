@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use PrestaShop\PrestaShop\Core\Module\ModuleFrontController;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
