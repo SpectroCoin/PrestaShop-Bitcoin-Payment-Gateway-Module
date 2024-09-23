@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-namespace SpectroCoin\Controllers\Front;
-
 use SpectroCoin\SCMerchantClient\Enum\OrderStatus;
 use SpectroCoin\SCMerchantClient\Http\OrderCallback;
 
@@ -53,20 +51,20 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
             if ($order_callback) {
                 $history = new OrderHistory();
-                $history->id_order = (int)$post_data['orderId'];
+                $history->id_order = (int) $post_data['orderId'];
                 $status = $order_callback->getStatus();
                 switch ($status) {
-                    case OrderStatus::New->value:
+                    case OrderStatus::New ->value:
                     case OrderStatus::Pending->value:
                         break;
                     case OrderStatus::Expired->value:
-                        $history->changeIdOrderState((int)Configuration::get('PS_OS_CANCELED'), (int)$post_data['orderId']);
+                        $history->changeIdOrderState((int) Configuration::get('PS_OS_CANCELED'), (int) $post_data['orderId']);
                         break;
                     case OrderStatus::Failed->value:
-                        $history->changeIdOrderState((int)Configuration::get('PS_OS_ERROR'), (int)$post_data['orderId']);
+                        $history->changeIdOrderState((int) Configuration::get('PS_OS_ERROR'), (int) $post_data['orderId']);
                         break;
                     case OrderStatus::Paid->value:
-                        $history->changeIdOrderState((int)Configuration::get('PS_OS_PAYMENT'), (int)$post_data['orderId']);
+                        $history->changeIdOrderState((int) Configuration::get('PS_OS_PAYMENT'), (int) $post_data['orderId']);
                         $history->addWithemail(true, ['order_name' => $post_data['orderId']]);
                         break;
                     default:

@@ -29,8 +29,7 @@
   },
   "autoload": {
     "psr-4": {
-      "SpectroCoin\\SCMerchantClient\\": "SCMerchantClient/",
-      "SpectroCoin\\Controllers\\Front\\": "controllers/front/"
+      "SpectroCoin\\SCMerchantClient\\": "SCMerchantClient/"
     }
   }
 }
