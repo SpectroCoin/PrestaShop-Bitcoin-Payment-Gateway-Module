@@ -23,13 +23,12 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController
 		parent::initContent();
 
 		$cart = $this->context->cart;
-		if (!$this->module->checkCurrency($cart)) {
+		if (!$this->module->checkFiatCurrency($cart)) {
 			Tools::redirect('index.php?controller=order');
 		}
 
 		$total = (float) number_format($cart->getOrderTotal(true, 3), 2, '.', '');
 		$currency = Context::getContext()->currency;
-		require_once $this->module->getLocalPath() . '/SCMerchantClient/SCMerchantClient.php';
 
 		$this->module->validateOrder($cart->id, Configuration::get('SPECTROCOIN_PENDING'), $total, $this->module->displayName, NULL, NULL, $currency->id);
 
@@ -41,7 +40,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController
 
 		$order_data = [
 			'orderId' => $this->module->currentOrder,
-			'Order #' . $this->module->currentOrder,
+			'description' => 'Order #' . $this->module->currentOrder,
 			'receiveAmount' => $total,
 			'receiveCurrencyCode' => $currency->iso_code,
 			'callbackUrl' => $this->context->link->getModuleLink('spectrocoin', 'callback'),
