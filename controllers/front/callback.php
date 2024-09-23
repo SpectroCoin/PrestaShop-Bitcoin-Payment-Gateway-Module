@@ -42,7 +42,6 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
         try {
             $order_callback = $this->initCallbackFromPost();
-            PrestaShopLogger::addLog(print_r($order_callback), 3); //DEBUG
             if ($order_callback) {
                 $history = new OrderHistory();
                 $history->id_order = (int) $post_data['orderId'];
