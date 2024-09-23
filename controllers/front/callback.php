@@ -5,9 +5,6 @@ declare(strict_types=1);
 use SpectroCoin\SCMerchantClient\Enum\OrderStatus;
 use SpectroCoin\SCMerchantClient\Http\OrderCallback;
 
-use Exception;
-use InvalidArgumentException;
-
 use GuzzleHttp\Exception\RequestException;
 
 if (!defined('_PS_VERSION_')) {
@@ -45,7 +42,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
         try {
             $order_callback = $this->initCallbackFromPost();
-            PrestaShopLogger::addLog(json_encode($order_callback)); //DEBUG
+            PrestaShopLogger::addLog(print_r($order_callback), 3); //DEBUG
             if ($order_callback) {
                 $history = new OrderHistory();
                 $history->id_order = (int) $post_data['orderId'];

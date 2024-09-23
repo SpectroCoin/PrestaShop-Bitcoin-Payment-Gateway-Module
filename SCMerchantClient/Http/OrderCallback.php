@@ -6,8 +6,6 @@ namespace SpectroCoin\SCMerchantClient\Http;
 
 use SpectroCoin\SCMerchantClient\Utils;
 use SpectroCoin\SCMerchantClient\Config;
-use Exception;
-use InvalidArgumentException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,20 +37,20 @@ class OrderCallback
      */
     public function __construct(array $data)
     {
-        $this->userId = isset($data['userId']) ? Utils::sanitize_text_field((string)$data['userId']) : null;
-        $this->merchantApiId = isset($data['merchantApiId']) ? Utils::sanitize_text_field((string)$data['merchantApiId']) : null;
-        $this->merchantId = isset($data['merchantId']) ? Utils::sanitize_text_field((string)$data['merchantId']) : null;
-        $this->apiId = isset($data['apiId']) ? Utils::sanitize_text_field((string)$data['apiId']) : null;
-        $this->orderId = isset($data['orderId']) ? Utils::sanitize_text_field((string)$data['orderId']) : null;
-        $this->payCurrency = isset($data['payCurrency']) ? Utils::sanitize_text_field((string)$data['payCurrency']) : null;
-        $this->payAmount = isset($data['payAmount']) ? Utils::sanitize_text_field((string)$data['payAmount']) : null; // Changed to string
-        $this->receiveCurrency = isset($data['receiveCurrency']) ? Utils::sanitize_text_field((string)$data['receiveCurrency']) : null;
-        $this->receiveAmount = isset($data['receiveAmount']) ? Utils::sanitize_text_field((string)$data['receiveAmount']) : null; // Changed to string
-        $this->receivedAmount = isset($data['receivedAmount']) ? Utils::sanitize_text_field((string)$data['receivedAmount']) : null; // Changed to string
-        $this->description = isset($data['description']) ? Utils::sanitize_text_field((string)$data['description']) : null;
-        $this->orderRequestId = isset($data['orderRequestId']) ? Utils::sanitize_text_field((string)$data['orderRequestId']) : null;
-        $this->status = isset($data['status']) ? Utils::sanitize_text_field((string)$data['status']) : null;
-        $this->sign = isset($data['sign']) ? Utils::sanitize_text_field((string)$data['sign']) : null;
+        $this->userId = isset($data['userId']) ? Utils::sanitize_text_field((string) $data['userId']) : null;
+        $this->merchantApiId = isset($data['merchantApiId']) ? Utils::sanitize_text_field((string) $data['merchantApiId']) : null;
+        $this->merchantId = isset($data['merchantId']) ? Utils::sanitize_text_field((string) $data['merchantId']) : null;
+        $this->apiId = isset($data['apiId']) ? Utils::sanitize_text_field((string) $data['apiId']) : null;
+        $this->orderId = isset($data['orderId']) ? Utils::sanitize_text_field((string) $data['orderId']) : null;
+        $this->payCurrency = isset($data['payCurrency']) ? Utils::sanitize_text_field((string) $data['payCurrency']) : null;
+        $this->payAmount = isset($data['payAmount']) ? Utils::sanitize_text_field((string) $data['payAmount']) : null; // Changed to string
+        $this->receiveCurrency = isset($data['receiveCurrency']) ? Utils::sanitize_text_field((string) $data['receiveCurrency']) : null;
+        $this->receiveAmount = isset($data['receiveAmount']) ? Utils::sanitize_text_field((string) $data['receiveAmount']) : null; // Changed to string
+        $this->receivedAmount = isset($data['receivedAmount']) ? Utils::sanitize_text_field((string) $data['receivedAmount']) : null; // Changed to string
+        $this->description = isset($data['description']) ? Utils::sanitize_text_field((string) $data['description']) : null;
+        $this->orderRequestId = isset($data['orderRequestId']) ? Utils::sanitize_text_field((string) $data['orderRequestId']) : null;
+        $this->status = isset($data['status']) ? Utils::sanitize_text_field((string) $data['status']) : null;
+        $this->sign = isset($data['sign']) ? Utils::sanitize_text_field((string) $data['sign']) : null;
 
         $validation_result = $this->validate();
         if (is_array($validation_result)) {
@@ -89,25 +87,25 @@ class OrderCallback
         if (empty($this->getOrderId())) {
             $errors[] = 'orderId is empty';
         }
-        if (empty($this->getStatus())){
+        if (empty($this->getStatus())) {
             $errors[] = 'status is empty';
         }
         if (strlen($this->getPayCurrency()) !== 3) {
             $errors[] = 'payCurrency is not 3 characters long';
         }
-        if (!is_numeric($this->getPayAmount()) || (float)$this->getPayAmount() <= 0) {
+        if (!is_numeric($this->getPayAmount()) || (float) $this->getPayAmount() <= 0) {
             $errors[] = 'payAmount is not a valid positive number';
         }
         if (strlen($this->getReceiveCurrency()) !== 3) {
             $errors[] = 'receiveCurrency is not 3 characters long';
         }
-        if (!is_numeric($this->getReceiveAmount()) || (float)$this->getReceiveAmount() <= 0) {
+        if (!is_numeric($this->getReceiveAmount()) || (float) $this->getReceiveAmount() <= 0) {
             $errors[] = 'receiveAmount is not a valid positive number';
         }
         if (!isset($this->receivedAmount)) {
             $errors[] = 'receivedAmount is not set';
         }
-        if (!is_numeric($this->getOrderRequestId()) || (float)$this->getOrderRequestId() <= 0) {
+        if (!is_numeric($this->getOrderRequestId()) || (float) $this->getOrderRequestId() <= 0) {
             $errors[] = 'orderRequestId is not a valid positive number';
         }
         if (empty($this->getSign())) {
@@ -144,19 +142,61 @@ class OrderCallback
         return openssl_verify($data, $decoded_signature, $public_key_pem, OPENSSL_ALGO_SHA1) === 1;
     }
 
-    public function getUserId() { return $this->userId; }
-    public function getMerchantApiId() { return $this->merchantApiId; }
-    public function getMerchantId() { return $this->merchantId; }
-    public function getApiId() { return $this->apiId; }
-    public function getOrderId() { return $this->orderId; }
-    public function getPayCurrency() { return $this->payCurrency; }
-    public function getPayAmount() { return Utils::formatCurrency($this->payAmount); }
-    public function getReceiveCurrency() { return $this->receiveCurrency; }
-    public function getReceiveAmount() { return Utils::formatCurrency($this->receiveAmount); }
-    public function getReceivedAmount() { return Utils::formatCurrency($this->receivedAmount); }
-    public function getDescription() { return $this->description; }
-    public function getOrderRequestId() { return $this->orderRequestId; }
-    public function getStatus() { return $this->status; }
-    public function getSign() { return $this->sign; }
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+    public function getMerchantApiId()
+    {
+        return $this->merchantApiId;
+    }
+    public function getMerchantId()
+    {
+        return $this->merchantId;
+    }
+    public function getApiId()
+    {
+        return $this->apiId;
+    }
+    public function getOrderId()
+    {
+        return $this->orderId;
+    }
+    public function getPayCurrency()
+    {
+        return $this->payCurrency;
+    }
+    public function getPayAmount()
+    {
+        return Utils::formatCurrency($this->payAmount);
+    }
+    public function getReceiveCurrency()
+    {
+        return $this->receiveCurrency;
+    }
+    public function getReceiveAmount()
+    {
+        return Utils::formatCurrency($this->receiveAmount);
+    }
+    public function getReceivedAmount()
+    {
+        return Utils::formatCurrency($this->receivedAmount);
+    }
+    public function getDescription()
+    {
+        return $this->description;
+    }
+    public function getOrderRequestId()
+    {
+        return $this->orderRequestId;
+    }
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    public function getSign()
+    {
+        return $this->sign;
+    }
 }
 ?>

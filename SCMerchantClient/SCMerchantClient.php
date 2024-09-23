@@ -17,10 +17,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 
-use InvalidArgumentException;
-use Exception;
-use RuntimeException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
