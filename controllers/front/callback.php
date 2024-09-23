@@ -10,9 +10,6 @@ use InvalidArgumentException;
 
 use GuzzleHttp\Exception\RequestException;
 
-use PrestaShop\PrestaShop\Core\Module\ModuleFrontController;
-use PrestaShopLogger;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

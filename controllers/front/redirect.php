@@ -6,9 +6,6 @@ use SpectroCoin\SCMerchantClient\Exception\ApiError;
 use SpectroCoin\SCMerchantClient\Exception\GenericError;
 use SpectroCoin\SCMerchantClient\SCMerchantClient;
 
-use PrestaShop\PrestaShop\Core\Module\ModuleFrontController;
-use PrestaShopLogger;
-
 if (!defined('_PS_VERSION_')) {
 	exit;
 }
