@@ -119,6 +119,9 @@ class SpectroCoin extends PaymentModule
     private function _postProcess(): void
     {
         if (Tools::isSubmit('btnSubmit')) {
+            $submittedTitle = (string) Tools::getValue('SPECTROCOIN_TITLE'); // debug
+            error_log('[SpectroCoin Module] Submitted Title: ' . $submittedTitle); // debug
+
             Configuration::updateValue('SPECTROCOIN_PROJECT_ID', (string) Tools::getValue('SPECTROCOIN_PROJECT_ID'));
             Configuration::updateValue('SPECTROCOIN_CLIENT_ID', (string) Tools::getValue('SPECTROCOIN_CLIENT_ID'));
             Configuration::updateValue('SPECTROCOIN_CURRENCY_CODE', (string) Tools::getValue('SPECTROCOIN_CURRENCY_CODE'));
@@ -130,6 +133,9 @@ class SpectroCoin extends PaymentModule
 
             $title = (string) Tools::getValue('SPECTROCOIN_TITLE');
             Configuration::updateValue('SPECTROCOIN_TITLE', $title ?: 'Pay with SpectroCoin');
+
+            $savedTitle = Configuration::get('SPECTROCOIN_TITLE'); // debug
+            error_log('[SpectroCoin Module] Saved Title from DB: ' . $savedTitle); // debug
 
             $description = (string) Tools::getValue('SPECTROCOIN_DESCRIPTION');
             Configuration::updateValue('SPECTROCOIN_DESCRIPTION', $description ?: '');
@@ -384,6 +390,9 @@ class SpectroCoin extends PaymentModule
 
     public function getConfigFieldsValues(): array
     {
+        $titleValue = Configuration::get('SPECTROCOIN_TITLE', '');
+        error_log('[SpectroCoin Module] getConfigFieldsValues - SPECTROCOIN_TITLE: ' . $titleValue);
+        
         return [
             'SPECTROCOIN_PROJECT_ID' => Tools::getValue('SPECTROCOIN_PROJECT_ID', Configuration::get('SPECTROCOIN_PROJECT_ID')),
             'SPECTROCOIN_CLIENT_ID' => Tools::getValue('SPECTROCOIN_CLIENT_ID', Configuration::get('SPECTROCOIN_CLIENT_ID')),
