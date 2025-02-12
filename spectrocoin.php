@@ -279,14 +279,21 @@ class SpectroCoin extends PaymentModule
         $langId = (int) Context::getContext()->language->id;
         error_log('[SpectroCoin Module] hookPaymentOptions: Context language id: ' . $langId);
         
-        // Try to get the multilingual value
+        // First try to retrieve multilingual value.
         $title = Configuration::get('SPECTROCOIN_TITLE', $langId);
         error_log('[SpectroCoin Module] hookPaymentOptions: Title retrieved with language id: "' . print_r($title, true) . '"');
         
-        // If that’s empty, fall back to the non-multilingual value
+        // If empty, try the non-multilingual value.
         if (empty($title)) {
             $title = Configuration::get('SPECTROCOIN_TITLE');
             error_log('[SpectroCoin Module] hookPaymentOptions: Fallback non-multilingual title: "' . $title . '"');
+        }
+        
+        // As an extra fallback, force a direct DB lookup.
+        if (empty($title)) {
+            $sql = "SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'SPECTROCOIN_TITLE'";
+            $title = Db::getInstance()->getValue($sql);
+            error_log('[SpectroCoin Module] hookPaymentOptions: Direct DB title: "' . $title . '"');
         }
         
         if (empty($title)) {
@@ -310,8 +317,8 @@ class SpectroCoin extends PaymentModule
         
         $new_option = new PaymentOption();
         $new_option->setCallToActionText($title)
-                ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true))
-                ->setAdditionalInformation($description);
+                   ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true))
+                   ->setAdditionalInformation($description);
         
         if ($show_logo) {
             $new_option->setLogo($iconUrl);
@@ -320,6 +327,7 @@ class SpectroCoin extends PaymentModule
         error_log('[SpectroCoin Module] hookPaymentOptions: Returning payment option with title: "' . $title . '"');
         return [$new_option];
     }
+    
 
 
     
