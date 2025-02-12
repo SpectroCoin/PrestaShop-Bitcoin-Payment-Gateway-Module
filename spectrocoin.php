@@ -275,9 +275,14 @@ class SpectroCoin extends PaymentModule
             error_log('[SpectroCoin Module] hookPaymentOptions: Module inactive or currency not accepted.');
             return [];
         }
-    
-        $title = Configuration::get('SPECTROCOIN_TITLE');
-        error_log('[SpectroCoin Module] hookPaymentOptions: Raw title from configuration: "' . $title . '"');
+        
+        $langId = (int) Context::getContext()->language->id;
+        error_log('[SpectroCoin Module] hookPaymentOptions: Context language id: ' . $langId);
+        
+        // Retrieve the title for the current language
+        $title = Configuration::get('SPECTROCOIN_TITLE', $langId);
+        error_log('[SpectroCoin Module] hookPaymentOptions: Raw title from configuration: "' . print_r($title, true) . '"');
+        
         if (empty($title)) {
             $title = $this->l('Pay with SpectroCoin');
             error_log('[SpectroCoin Module] hookPaymentOptions: Title empty, using default: "' . $title . '"');
@@ -285,29 +290,31 @@ class SpectroCoin extends PaymentModule
             error_log('[SpectroCoin Module] hookPaymentOptions: Using custom title: "' . $title . '"');
         }
         
-        $description = Configuration::get('SPECTROCOIN_DESCRIPTION');
+        // Retrieve the description for the current language (if applicable)
+        $description = Configuration::get('SPECTROCOIN_DESCRIPTION', $langId);
         if ($description === false) {
             $description = '';
             error_log('[SpectroCoin Module] hookPaymentOptions: Description is false, setting to empty string.');
         } else {
-            error_log('[SpectroCoin Module] hookPaymentOptions: Retrieved description: "' . $description . '"');
+            error_log('[SpectroCoin Module] hookPaymentOptions: Retrieved description: "' . print_r($description, true) . '"');
         }
-    
+        
         $iconUrl = $this->_path . '/views/img/spectrocoin-logo.svg';
         $show_logo = Configuration::get('SPECTROCOIN_CHECKBOX', 0) === '1';
-    
+        
         $new_option = new PaymentOption();
         $new_option->setCallToActionText($title)
-                   ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true))
-                   ->setAdditionalInformation($description);
-    
+                ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true))
+                ->setAdditionalInformation($description);
+        
         if ($show_logo) {
             $new_option->setLogo($iconUrl);
         }
-    
+        
         error_log('[SpectroCoin Module] hookPaymentOptions: Returning payment option with title: "' . $title . '"');
         return [$new_option];
     }
+
     
     public function checkFiatCurrency($cart)
     {
