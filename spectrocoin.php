@@ -6,6 +6,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+} else {
+    error_log('[SpectroCoin Module] Composer autoloader not found in ' . __DIR__ . '/vendor/autoload.php');
+}
+
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 use SpectroCoin\SCMerchantClient\Config;
