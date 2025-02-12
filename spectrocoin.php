@@ -13,21 +13,18 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 }
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-
 use SpectroCoin\SCMerchantClient\Config;
 
 class SpectroCoin extends PaymentModule
 {
     private string $_html = '';
     private array $_postErrors = [];
-
     private ?string $currency_code = null;
 
     public function __construct()
     {
         $shop = Context::getContext()->shop;
         $base_URL = $shop->getBaseURL();
-
         define('MODULE_ROOT_DIR', $base_URL);
 
         $this->name = 'spectrocoin';
@@ -39,23 +36,25 @@ class SpectroCoin extends PaymentModule
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
 
-        $config = Configuration::getMultiple(
-            array(
-                'SPECTROCOIN_PROJECT_ID',
-                'SPECTROCOIN_CLIENT_ID',
-                'SPECTROCOIN_CLIENT_SECRET',
-                'SPECTROCOIN_CURRENCY_CODE',
-            )
-        );
+        $config = Configuration::getMultiple([
+            'SPECTROCOIN_PROJECT_ID',
+            'SPECTROCOIN_CLIENT_ID',
+            'SPECTROCOIN_CLIENT_SECRET',
+            'SPECTROCOIN_CURRENCY_CODE',
+        ]);
 
-        if (!empty($config['SPECTROCOIN_PROJECT_ID']))
+        if (!empty($config['SPECTROCOIN_PROJECT_ID'])) {
             $this->project_id = $config['SPECTROCOIN_PROJECT_ID'];
-        if (!empty($config['SPECTROCOIN_CLIENT_ID']))
+        }
+        if (!empty($config['SPECTROCOIN_CLIENT_ID'])) {
             $this->client_id = $config['SPECTROCOIN_CLIENT_ID'];
-        if (!empty($config['SPECTROCOIN_CLIENT_SECRET']))
+        }
+        if (!empty($config['SPECTROCOIN_CLIENT_SECRET'])) {
             $this->client_secret = $config['SPECTROCOIN_CLIENT_SECRET'];
-        if (!empty($config['SPECTROCOIN_CURRENCY_CODE']))
+        }
+        if (!empty($config['SPECTROCOIN_CURRENCY_CODE'])) {
             $this->currency_code = $config['SPECTROCOIN_CURRENCY_CODE'];
+        }
 
         $this->bootstrap = true;
         parent::__construct();
@@ -63,19 +62,21 @@ class SpectroCoin extends PaymentModule
         $this->displayName = $this->l('SpectroCoin Crypto Payment Gateway');
         $this->description = $this->l('Easily accept payments for your products by enabling SpectroCoin\'s seamless cryptocurrency transfer option.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-        if (!count(Currency::checkPaymentCurrencies($this->id)))
-            $this->warning = $this->l('No currency has been set for this module.');
 
-        if ($this->currency_code && !Currency::getIdByIsoCode($this->currency_code))
+        if (!count(Currency::checkPaymentCurrencies($this->id))) {
+            $this->warning = $this->l('No currency has been set for this module.');
+        }
+        if ($this->currency_code && !Currency::getIdByIsoCode($this->currency_code)) {
             $this->warning = $this->l('Currency ' . $this->currency_code . ' is not configured.');
+        }
     }
 
     public function install(): bool
     {
         if (
-            !parent::install()
-            || !$this->registerHook('payment')
-            || !$this->registerHook('paymentOptions')
+            !parent::install() ||
+            !$this->registerHook('payment') ||
+            !$this->registerHook('paymentOptions')
         ) {
             return false;
         }
@@ -100,25 +101,27 @@ class SpectroCoin extends PaymentModule
     public function uninstall(): bool
     {
         if (
-            !Configuration::deleteByName('SPECTROCOIN_PROJECT_ID')
-            || !Configuration::deleteByName('SPECTROCOIN_CLIENT_ID')
-            || !Configuration::deleteByName('SPECTROCOIN_CLIENT_SECRET')
-            || !Configuration::deleteByName('SPECTROCOIN_CURRENCY_CODE')
-            || !parent::uninstall()
-        )
+            !Configuration::deleteByName('SPECTROCOIN_PROJECT_ID') ||
+            !Configuration::deleteByName('SPECTROCOIN_CLIENT_ID') ||
+            !Configuration::deleteByName('SPECTROCOIN_CLIENT_SECRET') ||
+            !Configuration::deleteByName('SPECTROCOIN_CURRENCY_CODE') ||
+            !parent::uninstall()
+        ) {
             return false;
+        }
         return true;
     }
 
     private function _postValidation(): void
     {
         if (Tools::isSubmit('btnSubmit')) {
-            if (!Tools::getValue('SPECTROCOIN_PROJECT_ID'))
+            if (!Tools::getValue('SPECTROCOIN_PROJECT_ID')) {
                 $this->_postErrors[] = $this->l('Project id is required.');
-            elseif (!Tools::getValue('SPECTROCOIN_CLIENT_ID'))
+            } elseif (!Tools::getValue('SPECTROCOIN_CLIENT_ID')) {
                 $this->_postErrors[] = $this->l('Client id is required.');
-            elseif (!Tools::getValue('SPECTROCOIN_CLIENT_SECRET'))
+            } elseif (!Tools::getValue('SPECTROCOIN_CLIENT_SECRET')) {
                 $this->_postErrors[] = $this->l('Client secret is required.');
+            }
         }
     }
 
@@ -152,7 +155,6 @@ class SpectroCoin extends PaymentModule
         $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
     }
 
-
     public function getContent(): string
     {
         ob_start();
@@ -175,7 +177,6 @@ class SpectroCoin extends PaymentModule
         if (!empty($this->_html)) {
             echo $this->_html;
         }
-
         ?>
         <div class="spectrocoin-settings flex-container">
             <div class="flex-col-1 flex-col">
@@ -237,8 +238,11 @@ class SpectroCoin extends PaymentModule
                 <div class="contact-information">
                     <?php
                     echo htmlspecialchars('Accept Bitcoin through the SpectroCoin and receive payments in your chosen currency.', ENT_QUOTES, 'UTF-8') . '<br>' .
-                        htmlspecialchars('Still have questions? Contact us via', ENT_QUOTES, 'UTF-8') . ' ' .
-                        sprintf('<a href="skype:spectrocoin_merchant?chat">%s</a> &middot; <a href="mailto:%s">%s</a>', htmlspecialchars('skype: spectrocoin_merchant', ENT_QUOTES, 'UTF-8'), htmlspecialchars('merchant@spectrocoin.com', ENT_QUOTES, 'UTF-8'), htmlspecialchars('email: merchant@spectrocoin.com', ENT_QUOTES, 'UTF-8'));
+                         htmlspecialchars('Still have questions? Contact us via', ENT_QUOTES, 'UTF-8') . ' ' .
+                         sprintf('<a href="skype:spectrocoin_merchant?chat">%s</a> &middot; <a href="mailto:%s">%s</a>',
+                             htmlspecialchars('skype: spectrocoin_merchant', ENT_QUOTES, 'UTF-8'),
+                             htmlspecialchars('merchant@spectrocoin.com', ENT_QUOTES, 'UTF-8'),
+                             htmlspecialchars('email: merchant@spectrocoin.com', ENT_QUOTES, 'UTF-8'));
                     ?>
                 </div>
             </div>
@@ -252,12 +256,13 @@ class SpectroCoin extends PaymentModule
     public function hookPayment(array $params): string
     {
         if (!$this->active || !$this->checkFiatCurrency($params['cart'])) {
+            error_log('[SpectroCoin Module] hookPayment: Module inactive or currency not accepted.');
             return '';
         }
 
         $this->smarty->assign([
-            'this_path' => $this->_path,
-            'this_path_bw' => $this->_path,
+            'this_path'     => $this->_path,
+            'this_path_bw'  => $this->_path,
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/'
         ]);
 
@@ -267,17 +272,25 @@ class SpectroCoin extends PaymentModule
     public function hookPaymentOptions(array $params): array
     {
         if (!$this->active || !$this->checkFiatCurrency($params['cart'])) {
+            error_log('[SpectroCoin Module] hookPaymentOptions: Module inactive or currency not accepted.');
             return [];
         }
     
         $title = Configuration::get('SPECTROCOIN_TITLE');
+        error_log('[SpectroCoin Module] hookPaymentOptions: Raw title from configuration: "' . $title . '"');
         if (empty($title)) {
             $title = $this->l('Pay with SpectroCoin');
+            error_log('[SpectroCoin Module] hookPaymentOptions: Title empty, using default: "' . $title . '"');
+        } else {
+            error_log('[SpectroCoin Module] hookPaymentOptions: Using custom title: "' . $title . '"');
         }
         
         $description = Configuration::get('SPECTROCOIN_DESCRIPTION');
         if ($description === false) {
             $description = '';
+            error_log('[SpectroCoin Module] hookPaymentOptions: Description is false, setting to empty string.');
+        } else {
+            error_log('[SpectroCoin Module] hookPaymentOptions: Retrieved description: "' . $description . '"');
         }
     
         $iconUrl = $this->_path . '/views/img/spectrocoin-logo.svg';
@@ -292,68 +305,69 @@ class SpectroCoin extends PaymentModule
             $new_option->setLogo($iconUrl);
         }
     
+        error_log('[SpectroCoin Module] hookPaymentOptions: Returning payment option with title: "' . $title . '"');
         return [$new_option];
     }
     
-
     public function checkFiatCurrency($cart)
     {
         $current_currency_iso_code = (new Currency($cart->id_currency))->iso_code;
-
+        error_log('[SpectroCoin Module] checkFiatCurrency: Cart currency ISO code: ' . $current_currency_iso_code);
+        error_log('[SpectroCoin Module] checkFiatCurrency: Accepted currencies: ' . print_r(Config::ACCEPTED_FIAT_CURRENCIES, true));
         return in_array($current_currency_iso_code, Config::ACCEPTED_FIAT_CURRENCIES);
     }
-
+    
     public function renderForm(): string
     {
         $fields_form = [
             'form' => [
                 'input' => [
                     [
-                        'type' => 'text',
+                        'type'  => 'text',
                         'label' => $this->l('Project id'),
-                        'name' => 'SPECTROCOIN_PROJECT_ID',
-                        'hint' => $this->l('Merchant id is obtained from SpectroCoin project settings.'),
+                        'name'  => 'SPECTROCOIN_PROJECT_ID',
+                        'hint'  => $this->l('Merchant id is obtained from SpectroCoin project settings.'),
                     ],
                     [
-                        'type' => 'text',
+                        'type'  => 'text',
                         'label' => $this->l('Client id'),
-                        'name' => 'SPECTROCOIN_CLIENT_ID',
-                        'hint' => $this->l('Client id is obtained from SpectroCoin API settings.'),
+                        'name'  => 'SPECTROCOIN_CLIENT_ID',
+                        'hint'  => $this->l('Client id is obtained from SpectroCoin API settings.'),
                     ],
                     [
-                        'type' => 'text',
+                        'type'  => 'text',
                         'label' => $this->l('Client secret'),
-                        'name' => 'SPECTROCOIN_CLIENT_SECRET',
-                        'hint' => $this->l('Client secret is obtained from SpectroCoin API settings, but is visible once, when API is created.'),
+                        'name'  => 'SPECTROCOIN_CLIENT_SECRET',
+                        'hint'  => $this->l('Client secret is obtained from SpectroCoin API settings, but is visible once, when API is created.'),
                     ],
                     [
-                        'type' => 'text',
+                        'type'  => 'text',
                         'label' => $this->l('Title'),
-                        'name' => 'SPECTROCOIN_TITLE',
-                        'hint' => $this->l('This controls the title which the user sees during checkout. If left blank will display default title'),
-                        'desc' => $this->l('Default: "Pay with SpectroCoin"')
+                        'name'  => 'SPECTROCOIN_TITLE',
+                        'hint'  => $this->l('This controls the title which the user sees during checkout. If left blank will display default title'),
+                        'desc'  => $this->l('Default: "Pay with SpectroCoin"')
                     ],
                     [
-                        'type' => 'textarea',
-                        'label' => $this->l('Description'),
-                        'name' => 'SPECTROCOIN_DESCRIPTION',
-                        'desc' => $this->l('Max: 80 characters.'),
-                        'hint' => $this->l('This controls the description which the user sees during checkout. If left blank then will not be displayed'),
+                        'type'      => 'textarea',
+                        'label'     => $this->l('Description'),
+                        'name'      => 'SPECTROCOIN_DESCRIPTION',
+                        'desc'      => $this->l('Max: 80 characters.'),
+                        'hint'      => $this->l('This controls the description which the user sees during checkout. If left blank then will not be displayed'),
                         'maxlength' => 80
                     ],
                     [
-                        'type' => 'switch',
-                        'label' => $this->l('Display logo'),
-                        'name' => 'SPECTROCOIN_CHECKBOX',
+                        'type'    => 'switch',
+                        'label'   => $this->l('Display logo'),
+                        'name'    => 'SPECTROCOIN_CHECKBOX',
                         'is_bool' => true,
-                        'hint' => $this->l('Check if you want the SpectroCoin logo to be displayed in checkout.'),
-                        'values' => [
+                        'hint'    => $this->l('Check if you want the SpectroCoin logo to be displayed in checkout.'),
+                        'values'  => [
                             [
-                                'id' => 'active_on',
+                                'id'    => 'active_on',
                                 'value' => 1,
                             ],
                             [
-                                'id' => 'active_off',
+                                'id'    => 'active_off',
                                 'value' => 0,
                             ]
                         ],
@@ -376,14 +390,18 @@ class SpectroCoin extends PaymentModule
         $helper->id = (int) Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'btnSubmit';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .
+                                '&configure=' . $this->name .
+                                '&tab_module=' . $this->tab .
+                                '&module_name=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = [
             'fields_value' => $this->getConfigFieldsValues(),
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id
+            'languages'    => $this->context->controller->getLanguages(),
+            'id_language'  => $this->context->language->id
         ];
 
+        error_log('[SpectroCoin Module] renderForm: Fields values: ' . print_r($this->getConfigFieldsValues(), true));
         return $helper->generateForm([$fields_form]);
     }
 
@@ -400,13 +418,13 @@ class SpectroCoin extends PaymentModule
         error_log('[SpectroCoin Module] getConfigFieldsValues - SPECTROCOIN_TITLE: ' . $titleValue);
         
         return [
-            'SPECTROCOIN_PROJECT_ID' => Tools::getValue('SPECTROCOIN_PROJECT_ID', Configuration::get('SPECTROCOIN_PROJECT_ID')),
-            'SPECTROCOIN_CLIENT_ID' => Tools::getValue('SPECTROCOIN_CLIENT_ID', Configuration::get('SPECTROCOIN_CLIENT_ID')),
-            'SPECTROCOIN_CLIENT_SECRET' => Tools::getValue('SPECTROCOIN_CLIENT_SECRET', Configuration::get('SPECTROCOIN_CLIENT_SECRET')),
-            'SPECTROCOIN_CURRENCY_CODE' => Tools::getValue('SPECTROCOIN_CURRENCY_CODE', Configuration::get('SPECTROCOIN_CURRENCY_CODE', 'EUR')),
-            'SPECTROCOIN_TITLE' => Tools::getValue('SPECTROCOIN_TITLE', Configuration::get('SPECTROCOIN_TITLE', '')),
-            'SPECTROCOIN_DESCRIPTION' => Tools::getValue('SPECTROCOIN_DESCRIPTION', Configuration::get('SPECTROCOIN_DESCRIPTION', '')),
-            'SPECTROCOIN_CHECKBOX' => Tools::getValue('SPECTROCOIN_CHECKBOX', Configuration::get('SPECTROCOIN_CHECKBOX', 0)),
+            'SPECTROCOIN_PROJECT_ID'   => Tools::getValue('SPECTROCOIN_PROJECT_ID', Configuration::get('SPECTROCOIN_PROJECT_ID')),
+            'SPECTROCOIN_CLIENT_ID'      => Tools::getValue('SPECTROCOIN_CLIENT_ID', Configuration::get('SPECTROCOIN_CLIENT_ID')),
+            'SPECTROCOIN_CLIENT_SECRET'  => Tools::getValue('SPECTROCOIN_CLIENT_SECRET', Configuration::get('SPECTROCOIN_CLIENT_SECRET')),
+            'SPECTROCOIN_CURRENCY_CODE'  => Tools::getValue('SPECTROCOIN_CURRENCY_CODE', Configuration::get('SPECTROCOIN_CURRENCY_CODE', 'EUR')),
+            'SPECTROCOIN_TITLE'          => Tools::getValue('SPECTROCOIN_TITLE', Configuration::get('SPECTROCOIN_TITLE', '')),
+            'SPECTROCOIN_DESCRIPTION'    => Tools::getValue('SPECTROCOIN_DESCRIPTION', Configuration::get('SPECTROCOIN_DESCRIPTION', '')),
+            'SPECTROCOIN_CHECKBOX'       => Tools::getValue('SPECTROCOIN_CHECKBOX', Configuration::get('SPECTROCOIN_CHECKBOX', 0)),
         ];
     }
 }
