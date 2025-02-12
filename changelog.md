@@ -1,3 +1,25 @@
+### 2.0.0 MAJOR ():
+
+This major update introduces several improvements, including enhanced security, updated coding standards, and a streamlined integration process. **Important:** Users must generate new API credentials (Client ID and Client Secret) in their SpectroCoin account settings to continue using the Module. The previous private key and merchant ID functionality have been deprecated.
+
+_Updated_ SCMerchantClient was reworked to adhere to better coding standards.
+
+_Updated_ Order creation API endpoint has been updated for enhanced performance and security.
+
+_Removed_ Private key functionality and merchant ID requirement have been removed to streamline integration.
+
+_Added_ OAuth functionality introduced for authentication, requiring Client ID and Client Secret for secure API access.
+
+_Updated_ Class and some method names have been updated based on PSR-12 standards.
+
+_Added_ _Config.php_ file has been added to store plugin configuration.
+
+_Added_ _Utils.php_ file has been added to store utility functions.
+
+_Added_ _GenericError.php_ file has been added to handle generic errors.
+
+_Added_ Strict types have been added to all classes.
+
 ## Version 1.0.0 MAJOR (09/28/2023):
 
 - Updated module admin settings design for a more modern look inspired by spectrocoin.com.
