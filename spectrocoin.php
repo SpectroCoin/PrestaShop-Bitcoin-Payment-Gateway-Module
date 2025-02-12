@@ -141,7 +141,7 @@ class SpectroCoin extends PaymentModule
             }
 
             $title = (string) Tools::getValue('SPECTROCOIN_TITLE');
-            Configuration::updateValue('SPECTROCOIN_TITLE', $title ?: 'Pay with SpectroCoin');
+            Configuration::updateValue('SPECTROCOIN_TITLE', $title ?: 'Pay with SpectroCoin', true);            
 
             $savedTitle = Configuration::get('SPECTROCOIN_TITLE'); // debug
             error_log('[SpectroCoin Module] Saved Title from DB: ' . $savedTitle); // debug
@@ -279,24 +279,30 @@ class SpectroCoin extends PaymentModule
         $langId = (int) Context::getContext()->language->id;
         error_log('[SpectroCoin Module] hookPaymentOptions: Context language id: ' . $langId);
         
-        // Retrieve the title for the current language
+        // Try to get the multilingual value
         $title = Configuration::get('SPECTROCOIN_TITLE', $langId);
-        error_log('[SpectroCoin Module] hookPaymentOptions: Raw title from configuration: "' . print_r($title, true) . '"');
+        error_log('[SpectroCoin Module] hookPaymentOptions: Title retrieved with language id: "' . print_r($title, true) . '"');
+        
+        // If that’s empty, fall back to the non-multilingual value
+        if (empty($title)) {
+            $title = Configuration::get('SPECTROCOIN_TITLE');
+            error_log('[SpectroCoin Module] hookPaymentOptions: Fallback non-multilingual title: "' . $title . '"');
+        }
         
         if (empty($title)) {
             $title = $this->l('Pay with SpectroCoin');
-            error_log('[SpectroCoin Module] hookPaymentOptions: Title empty, using default: "' . $title . '"');
+            error_log('[SpectroCoin Module] hookPaymentOptions: Title still empty, using default: "' . $title . '"');
         } else {
-            error_log('[SpectroCoin Module] hookPaymentOptions: Using custom title: "' . $title . '"');
+            error_log('[SpectroCoin Module] hookPaymentOptions: Final title: "' . $title . '"');
         }
         
-        // Retrieve the description for the current language (if applicable)
         $description = Configuration::get('SPECTROCOIN_DESCRIPTION', $langId);
-        if ($description === false) {
-            $description = '';
-            error_log('[SpectroCoin Module] hookPaymentOptions: Description is false, setting to empty string.');
-        } else {
-            error_log('[SpectroCoin Module] hookPaymentOptions: Retrieved description: "' . print_r($description, true) . '"');
+        if ($description === false || empty($description)) {
+            $description = Configuration::get('SPECTROCOIN_DESCRIPTION');
+            if ($description === false) {
+                $description = '';
+                error_log('[SpectroCoin Module] hookPaymentOptions: Description not found, set to empty.');
+            }
         }
         
         $iconUrl = $this->_path . '/views/img/spectrocoin-logo.svg';
@@ -314,6 +320,7 @@ class SpectroCoin extends PaymentModule
         error_log('[SpectroCoin Module] hookPaymentOptions: Returning payment option with title: "' . $title . '"');
         return [$new_option];
     }
+
 
     
     public function checkFiatCurrency($cart)
