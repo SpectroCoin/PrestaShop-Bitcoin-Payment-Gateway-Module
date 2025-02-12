@@ -257,24 +257,32 @@ class SpectroCoin extends PaymentModule
         if (!$this->active || !$this->checkFiatCurrency($params['cart'])) {
             return [];
         }
-
-        $title = Configuration::get('SPECTROCOIN_TITLE', $this->l('Pay with SpectroCoin'));
-        $description = Configuration::get('SPECTROCOIN_DESCRIPTION', '');
+    
+        $title = Configuration::get('SPECTROCOIN_TITLE');
+        if (empty($title)) {
+            $title = $this->l('Pay with SpectroCoin');
+        }
+        
+        $description = Configuration::get('SPECTROCOIN_DESCRIPTION');
+        if ($description === false) {
+            $description = '';
+        }
+    
         $iconUrl = $this->_path . '/views/img/spectrocoin-logo.svg';
-
         $show_logo = Configuration::get('SPECTROCOIN_CHECKBOX', 0) === '1';
-
+    
         $new_option = new PaymentOption();
         $new_option->setCallToActionText($title)
-            ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true))
-            ->setAdditionalInformation($description);
-
+                   ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true))
+                   ->setAdditionalInformation($description);
+    
         if ($show_logo) {
             $new_option->setLogo($iconUrl);
         }
-
+    
         return [$new_option];
     }
+    
 
     public function checkFiatCurrency($cart)
     {
