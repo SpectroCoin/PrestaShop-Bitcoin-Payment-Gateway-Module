@@ -8,8 +8,6 @@ if (!defined('_PS_VERSION_')) {
 
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
-} else {
-    error_log('[SpectroCoin Module] Composer autoloader not found in ' . __DIR__ . '/vendor/autoload.php');
 }
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -128,8 +126,6 @@ class SpectroCoin extends PaymentModule
     private function _postProcess(): void
     {
         if (Tools::isSubmit('btnSubmit')) {
-            $submittedTitle = (string) Tools::getValue('SPECTROCOIN_TITLE'); // debug
-            error_log('[SpectroCoin Module] Submitted Title: ' . $submittedTitle); // debug
 
             Configuration::updateValue('SPECTROCOIN_PROJECT_ID', (string) Tools::getValue('SPECTROCOIN_PROJECT_ID'));
             Configuration::updateValue('SPECTROCOIN_CLIENT_ID', (string) Tools::getValue('SPECTROCOIN_CLIENT_ID'));
@@ -143,8 +139,6 @@ class SpectroCoin extends PaymentModule
             $title = (string) Tools::getValue('SPECTROCOIN_TITLE');
             Configuration::updateValue('SPECTROCOIN_TITLE', $title ?: 'Pay with SpectroCoin', true);            
 
-            $savedTitle = Configuration::get('SPECTROCOIN_TITLE'); // debug
-            error_log('[SpectroCoin Module] Saved Title from DB: ' . $savedTitle); // debug
 
             $description = (string) Tools::getValue('SPECTROCOIN_DESCRIPTION');
             Configuration::updateValue('SPECTROCOIN_DESCRIPTION', $description ?: '');
@@ -272,44 +266,29 @@ class SpectroCoin extends PaymentModule
     public function hookPaymentOptions(array $params): array
     {
         if (!$this->active || !$this->checkFiatCurrency($params['cart'])) {
-            error_log('[SpectroCoin Module] hookPaymentOptions: Module inactive or currency not accepted.');
             return [];
         }
         
         $langId = (int) Context::getContext()->language->id;
-        error_log('[SpectroCoin Module] hookPaymentOptions: Context language id: ' . $langId);
         
-        // First try to retrieve multilingual value.
         $title = Configuration::get('SPECTROCOIN_TITLE', $langId);
-        error_log('[SpectroCoin Module] hookPaymentOptions: Title retrieved with language id: "' . print_r($title, true) . '"');
         
-        // If empty, try the non-multilingual value.
         if (empty($title)) {
             $title = Configuration::get('SPECTROCOIN_TITLE');
-            error_log('[SpectroCoin Module] hookPaymentOptions: Fallback non-multilingual title: "' . $title . '"');
         }
         
-        // As an extra fallback, force a direct DB lookup.
         if (empty($title)) {
             $sql = "SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'SPECTROCOIN_TITLE'";
             $title = Db::getInstance()->getValue($sql);
-            error_log('[SpectroCoin Module] hookPaymentOptions: Direct DB title: "' . $title . '"');
         }
         
         if (empty($title)) {
             $title = $this->l('Pay with SpectroCoin');
-            error_log('[SpectroCoin Module] hookPaymentOptions: Title still empty, using default: "' . $title . '"');
-        } else {
-            error_log('[SpectroCoin Module] hookPaymentOptions: Final title: "' . $title . '"');
         }
-        
+
         $description = Configuration::get('SPECTROCOIN_DESCRIPTION', $langId);
         if ($description === false || empty($description)) {
             $description = Configuration::get('SPECTROCOIN_DESCRIPTION');
-            if ($description === false) {
-                $description = '';
-                error_log('[SpectroCoin Module] hookPaymentOptions: Description not found, set to empty.');
-            }
         }
         
         $iconUrl = $this->_path . '/views/img/spectrocoin-logo.svg';
@@ -324,7 +303,6 @@ class SpectroCoin extends PaymentModule
             $new_option->setLogo($iconUrl);
         }
         
-        error_log('[SpectroCoin Module] hookPaymentOptions: Returning payment option with title: "' . $title . '"');
         return [$new_option];
     }
     
@@ -334,8 +312,6 @@ class SpectroCoin extends PaymentModule
     public function checkFiatCurrency($cart)
     {
         $current_currency_iso_code = (new Currency($cart->id_currency))->iso_code;
-        error_log('[SpectroCoin Module] checkFiatCurrency: Cart currency ISO code: ' . $current_currency_iso_code);
-        error_log('[SpectroCoin Module] checkFiatCurrency: Accepted currencies: ' . print_r(Config::ACCEPTED_FIAT_CURRENCIES, true));
         return in_array($current_currency_iso_code, Config::ACCEPTED_FIAT_CURRENCIES);
     }
     
@@ -423,7 +399,6 @@ class SpectroCoin extends PaymentModule
             'id_language'  => $this->context->language->id
         ];
 
-        error_log('[SpectroCoin Module] renderForm: Fields values: ' . print_r($this->getConfigFieldsValues(), true));
         return $helper->generateForm([$fields_form]);
     }
 
@@ -436,9 +411,6 @@ class SpectroCoin extends PaymentModule
 
     public function getConfigFieldsValues(): array
     {
-        $titleValue = Configuration::get('SPECTROCOIN_TITLE', '');
-        error_log('[SpectroCoin Module] getConfigFieldsValues - SPECTROCOIN_TITLE: ' . $titleValue);
-        
         return [
             'SPECTROCOIN_PROJECT_ID'   => Tools::getValue('SPECTROCOIN_PROJECT_ID', Configuration::get('SPECTROCOIN_PROJECT_ID')),
             'SPECTROCOIN_CLIENT_ID'      => Tools::getValue('SPECTROCOIN_CLIENT_ID', Configuration::get('SPECTROCOIN_CLIENT_ID')),
