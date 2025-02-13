@@ -54,9 +54,9 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
             'payCurrency', 'payAmount', 'receiveCurrency', 'receiveAmount',
             'receivedAmount', 'description', 'orderRequestId', 'status', 'sign',
         ];
-        
-        $post_data = [];
 
+        $post_data = [];
+        
         foreach ($expected_keys as $key) {
             if (\Tools::getIsset($key)) {
                 $post_data[$key] = $_POST[$key];

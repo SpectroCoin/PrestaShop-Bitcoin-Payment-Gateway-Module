@@ -245,10 +245,10 @@ class SpectroCoin extends PaymentModule
             ),
         ]);
         $output .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
-    
+
         return $output;
     }
-    
+
     public function hookPayment(array $params): string
     {
         if (!$this->active || !$this->checkFiatCurrency($params['cart'])) {
@@ -256,13 +256,13 @@ class SpectroCoin extends PaymentModule
 
             return '';
         }
-    
+
         $this->smarty->assign([
             'this_path' => $this->_path,
             'this_path_bw' => $this->_path,
             'this_path_ssl' => \Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/',
         ]);
-    
+
         return $this->display(__FILE__, 'payment.tpl');
     }
 
@@ -324,7 +324,7 @@ class SpectroCoin extends PaymentModule
                         'type' => 'text',
                         'label' => $this->l('Project id'),
                         'name' => 'SPECTROCOIN_PROJECT_ID',
-                        'hint'=> $this->l('Merchant id is obtained from SpectroCoin project settings.'),
+                        'hint' => $this->l('Merchant id is obtained from SpectroCoin project settings.'),
                     ],
                     [
                         'type' => 'text',
@@ -410,7 +410,7 @@ class SpectroCoin extends PaymentModule
             $this->context->controller->addCSS($this->_path . '/views/css/settings.css', 'all');
         }
     }
-    
+
     public function getConfigFieldsValues(): array
     {
 

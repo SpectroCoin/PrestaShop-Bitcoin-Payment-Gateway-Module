@@ -34,7 +34,6 @@ use SpectroCoin\SCMerchantClient\Exception\ApiError;
 use SpectroCoin\SCMerchantClient\Exception\GenericError;
 use SpectroCoin\SCMerchantClient\Http\CreateOrderRequest;
 use SpectroCoin\SCMerchantClient\Http\CreateOrderResponse;
-use SpectroCoin\SCMerchantClient\Utils;
 
 if (!defined('_PS_VERSION_')) {
     exit;
