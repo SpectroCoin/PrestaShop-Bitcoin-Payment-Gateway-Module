@@ -1,3 +1,4 @@
+
 * {
   box-sizing: border-box;
   font-family: Red Hat Text, sans-serif;
@@ -23,14 +24,14 @@ html {
   background: #f9f9fc;
 }
 
-.header_conatiner {
-  padding: 8px 0 0;
+.header_container {
+  padding: 14px;
   display: flex;
 }
 
 h3 {
   word-wrap: break-word;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   line-height: 24px;
   word-break: break-word;
@@ -44,15 +45,14 @@ h3 {
   margin: 0 auto;
   max-width: 460px;
   width: 100vw;
+  background-color: #fff;
+  border-radius: 8px;
 }
 
 .content_content {
-  background-color: #fff;
-  border-radius: 8px;
   display: flex;
   flex-flow: column;
-  margin: 12px 0 24px;
-  padding: 20px;
+  padding: 14px;
 }
 
 .form_body {

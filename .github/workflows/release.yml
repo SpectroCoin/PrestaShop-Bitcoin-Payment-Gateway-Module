@@ -1,0 +1,104 @@
+name: Create tag and release
+
+on:
+  workflow_run:
+    workflows: ["Launch release.yml after closed PR"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  create_tag_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Install GitHub CLI and zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh zip
+
+      - name: Fetch Latest PR Info and Check for Existing Tag
+        id: check_tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Fetch the latest merged PR title and body using GitHub CLI
+          PR_TITLE=$(gh pr list --state merged --limit 1 --json title --jq '.[0].title')
+          PR_BODY=$(gh pr list --state merged --limit 1 --json body --jq '.[0].body')
+
+          TAG_NAME=$(echo "$PR_TITLE" | sed 's/ /_/g')
+
+          # Check if the tag already exists
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag '$TAG_NAME' already exists. Exiting workflow."
+            echo "TAG_EXISTS=true" >> $GITHUB_ENV
+            exit 0
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_ENV
+            echo "PR_TITLE: $PR_TITLE"
+            echo "PR_BODY: $PR_BODY"
+            echo "TAG_NAME: $TAG_NAME"
+
+            # Create the tag and push it to origin
+            git tag "$TAG_NAME"
+            git push origin "$TAG_NAME"
+
+            # Create a release using GitHub CLI with the tag name and PR body
+            RELEASE_OUTPUT=$(gh release create "$TAG_NAME" --title "$PR_TITLE" --notes "$PR_BODY")
+
+            # Extract the upload URL for the release asset
+            UPLOAD_URL=$(gh release view "$TAG_NAME" --json uploadUrl --jq '.uploadUrl')
+            echo "UPLOAD_URL: $UPLOAD_URL"
+
+            echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
+          fi
+
+      - name: Create spectrocoin.zip with folder structure
+        if: env.TAG_EXISTS == 'false'
+        run: |
+          # Create a temporary directory for the release build
+          TMP_DIR=$(mktemp -d)
+          mkdir "$TMP_DIR/spectrocoin"
+
+          # Copy all files into the temporary spectrocoin folder,
+          # excluding unwanted directories/files including any release_folder.
+          rsync -av \
+            --exclude='release_folder' \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='README.txt' \
+            --exclude='README.md' \
+            --exclude='changelog.md' \
+            --exclude='.gitignore' \
+            --exclude='.vscode' \
+            ./ "$TMP_DIR/spectrocoin"
+
+          # Create the zip file so that unzipping it produces a top-level "spectrocoin" folder.
+          # The zip file is written directly to the repository root ($GITHUB_WORKSPACE).
+          (cd "$TMP_DIR" && zip -r "$GITHUB_WORKSPACE/spectrocoin.zip" spectrocoin)
+
+          # Clean up the temporary directory
+          rm -rf "$TMP_DIR"
+
+          ls -la spectrocoin.zip
+
+      - name: Upload spectrocoin.zip as release asset
+        if: env.TAG_EXISTS == 'false'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: spectrocoin.zip
+          asset_name: spectrocoin.zip
+          asset_content_type: application/zip
