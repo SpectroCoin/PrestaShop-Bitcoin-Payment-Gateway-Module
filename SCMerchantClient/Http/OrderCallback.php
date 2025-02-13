@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace SpectroCoin\SCMerchantClient\Http;
 
-use SpectroCoin\SCMerchantClient\Utils;
 use SpectroCoin\SCMerchantClient\Config;
+use SpectroCoin\SCMerchantClient\Utils;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -53,7 +53,7 @@ class OrderCallback
     /**
      * Constructor for OrderCallback.
      *
-     * @param array $data The data for initializing the callback.
+     * @param array $data The data for initializing the callback
      *
      * @throws InvalidArgumentException If the payload is invalid
      */

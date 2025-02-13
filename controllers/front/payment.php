@@ -54,7 +54,7 @@ class SpectrocoinPaymentModuleFrontController extends ModuleFrontController
             'this_path_bw' => $this->module->getPathUri(),
             'this_path_ssl' => \Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/',
         ]);
-        
+
         $this->setTemplate('payment_execution.tpl');
     }
 }

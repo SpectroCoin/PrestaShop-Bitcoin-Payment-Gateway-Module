@@ -125,12 +125,14 @@ class Utils
 
     /**
      * Generate random string
+     * 
      * @param int $length
      * @return string
      */
     public static function generateRandomStr($length): string
     {
-        $random_str = substr(md5( (string)rand(1, pow(2, 16))), 0, $length);
+        $random_str = substr(md5((string) rand(1, pow(2, 16))), 0, $length);
+
         return $random_str;
     }
 
