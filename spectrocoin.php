@@ -103,9 +103,7 @@ class SpectroCoin extends PaymentModule
 
     public function install(): bool
     {
-        if (
-            !parent::install() || !$this->registerHook('payment') || !$this->registerHook('paymentOptions')
-        ) {
+        if (!parent::install() || !$this->registerHook('payment') || !$this->registerHook('paymentOptions')) {
 
             return false;
         }
@@ -129,9 +127,7 @@ class SpectroCoin extends PaymentModule
 
     public function uninstall(): bool
     {
-        if (
-            !Configuration::deleteByName('SPECTROCOIN_PROJECT_ID') || !Configuration::deleteByName('SPECTROCOIN_CLIENT_ID') || !Configuration::deleteByName('SPECTROCOIN_CLIENT_SECRET') || !Configuration::deleteByName('SPECTROCOIN_CURRENCY_CODE') || !parent::uninstall()
-        ) {
+        if (!Configuration::deleteByName('SPECTROCOIN_PROJECT_ID') || !Configuration::deleteByName('SPECTROCOIN_CLIENT_ID') || !Configuration::deleteByName('SPECTROCOIN_CLIENT_SECRET') || !Configuration::deleteByName('SPECTROCOIN_CURRENCY_CODE') || !parent::uninstall()) {
 
             return false;
         }
@@ -203,7 +199,7 @@ class SpectroCoin extends PaymentModule
                 . 'These credentials are required to enable secure transactions between your website and the payment gateway. '
                 . 'Follow the step-by-step tutorial below to acquire these credentials:'
             ),
-            'tutorialSteps'      => [
+            'tutorialSteps' => [
                 sprintf(
                     '<a href="%s" target="_blank">%s</a> %s',
                     'https://auth.spectrocoin.com/signup',
@@ -233,7 +229,7 @@ class SpectroCoin extends PaymentModule
                     'Copy and store "Client id" and "Client secret". '
                     . 'Please be aware that the "Client secret" will be shown once, so it should be stored safely. '
                     . 'Lastly, save the settings.'
-                )
+                ),
             ],
             'note' => $this->l('Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.'),
             'contactInformation' => sprintf(
@@ -245,10 +241,9 @@ class SpectroCoin extends PaymentModule
                     $this->l('skype: spectrocoin_merchant'),
                     'merchant@spectrocoin.com',
                     $this->l('email: merchant@spectrocoin.com'),
-                )
+                ),
             ),
         ]);
-    
         $output .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
     
         return $output;
@@ -258,13 +253,14 @@ class SpectroCoin extends PaymentModule
     {
         if (!$this->active || !$this->checkFiatCurrency($params['cart'])) {
             error_log('[SpectroCoin Module] hookPayment: Module inactive or currency not accepted.');
+
             return '';
         }
     
         $this->smarty->assign([
-            'this_path'     => $this->_path,
-            'this_path_bw'  => $this->_path,
-            'this_path_ssl' => \Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/'
+            'this_path' => $this->_path,
+            'this_path_bw' => $this->_path,
+            'this_path_ssl' => \Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/',
         ]);
     
         return $this->display(__FILE__, 'payment.tpl');
@@ -402,7 +398,7 @@ class SpectroCoin extends PaymentModule
         $helper->tpl_vars = [
             'fields_value' => $this->getConfigFieldsValues(),
             'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id
+            'id_language' => $this->context->language->id,
         ];
 
         return $helper->generateForm([$fields_form]);

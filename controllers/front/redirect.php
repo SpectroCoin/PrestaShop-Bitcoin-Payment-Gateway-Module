@@ -94,7 +94,7 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController
     /**
      * Renders error response HTML.
      *
-     * @param int    $errorCode    The error code
+     * @param int $errorCode The error code
      * @param string $errorMessage The error message
      */
     protected function renderResponseErrorCode($errorCode, $errorMessage)

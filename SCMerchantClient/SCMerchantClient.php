@@ -48,11 +48,11 @@ class SCMerchantClient
     private string $client_id;
     private string $client_secret;
     private string $encryption_key;
-    
+
     protected Client $http_client;
 
     protected Configuration $configuration;
-
+    
     /**
      * Constructor
      *
