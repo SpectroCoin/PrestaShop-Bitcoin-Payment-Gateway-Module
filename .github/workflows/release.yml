@@ -33,7 +33,7 @@ jobs:
           # Fetch the latest merged PR title and body using GitHub CLI
           PR_TITLE=$(gh pr list --state merged --limit 1 --json title --jq '.[0].title')
           PR_BODY=$(gh pr list --state merged --limit 1 --json body --jq '.[0].body')
-          TAG_NAME=$(echo "$PR_TITLE" | sed 's/ /_/g') # Replace spaces with underscores in the tag name for consistency
+          TAG_NAME=$(echo "$PR_TITLE" | sed 's/ /_/g') # Replace spaces with underscores for tag name consistency
 
           # Check if the tag already exists
           if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
@@ -46,21 +46,18 @@ jobs:
             echo "PR_BODY: $PR_BODY"
             echo "TAG_NAME: $TAG_NAME"
 
-            # Create the tag
+            # Create the tag and push it to origin
             git tag "$TAG_NAME"
             git push origin "$TAG_NAME"
 
             # Create a release using GitHub CLI with the tag name and PR body
             RELEASE_OUTPUT=$(gh release create "$TAG_NAME" --title "$PR_TITLE" --notes "$PR_BODY")
 
-            # Extract the release URL and upload URL
-            RELEASE_URL=$(echo "$RELEASE_OUTPUT" | grep -oP 'https://github.com/[^ ]+/releases/tag/[^ ]+')
-            echo "Release URL: $RELEASE_URL"
-
+            # Extract the upload URL for the release asset
             UPLOAD_URL=$(gh release view "$TAG_NAME" --json uploadUrl --jq '.uploadUrl')
             echo "UPLOAD_URL: $UPLOAD_URL"
 
-            # Store the upload URL in an environment variable for the next step
+            # Store the upload URL in an environment variable for later use
             echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
           fi
 
