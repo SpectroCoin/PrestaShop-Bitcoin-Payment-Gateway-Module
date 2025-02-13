@@ -67,7 +67,6 @@ jobs:
       - name: Create spectrocoin.zip
         if: env.TAG_EXISTS == 'false'
         run: |
-          # Create the zip file directly from the necessary files
           zip -r spectrocoin.zip . -x \
             .git\* \
             .github\* \
