@@ -61,17 +61,19 @@ jobs:
 
             UPLOAD_URL=$(gh release view "$TAG_NAME" --json uploadUrl --jq '.uploadUrl')
             echo "UPLOAD_URL: $UPLOAD_URL"
-
-            # Store the upload URL for the next step
+            
             echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
           fi
 
       - name: Create spectrocoin.zip with folder structure
         if: env.TAG_EXISTS == 'false'
         run: |
+          # Create a temporary directory for the release build
           TMP_DIR=$(mktemp -d)
           mkdir "$TMP_DIR/spectrocoin"
 
+          # Copy all files into the temporary spectrocoin folder,
+          # excluding unwanted directories/files including any release_folder.
           rsync -av \
             --exclude='release_folder' \
             --exclude='.git' \
@@ -83,12 +85,14 @@ jobs:
             --exclude='.vscode' \
             ./ "$TMP_DIR/spectrocoin"
 
+          # Create the zip file so that unzipping it produces a top-level "spectrocoin" folder.
+          # The zip file is written directly to the repository root ($GITHUB_WORKSPACE).
           (cd "$TMP_DIR" && zip -r "$GITHUB_WORKSPACE/spectrocoin.zip" spectrocoin)
 
+          # Clean up the temporary directory
           rm -rf "$TMP_DIR"
 
           ls -la spectrocoin.zip
-
 
       - name: Upload spectrocoin.zip as release asset
         if: env.TAG_EXISTS == 'false'
