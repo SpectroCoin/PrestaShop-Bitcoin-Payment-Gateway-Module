@@ -1,3 +1,7 @@
+
+![Prestashop Version](https://img.shields.io/badge/Joomla-v1.7.0-blue)
+![Prestashop Version](https://img.shields.io/badge/Joomla-v8.2.0-blue)
+
 # SpectroCoin PrestaShop Crypto Payment Extension
 
 Integrate cryptocurrency payments seamlessly into your PrestaShop store with the [SpectroCoin Crypto Payment Module](https://spectrocoin.com/en/plugins/accept-bitcoin-prestashop.html). This extension facilitates the acceptance of a variety of cryptocurrencies, enhancing payment options for your customers. Easily configure and implement secure transactions for a streamlined payment process on your PrestaShop website. Visit SpectroCoin Crypto Payment Module for PrestaShop to get started.
@@ -56,7 +60,7 @@ Order callbacks allow your Prestashop site to automatically process order status
 
 ## Changelog
 
-### 2.0.0 MAJOR ():
+### 2.0.0 MAJOR (13/02/2025):
 
 This major update introduces several improvements, including enhanced security, updated coding standards, and a streamlined integration process. **Important:** Users must generate new API credentials (Client ID and Client Secret) in their SpectroCoin account settings to continue using the Module. The previous private key and merchant ID functionality have been deprecated.
 
@@ -77,6 +81,14 @@ _Added_ _Utils.php_ file has been added to store utility functions.
 _Added_ _GenericError.php_ file has been added to handle generic errors.
 
 _Added_ Strict types have been added to all classes.
+
+_Fixed_ Multilingual issues with payment method title and description.
+
+_Refactored_ Ensured best coding standards using PHP CS fixer.
+
+_Added_ `.htaccess` for better security.
+
+_Ensured_ Compatibility with latest and older Prestashop versions.
 
 ### 1.0.0 MAJOR (09/28/2023):
 

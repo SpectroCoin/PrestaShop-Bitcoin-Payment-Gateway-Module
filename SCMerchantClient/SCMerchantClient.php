@@ -1,5 +1,24 @@
 <?php
 
+/**
+ * SpectroCoin Module
+ *
+ * Copyright (C) 2014-2025 SpectroCoin
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 declare(strict_types=1);
 
 namespace SpectroCoin\SCMerchantClient;
@@ -10,9 +29,7 @@ use SpectroCoin\SCMerchantClient\Exception\ApiError;
 use SpectroCoin\SCMerchantClient\Exception\GenericError;
 use SpectroCoin\SCMerchantClient\Http\CreateOrderRequest;
 use SpectroCoin\SCMerchantClient\Http\CreateOrderResponse;
-
 use PrestaShop\PrestaShop\Adapter\Configuration;
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
@@ -34,7 +51,7 @@ class SCMerchantClient
 
     /**
      * Constructor
-     * 
+     *
      * @param string $project_id
      * @param string $client_id
      * @param string $client_secret
@@ -52,7 +69,7 @@ class SCMerchantClient
 
     /**
      * Create an order
-     * 
+     *
      * @param array $order_data
      * @return CreateOrderResponse|ApiError|GenericError|null
      */
@@ -78,7 +95,7 @@ class SCMerchantClient
 
     /**
      * Send create order request
-     * 
+     *
      * @param string $order_payload
      * @return CreateOrderResponse|ApiError|GenericError
      */
@@ -125,7 +142,7 @@ class SCMerchantClient
 
     /**
      * Retrieves the current access token data
-     * 
+     *
      * @return array|null
      */
     public function getAccessTokenData()
@@ -143,7 +160,7 @@ class SCMerchantClient
 
     /**
      * Refreshes the access token
-     * 
+     *
      * @param int $current_time
      * @return array|null
      * @throws GuzzleException
@@ -178,7 +195,7 @@ class SCMerchantClient
 
     /**
      * Checks if the current access token is valid
-     * 
+     *
      * @param array $access_token_data
      * @param int $current_time
      * @return bool
