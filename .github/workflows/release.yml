@@ -64,16 +64,16 @@ jobs:
       - name: Create spectrocoin.zip
         if: env.TAG_EXISTS == 'false'
         run: |
-          # Create a temporary directory named 'spectrocoin'
-          mkdir spectrocoin
-          # Copy all repository files into the 'spectrocoin' folder while excluding unwanted files/folders
-          rsync -av --exclude='.git*' --exclude='.github*' --exclude='README.txt' --exclude='README.md' --exclude='changelog.md' --exclude='.gitignore' --exclude='.vscode' ./ spectrocoin/
-          # Zip the 'spectrocoin' folder so that the zip archive has the structure:
-          # spectrocoin.zip
-          #   └── spectrocoin/
-          #         └── [all module files]
-          zip -r spectrocoin.zip spectrocoin
+          zip -r spectrocoin.zip spectrocoin -x \
+            "spectrocoin/.git*" \
+            "spectrocoin/.github*" \
+            "spectrocoin/README.*" \
+            "spectrocoin/changelog.md" \
+            "spectrocoin/.gitignore" \
+            "spectrocoin/.vscode*" \
+            "spectrocoin/.DS_Store"
         shell: bash
+
 
       - name: Upload spectrocoin.zip as release asset
         if: env.TAG_EXISTS == 'false'

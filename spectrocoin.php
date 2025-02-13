@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SpectroCoin Module
  *
@@ -18,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @author SpectroCoin
  */
 declare(strict_types=1);
 
@@ -38,22 +39,27 @@ class SpectroCoin extends PaymentModule
     private array $_postErrors = [];
     private ?string $currency_code = null;
 
+    protected string $project_id;
+    protected string $client_id;
+    protected string $client_secret;
+    protected array $fields_form = [];
+
     public function __construct()
     {
         $shop = Context::getContext()->shop;
         $base_URL = $shop->getBaseURL();
         define('MODULE_ROOT_DIR', $base_URL);
 
-        $this->ps_versions_compliancy = array(
+        $this->ps_versions_compliancy = [
             'min' => '1.7.0.0',
-            'max' => '8.2.0.0'
-        );
+            'max' => '8.2.0.0',
+        ];
 
         $this->name = 'spectrocoin';
         $this->tab = 'payments_gateways';
         $this->version = '2.0.0';
         $this->author = 'SpectroCoin';
-        $this->controllers = array('payment', 'redirect', 'callback');
+        $this->controllers = ['payment', 'redirect', 'callback'];
 
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -97,10 +103,11 @@ class SpectroCoin extends PaymentModule
     public function install(): bool
     {
         if (
-            !parent::install() ||
-            !$this->registerHook('payment') ||
-            !$this->registerHook('paymentOptions')
+            !parent::install()
+            || !$this->registerHook('payment')
+            || !$this->registerHook('paymentOptions')
         ) {
+
             return false;
         }
 
@@ -124,25 +131,27 @@ class SpectroCoin extends PaymentModule
     public function uninstall(): bool
     {
         if (
-            !Configuration::deleteByName('SPECTROCOIN_PROJECT_ID') ||
-            !Configuration::deleteByName('SPECTROCOIN_CLIENT_ID') ||
-            !Configuration::deleteByName('SPECTROCOIN_CLIENT_SECRET') ||
-            !Configuration::deleteByName('SPECTROCOIN_CURRENCY_CODE') ||
-            !parent::uninstall()
+            !Configuration::deleteByName('SPECTROCOIN_PROJECT_ID')
+            || !Configuration::deleteByName('SPECTROCOIN_CLIENT_ID')
+            || !Configuration::deleteByName('SPECTROCOIN_CLIENT_SECRET')
+            || !Configuration::deleteByName('SPECTROCOIN_CURRENCY_CODE')
+            || !parent::uninstall()
         ) {
+
             return false;
         }
+
         return true;
     }
 
     private function _postValidation(): void
     {
-        if (Tools::isSubmit('btnSubmit')) {
-            if (!Tools::getValue('SPECTROCOIN_PROJECT_ID')) {
+        if (\Tools::isSubmit('btnSubmit')) {
+            if (!\Tools::getValue('SPECTROCOIN_PROJECT_ID')) {
                 $this->_postErrors[] = $this->l('Project id is required.');
-            } elseif (!Tools::getValue('SPECTROCOIN_CLIENT_ID')) {
+            } elseif (!\Tools::getValue('SPECTROCOIN_CLIENT_ID')) {
                 $this->_postErrors[] = $this->l('Client id is required.');
-            } elseif (!Tools::getValue('SPECTROCOIN_CLIENT_SECRET')) {
+            } elseif (!\Tools::getValue('SPECTROCOIN_CLIENT_SECRET')) {
                 $this->_postErrors[] = $this->l('Client secret is required.');
             }
         }
@@ -150,35 +159,34 @@ class SpectroCoin extends PaymentModule
 
     private function _postProcess(): void
     {
-        if (Tools::isSubmit('btnSubmit')) {
+        if (\Tools::isSubmit('btnSubmit')) {
+            Configuration::updateValue('SPECTROCOIN_PROJECT_ID', (string) \Tools::getValue('SPECTROCOIN_PROJECT_ID'));
+            Configuration::updateValue('SPECTROCOIN_CLIENT_ID', (string) \Tools::getValue('SPECTROCOIN_CLIENT_ID'));
+            Configuration::updateValue('SPECTROCOIN_CURRENCY_CODE', (string) \Tools::getValue('SPECTROCOIN_CURRENCY_CODE'));
 
-            Configuration::updateValue('SPECTROCOIN_PROJECT_ID', (string) Tools::getValue('SPECTROCOIN_PROJECT_ID'));
-            Configuration::updateValue('SPECTROCOIN_CLIENT_ID', (string) Tools::getValue('SPECTROCOIN_CLIENT_ID'));
-            Configuration::updateValue('SPECTROCOIN_CURRENCY_CODE', (string) Tools::getValue('SPECTROCOIN_CURRENCY_CODE'));
-
-            $clientSecret = (string) Tools::getValue('SPECTROCOIN_CLIENT_SECRET');
+            $clientSecret = (string) \Tools::getValue('SPECTROCOIN_CLIENT_SECRET');
             if ($clientSecret) {
                 Configuration::updateValue('SPECTROCOIN_CLIENT_SECRET', $clientSecret);
             }
 
-            $title = (string) Tools::getValue('SPECTROCOIN_TITLE');
+            $title = (string) \Tools::getValue('SPECTROCOIN_TITLE');
             Configuration::updateValue('SPECTROCOIN_TITLE', $title ?: 'Pay with SpectroCoin', true);
 
-
-            $description = (string) Tools::getValue('SPECTROCOIN_DESCRIPTION');
+            $description = (string) \Tools::getValue('SPECTROCOIN_DESCRIPTION');
             Configuration::updateValue('SPECTROCOIN_DESCRIPTION', $description ?: '');
 
-            Configuration::updateValue('SPECTROCOIN_CHECKBOX', (int) Tools::getValue('SPECTROCOIN_CHECKBOX'));
+            Configuration::updateValue('SPECTROCOIN_CHECKBOX', (int) \Tools::getValue('SPECTROCOIN_CHECKBOX'));
         }
 
+        // Ensure a blank line before this statement for readability
         $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
     }
 
     public function getContent(): string
     {
         $output = '';
-
-        if (Tools::isSubmit('btnSubmit')) {
+    
+        if (\Tools::isSubmit('btnSubmit')) {
             $this->_postValidation();
             if (empty($this->_postErrors)) {
                 $this->_postProcess();
@@ -189,29 +197,56 @@ class SpectroCoin extends PaymentModule
                 }
             }
         }
-
+    
         $logoPath = $this->_path . 'views/img/spectrocoin-logo.svg';
-
+    
         $this->context->smarty->assign([
             'logoPath'           => $logoPath,
             'form'               => $this->renderForm(),
             'style'              => $this->renderStyle(),
             'configurationTitle' => $this->l('Configuration'),
             'introductionTitle'  => $this->l('Introduction'),
-            'introductionText'   => $this->l('The SpectroCoin plugin allows seamless integration of payment gateways into your website. To get started, you\'ll need to obtain the essential credentials: "Project id", "Client id", and "Client secret". These credentials are required to enable secure transactions between your website and the payment gateway. Follow the step-by-step tutorial below to acquire these credentials:'),
+            'introductionText'   => $this->l(
+                'The SpectroCoin plugin allows seamless integration of payment gateways into your website. '
+                . 'To get started, you\'ll need to obtain the essential credentials: "Project id", "Client id", and "Client secret". '
+                . 'These credentials are required to enable secure transactions between your website and the payment gateway. '
+                . 'Follow the step-by-step tutorial below to acquire these credentials:'
+            ),
             'tutorialSteps'      => [
-                sprintf('<a href="%s" target="_blank">%s</a> %s', 'https://auth.spectrocoin.com/signup', $this->l('Sign up'), $this->l('for a SpectroCoin Account.')),
-                sprintf('<a href="%s" target="_blank">%s</a> %s', 'https://auth.spectrocoin.com/login', $this->l('Log in'), $this->l('to your SpectroCoin account.')),
+                sprintf(
+                    '<a href="%s" target="_blank">%s</a> %s',
+                    'https://auth.spectrocoin.com/signup',
+                    $this->l('Sign up'),
+                    $this->l('for a SpectroCoin Account.')
+                ),
+                sprintf(
+                    '<a href="%s" target="_blank">%s</a> %s',
+                    'https://auth.spectrocoin.com/login',
+                    $this->l('Log in'),
+                    $this->l('to your SpectroCoin account.')
+                ),
                 $this->l('On the dashboard, locate the Business tab and click on it.'),
                 $this->l('Click on New project.'),
                 $this->l('Fill in the project details and select desired settings (settings can be changed).'),
                 $this->l('Click "Submit".'),
                 $this->l('Copy and paste the "Project id".'),
-                $this->l('Click on the user icon in the top right and navigate to Settings. Then click on API and choose Create New API.'),
-                $this->l('Add "API name", in scope groups select "View merchant preorders", "Create merchant preorders", "View merchant orders", "Create merchant orders", "Cancel merchant orders" and click "Create API".'),
-                $this->l('Copy and store "Client id" and "Client secret". Please be aware that the "Client secret" will be shown once, so it should be stored safely. Lastly, save the settings.')
+                $this->l(
+                    'Click on the user icon in the top right and navigate to Settings. '
+                    . 'Then click on API and choose Create New API.'
+                ),
+                $this->l(
+                    'Add "API name", in scope groups select "View merchant preorders", "Create merchant preorders", '
+                    . '"View merchant orders", "Create merchant orders", "Cancel merchant orders" and click "Create API".'
+                ),
+                $this->l(
+                    'Copy and store "Client id" and "Client secret". '
+                    . 'Please be aware that the "Client secret" will be shown once, so it should be stored safely. '
+                    . 'Lastly, save the settings.'
+                )
             ],
-            'note'               => $this->l('Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.'),
+            'note'               => $this->l(
+                'Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.'
+            ),
             'contactInformation' => sprintf(
                 '%s<br>%s %s',
                 $this->l('Accept Bitcoin through SpectroCoin and receive payments in your chosen currency.'),
@@ -224,26 +259,27 @@ class SpectroCoin extends PaymentModule
                 )
             ),
         ]);
-
-        // Render the Smarty template and append its output
+    
+        // Ensure a blank line before this statement for readability
         $output .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
+    
 
         return $output;
     }
-
-
+    
     public function hookPayment(array $params): string
     {
         if (!$this->active || !$this->checkFiatCurrency($params['cart'])) {
             error_log('[SpectroCoin Module] hookPayment: Module inactive or currency not accepted.');
             return '';
         }
-
+    
         $this->smarty->assign([
             'this_path'     => $this->_path,
             'this_path_bw'  => $this->_path,
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/'
+            'this_path_ssl' => \Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/'
         ]);
+    
 
         return $this->display(__FILE__, 'payment.tpl');
     }
@@ -263,7 +299,7 @@ class SpectroCoin extends PaymentModule
         }
 
         if (empty($title)) {
-            $sql = "SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'SPECTROCOIN_TITLE'";
+            $sql = 'SELECT value FROM ' . _DB_PREFIX_ . 'configuration WHERE name = \'SPECTROCOIN_TITLE\'';
             $title = Db::getInstance()->getValue($sql);
         }
 
@@ -290,9 +326,6 @@ class SpectroCoin extends PaymentModule
 
         return [$new_option];
     }
-
-
-
 
     public function checkFiatCurrency($cart)
     {
@@ -368,16 +401,18 @@ class SpectroCoin extends PaymentModule
         $helper->table = $this->table;
         $lang = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG')
+            ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG')
+            : 0;
         $this->fields_form = [];
-        $helper->id = (int) Tools::getValue('id_carrier');
+        $helper->id = (int) \Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'btnSubmit';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .
-                                '&configure=' . $this->name .
-                                '&tab_module=' . $this->tab .
-                                '&module_name=' . $this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+            . '&configure=' . $this->name
+            . '&tab_module=' . $this->tab
+            . '&module_name=' . $this->name;
+        $helper->token = \Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = [
             'fields_value' => $this->getConfigFieldsValues(),
             'languages'    => $this->context->controller->getLanguages(),
@@ -387,23 +422,24 @@ class SpectroCoin extends PaymentModule
         return $helper->generateForm([$fields_form]);
     }
 
-    public function renderStyle(): void
+    public function renderStyle(): string
     {
-        if (Tools::getValue('configure') === $this->name) {
+        if (\Tools::getValue('configure') === $this->name) {
             $this->context->controller->addCSS($this->_path . '/views/css/settings.css', 'all');
         }
     }
-
+    
     public function getConfigFieldsValues(): array
     {
         return [
-            'SPECTROCOIN_PROJECT_ID'   => Tools::getValue('SPECTROCOIN_PROJECT_ID', Configuration::get('SPECTROCOIN_PROJECT_ID')),
-            'SPECTROCOIN_CLIENT_ID'      => Tools::getValue('SPECTROCOIN_CLIENT_ID', Configuration::get('SPECTROCOIN_CLIENT_ID')),
-            'SPECTROCOIN_CLIENT_SECRET'  => Tools::getValue('SPECTROCOIN_CLIENT_SECRET', Configuration::get('SPECTROCOIN_CLIENT_SECRET')),
-            'SPECTROCOIN_CURRENCY_CODE'  => Tools::getValue('SPECTROCOIN_CURRENCY_CODE', Configuration::get('SPECTROCOIN_CURRENCY_CODE', 'EUR')),
-            'SPECTROCOIN_TITLE'          => Tools::getValue('SPECTROCOIN_TITLE', Configuration::get('SPECTROCOIN_TITLE', '')),
-            'SPECTROCOIN_DESCRIPTION'    => Tools::getValue('SPECTROCOIN_DESCRIPTION', Configuration::get('SPECTROCOIN_DESCRIPTION', '')),
-            'SPECTROCOIN_CHECKBOX'       => Tools::getValue('SPECTROCOIN_CHECKBOX', Configuration::get('SPECTROCOIN_CHECKBOX', 0)),
+            'SPECTROCOIN_PROJECT_ID'    => \Tools::getValue('SPECTROCOIN_PROJECT_ID', Configuration::get('SPECTROCOIN_PROJECT_ID')),
+            'SPECTROCOIN_CLIENT_ID'     => \Tools::getValue('SPECTROCOIN_CLIENT_ID', Configuration::get('SPECTROCOIN_CLIENT_ID')),
+            'SPECTROCOIN_CLIENT_SECRET' => \Tools::getValue('SPECTROCOIN_CLIENT_SECRET', Configuration::get('SPECTROCOIN_CLIENT_SECRET')),
+            'SPECTROCOIN_CURRENCY_CODE' => \Tools::getValue('SPECTROCOIN_CURRENCY_CODE', Configuration::get('SPECTROCOIN_CURRENCY_CODE', 'EUR')),
+            'SPECTROCOIN_TITLE'         => \Tools::getValue('SPECTROCOIN_TITLE', Configuration::get('SPECTROCOIN_TITLE', '')),
+            'SPECTROCOIN_DESCRIPTION'   => \Tools::getValue('SPECTROCOIN_DESCRIPTION', Configuration::get('SPECTROCOIN_DESCRIPTION', '')),
+            'SPECTROCOIN_CHECKBOX'      => \Tools::getValue('SPECTROCOIN_CHECKBOX', Configuration::get('SPECTROCOIN_CHECKBOX', 0)),
         ];
     }
+    
 }

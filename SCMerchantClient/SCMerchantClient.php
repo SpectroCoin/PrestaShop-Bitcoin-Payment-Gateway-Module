@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SpectroCoin Module
  *
@@ -18,21 +17,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @author SpectroCoin
  */
+
 declare(strict_types=1);
 
 namespace SpectroCoin\SCMerchantClient;
 
-use SpectroCoin\SCMerchantClient\Config;
-use SpectroCoin\SCMerchantClient\Utils;
+use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
+use InvalidArgumentException;
+use PrestaShop\PrestaShop\Adapter\Configuration;
+use RuntimeException;
 use SpectroCoin\SCMerchantClient\Exception\ApiError;
 use SpectroCoin\SCMerchantClient\Exception\GenericError;
 use SpectroCoin\SCMerchantClient\Http\CreateOrderRequest;
 use SpectroCoin\SCMerchantClient\Http\CreateOrderResponse;
-use PrestaShop\PrestaShop\Adapter\Configuration;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\RequestOptions;
+use SpectroCoin\SCMerchantClient\Utils;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,15 +50,16 @@ class SCMerchantClient
     private string $client_id;
     private string $client_secret;
     private string $encryption_key;
+    
     protected Client $http_client;
     protected Configuration $configuration;
 
     /**
      * Constructor
      *
-     * @param string $project_id
-     * @param string $client_id
-     * @param string $client_secret
+     * @param string $project_id Project ID
+     * @param string $client_id Client ID
+     * @param string $client_secret Client Secret
      */
     public function __construct(string $project_id, string $client_id, string $client_secret)
     {
@@ -70,7 +75,7 @@ class SCMerchantClient
     /**
      * Create an order
      *
-     * @param array $order_data
+     * @param array $order_data Order data
      * @return CreateOrderResponse|ApiError|GenericError|null
      */
     public function createOrder(array $order_data)
@@ -96,7 +101,7 @@ class SCMerchantClient
     /**
      * Send create order request
      *
-     * @param string $order_payload
+     * @param string $order_payload JSON-encoded order payload
      * @return CreateOrderResponse|ApiError|GenericError
      */
     private function sendCreateOrderRequest(string $order_payload)
@@ -105,9 +110,9 @@ class SCMerchantClient
             $response = $this->http_client->request('POST', Config::MERCHANT_API_URL . '/merchants/orders/create', [
                 RequestOptions::HEADERS => [
                     'Authorization' => 'Bearer ' . $this->getAccessTokenData()['access_token'],
-                    'Content-Type' => 'application/json'
+                    'Content-Type' => 'application/json',
                 ],
-                RequestOptions::BODY => $order_payload
+                RequestOptions::BODY => $order_payload,
             ]);
 
             $body = json_decode($response->getBody()->getContents(), true);
@@ -127,7 +132,7 @@ class SCMerchantClient
                 'receiveAmount' => $body['receiveAmount'] ?? null,
                 'depositAddress' => $body['depositAddress'] ?? null,
                 'memo' => $body['memo'] ?? null,
-                'redirectUrl' => $body['redirectUrl'] ?? null
+                'redirectUrl' => $body['redirectUrl'] ?? null,
             ];
 
             return new CreateOrderResponse($responseData);
@@ -149,19 +154,22 @@ class SCMerchantClient
     {
         $current_time = time();
         $encrypted_access_token_data = $this->configuration->get(Config::SPECTROCOIN_ACCESS_TOKEN_CONFIG_KEY);
+
         if ($encrypted_access_token_data) {
             $access_token_data = json_decode(Utils::DecryptAuthData($encrypted_access_token_data, $this->encryption_key), true);
+
             if ($this->isTokenValid($access_token_data, $current_time)) {
                 return $access_token_data;
             }
         }
+
         return $this->refreshAccessToken($current_time);
     }
 
     /**
      * Refreshes the access token
      *
-     * @param int $current_time
+     * @param int $current_time Current timestamp
      * @return array|null
      * @throws GuzzleException
      */
@@ -177,31 +185,16 @@ class SCMerchantClient
             ]);
 
             $access_token_data = json_decode((string) $response->getBody(), true);
+
             if (!isset($access_token_data['access_token'], $access_token_data['expires_in'])) {
                 return new ApiError('Invalid access token response');
             }
 
             $access_token_data['expires_at'] = $current_time + $access_token_data['expires_in'];
-            $encrypted_access_token_data = Utils::EncryptAuthData(json_encode($access_token_data), $this->encryption_key);
-
-            $this->configuration->set(Config::SPECTROCOIN_ACCESS_TOKEN_CONFIG_KEY, $encrypted_access_token_data);
 
             return $access_token_data;
-
         } catch (GuzzleException $e) {
             return new ApiError($e->getMessage(), $e->getCode());
         }
-    }
-
-    /**
-     * Checks if the current access token is valid
-     *
-     * @param array $access_token_data
-     * @param int $current_time
-     * @return bool
-     */
-    private function isTokenValid(array $access_token_data, int $current_time): bool
-    {
-        return isset($access_token_data['expires_at']) && $current_time < $access_token_data['expires_at'];
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SpectroCoin Module
  *
@@ -18,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @author SpectroCoin
  */
 declare(strict_types=1);
 
@@ -39,19 +40,19 @@ class SpectrocoinPaymentModuleFrontController extends ModuleFrontController
 
         $cart = $this->context->cart;
         if (!$this->module->checkCurrency($cart)) {
-            Tools::redirect('index.php?controller=order');
+            \Tools::redirect('index.php?controller=order');
         }
 
         $this->context->smarty->assign([
-            'nbProducts' => $cart->nbProducts(),
-            'cust_currency' => $cart->id_currency,
-            'currencies' => $this->module->getCurrency((int) $cart->id_currency),
-            'total' => $cart->getOrderTotal(true, Cart::BOTH),
-            'this_path' => $this->module->getPathUri(),
-            'this_path_bw' => $this->module->getPathUri(),
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
+            'nbProducts'     => $cart->nbProducts(),
+            'cust_currency'  => $cart->id_currency,
+            'currencies'     => $this->module->getCurrency((int) $cart->id_currency),
+            'total'          => $cart->getOrderTotal(true, Cart::BOTH),
+            'this_path'      => $this->module->getPathUri(),
+            'this_path_bw'   => $this->module->getPathUri(),
+            'this_path_ssl'  => \Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/',
         ]);
-
+        
         $this->setTemplate('payment_execution.tpl');
     }
 }

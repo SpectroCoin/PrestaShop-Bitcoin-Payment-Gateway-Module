@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SpectroCoin Module
  *
@@ -18,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  *
+ * @author SpectroCoin
  */
 declare(strict_types=1);
 
@@ -25,6 +26,9 @@ namespace SpectroCoin\SCMerchantClient\Http;
 
 use SpectroCoin\SCMerchantClient\Utils;
 use SpectroCoin\SCMerchantClient\Config;
+use \InvalidArgumentException;
+use \Exception;
+
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -156,7 +160,7 @@ class OrderCallback
         ];
         $data = http_build_query($payload);
         $decoded_signature = base64_decode($this->sign);
-        $public_key = Tools::file_get_contents(Config::PUBLIC_SPECTROCOIN_CERT_LOCATION);
+        $public_key = \Tools::file_get_contents(Config::PUBLIC_SPECTROCOIN_CERT_LOCATION);
         $public_key_pem = openssl_pkey_get_public($public_key);
         return openssl_verify($data, $decoded_signature, $public_key_pem, OPENSSL_ALGO_SHA1) === 1;
     }

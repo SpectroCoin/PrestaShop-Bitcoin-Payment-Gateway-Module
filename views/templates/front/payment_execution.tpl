@@ -29,7 +29,7 @@
 <h3>{l s='Crypto provided by SpectroCoin' mod='spectrocoin'}</h3>
 <form action="{$link->getModuleLink('spectrocoin', 'redirect', [], true)|escape:'html':'UTF-8'}" method="post">
   <p>
-    <img src="{$this_path_bw|escape:'htmlall':'UTF-8'}spectrocoin-logo.svg" alt="{l s='SpectroCoin' mod='spectrocoin'|escape:'html':'UTF-8'}" width="129" height="49" style="float:left; margin: 0px 10px 5px 0px;" />
+    <img src="{$this_path_bw|escape:'htmlall':'UTF-8'}spectrocoin-logo.svg" alt="{l s='SpectroCoin' mod='spectrocoin'}" width="129" height="49" style="float:left; margin: 0px 10px 5px 0px;" />
     {l s='You have chosen to pay by crypto.' mod='spectrocoin'}
     <br/><br />
     {l s='Here is a short summary of your order:' mod='spectrocoin'}
