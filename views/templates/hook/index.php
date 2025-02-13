@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SpectroCoin Module
  *
@@ -20,6 +19,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author SpectroCoin
+ * @copyright 2014-2025 SpectroCoin
+ * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');

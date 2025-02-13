@@ -64,18 +64,23 @@ jobs:
             echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
           fi
 
-      - name: Create spectrocoin.zip
+      - name: Create spectrocoin.zip with folder structure
         if: env.TAG_EXISTS == 'false'
         run: |
-          zip -r spectrocoin.zip . -x \
-            .git\* \
-            .github\* \
-            README.txt \
-            README.md \
-            changelog.md \
-            .gitignore \
-            .vscode
-        shell: bash
+          # Create a temporary directory for the release
+          mkdir release_folder
+          mkdir release_folder/spectrocoin
+
+          # Copy all desired files into release_folder/spectrocoin excluding unwanted files/directories
+          rsync -av --exclude='.git' --exclude='.github' --exclude='README.txt' --exclude='README.md' --exclude='changelog.md' --exclude='.gitignore' --exclude='.vscode' ./ release_folder/spectrocoin
+
+          # Create the zip file so that it contains a top-level 'spectrocoin' folder
+          cd release_folder
+          zip -r ../spectrocoin.zip spectrocoin
+          cd ..
+
+          # Clean up the temporary release folder
+          rm -rf release_folder
 
       - name: Upload spectrocoin.zip as release asset
         if: env.TAG_EXISTS == 'false'

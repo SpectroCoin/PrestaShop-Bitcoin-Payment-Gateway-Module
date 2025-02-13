@@ -19,8 +19,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author SpectroCoin
+ * @copyright 2014-2025 SpectroCoin
+ * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
-
 declare(strict_types=1);
 
 use GuzzleHttp\Exception\RequestException;
@@ -51,10 +52,11 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
         $expected_keys = [
             'userId', 'merchantApiId', 'merchantId', 'apiId', 'orderId',
             'payCurrency', 'payAmount', 'receiveCurrency', 'receiveAmount',
-            'receivedAmount', 'description', 'orderRequestId', 'status', 'sign'
+            'receivedAmount', 'description', 'orderRequestId', 'status', 'sign',
         ];
 
         $post_data = [];
+        
         foreach ($expected_keys as $key) {
             if (\Tools::getIsset($key)) {
                 $post_data[$key] = $_POST[$key];
@@ -128,10 +130,11 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
         $expected_keys = [
             'userId', 'merchantApiId', 'merchantId', 'apiId', 'orderId',
             'payCurrency', 'payAmount', 'receiveCurrency', 'receiveAmount',
-            'receivedAmount', 'description', 'orderRequestId', 'status', 'sign'
+            'receivedAmount', 'description', 'orderRequestId', 'status', 'sign',
         ];
 
         $callback_data = [];
+
         foreach ($expected_keys as $key) {
             if (\Tools::getIsset($key)) {
                 $callback_data[$key] = $_POST[$key];

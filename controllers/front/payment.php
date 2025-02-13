@@ -19,6 +19,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author SpectroCoin
+ * @copyright 2014-2025 SpectroCoin
+ * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 declare(strict_types=1);
 
@@ -44,13 +46,13 @@ class SpectrocoinPaymentModuleFrontController extends ModuleFrontController
         }
 
         $this->context->smarty->assign([
-            'nbProducts'     => $cart->nbProducts(),
-            'cust_currency'  => $cart->id_currency,
-            'currencies'     => $this->module->getCurrency((int) $cart->id_currency),
-            'total'          => $cart->getOrderTotal(true, Cart::BOTH),
-            'this_path'      => $this->module->getPathUri(),
-            'this_path_bw'   => $this->module->getPathUri(),
-            'this_path_ssl'  => \Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/',
+            'nbProducts' => $cart->nbProducts(),
+            'cust_currency' => $cart->id_currency,
+            'currencies' => $this->module->getCurrency((int) $cart->id_currency),
+            'total' => $cart->getOrderTotal(true, Cart::BOTH),
+            'this_path' => $this->module->getPathUri(),
+            'this_path_bw' => $this->module->getPathUri(),
+            'this_path_ssl' => \Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/',
         ]);
         
         $this->setTemplate('payment_execution.tpl');
