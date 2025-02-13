@@ -51,7 +51,7 @@ class SCMerchantClient
     protected Client $http_client;
 
     protected Configuration $configuration;
-    
+
     /**
      * Constructor
      *
