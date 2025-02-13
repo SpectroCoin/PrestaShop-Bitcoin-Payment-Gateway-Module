@@ -17,8 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  *
+ *
  * @author SpectroCoin
+ * @copyright 2014-2025 SpectroCoin
+ * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 declare(strict_types=1);
 
@@ -26,9 +28,6 @@ namespace SpectroCoin\SCMerchantClient\Http;
 
 use SpectroCoin\SCMerchantClient\Utils;
 use SpectroCoin\SCMerchantClient\Config;
-use \InvalidArgumentException;
-use \Exception;
-
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -56,7 +55,7 @@ class OrderCallback
      *
      * @param array $data The data for initializing the callback.
      *
-     * @throws InvalidArgumentException If the payload is invalid.
+     * @throws InvalidArgumentException If the payload is invalid
      */
     public function __construct(array $data)
     {
@@ -78,18 +77,18 @@ class OrderCallback
         $validation_result = $this->validate();
         if (is_array($validation_result)) {
             $errorMessage = 'Invalid order callback payload. Failed fields: ' . implode(', ', $validation_result);
-            throw new InvalidArgumentException($errorMessage);
+            throw new \InvalidArgumentException($errorMessage);
         }
 
         if (!$this->validatePayloadSignature()) {
-            throw new Exception('Invalid payload signature.');
+            throw new \Exception('Invalid payload signature.');
         }
     }
 
     /**
      * Validate the input data.
      *
-     * @return bool|array True if validation passes, otherwise an array of error messages.
+     * @return bool|array True if validation passes, otherwise an array of error messages
      */
     private function validate(): bool|array
     {
@@ -141,7 +140,7 @@ class OrderCallback
     /**
      * Validate the payload signature.
      *
-     * @return bool True if the signature is valid, otherwise false.
+     * @return bool True if the signature is valid, otherwise false
      */
     public function validatePayloadSignature(): bool
     {

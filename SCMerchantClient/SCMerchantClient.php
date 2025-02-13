@@ -19,19 +19,17 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author SpectroCoin
+ * @copyright 2014-2025 SpectroCoin
+ * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
-
 declare(strict_types=1);
 
 namespace SpectroCoin\SCMerchantClient;
 
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
-use InvalidArgumentException;
 use PrestaShop\PrestaShop\Adapter\Configuration;
-use RuntimeException;
 use SpectroCoin\SCMerchantClient\Exception\ApiError;
 use SpectroCoin\SCMerchantClient\Exception\GenericError;
 use SpectroCoin\SCMerchantClient\Http\CreateOrderRequest;
@@ -52,6 +50,7 @@ class SCMerchantClient
     private string $encryption_key;
     
     protected Client $http_client;
+
     protected Configuration $configuration;
 
     /**
@@ -88,7 +87,7 @@ class SCMerchantClient
 
         try {
             $create_order_request = new CreateOrderRequest($order_data);
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             return new GenericError($e->getMessage(), $e->getCode());
         }
 
@@ -118,7 +117,7 @@ class SCMerchantClient
             $body = json_decode($response->getBody()->getContents(), true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new RuntimeException('Failed to parse JSON response: ' . json_last_error_msg());
+                throw new \RuntimeException('Failed to parse JSON response: ' . json_last_error_msg());
             }
 
             $responseData = [
@@ -136,11 +135,11 @@ class SCMerchantClient
             ];
 
             return new CreateOrderResponse($responseData);
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             return new GenericError($e->getMessage(), $e->getCode());
         } catch (GuzzleException $e) {
             return new ApiError($e->getMessage(), $e->getCode());
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return new GenericError($e->getMessage(), $e->getCode());
         }
     }
@@ -196,5 +195,17 @@ class SCMerchantClient
         } catch (GuzzleException $e) {
             return new ApiError($e->getMessage(), $e->getCode());
         }
+    }
+
+    /**
+     * Checks if the current access token is valid
+     *
+     * @param array $access_token_data
+     * @param int $current_time
+     * @return bool
+     */
+    private function isTokenValid(array $access_token_data, int $current_time): bool
+    {
+        return isset($access_token_data['expires_at']) && $current_time < $access_token_data['expires_at'];
     }
 }

@@ -19,6 +19,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author SpectroCoin
+ * @copyright 2014-2025 SpectroCoin
+ * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 declare(strict_types=1);
 
@@ -33,7 +35,7 @@ class Utils
     /**
      * Get the plugin folder name.
      *
-     * @return string The plugin folder name.
+     * @return string The plugin folder name
      */
     public static function getPluginFolderName(): string
     {
@@ -43,22 +45,22 @@ class Utils
     /**
      * Formats currency amount with '0.0#######' format.
      *
-     * @param mixed $amount The amount to format.
-     * @return string The formatted currency amount.
+     * @param mixed $amount The amount to format
+     * @return string The formatted currency amount
      */
     public static function formatCurrency($amount): string
     {
         $decimals = strlen(substr(strrchr(rtrim(sprintf('%.8f', $amount), '0'), '.'), 1));
         $decimals = $decimals < 1 ? 1 : $decimals;
-        return number_format((float)$amount, $decimals, '.', '');
+        return number_format((float) $amount, $decimals, '.', '');
     }
 
     /**
      * Encrypts the given data using the given encryption key.
      *
-     * @param string $data The data to encrypt.
-     * @param string $encryptionKey The encryption key to use.
-     * @return string The encrypted data.
+     * @param string $data The data to encrypt
+     * @param string $encryptionKey The encryption key to use
+     * @return string The encrypted data
      */
     public static function encryptAuthData(string $data, string $encryptionKey): string
     {
@@ -70,9 +72,9 @@ class Utils
     /**
      * Decrypts the given encrypted data using the given encryption key.
      *
-     * @param string $encryptedDataWithIv The encrypted data to decrypt.
-     * @param string $encryptionKey The encryption key to use.
-     * @return string The decrypted data.
+     * @param string $encryptedDataWithIv The encrypted data to decrypt
+     * @param string $encryptionKey The encryption key to use
+     * @return string The decrypted data
      */
     public static function decryptAuthData(string $encryptedDataWithIv, string $encryptionKey): string
     {
@@ -83,7 +85,7 @@ class Utils
     /**
      * Generates a random 128-bit secret key for AES-128-CBC encryption.
      *
-     * @return string The generated secret key encoded in base64.
+     * @return string The generated secret key encoded in base64
      */
     public static function generateEncryptionKey(): string
     {
@@ -94,8 +96,8 @@ class Utils
     /**
      * Sanitize float values.
      *
-     * @param mixed $value The value to sanitize.
-     * @return float|null The sanitized float value or `null` if the sanitization fails.
+     * @param mixed $value The value to sanitize
+     * @return float|null The sanitized float value or `null` if the sanitization fails
      */
     public static function sanitizeFloat($value): ?float
     {
@@ -128,20 +130,20 @@ class Utils
      */
     public static function generateRandomStr($length): string
     {
-        $random_str = substr(md5((string)rand(1, pow(2, 16))), 0, $length);
+        $random_str = substr(md5( (string)rand(1, pow(2, 16))), 0, $length);
         return $random_str;
     }
 
     /**
-     * 1. Checks for invalid UTF-8 characters.
-     * 2. Converts single less-than characters (<) to entities.
-     * 3. Strips all HTML and PHP tags.
-     * 4. Removes line breaks, tabs, and extra whitespace.
-     * 5. Strips percent-encoded characters.
-     * 6. Removes any remaining invalid UTF-8 characters.
+     * 1. Checks for invalid UTF-8 characters
+     * 2. Converts single less-than characters (<) to entities
+     * 3. Strips all HTML and PHP tags
+     * 4. Removes line breaks, tabs, and extra whitespace
+     * 5. Strips percent-encoded characters
+     * 6. Removes any remaining invalid UTF-8 characters
      *
-     * @param string $str The text to be sanitized.
-     * @return string The sanitized text.
+     * @param string $str The text to be sanitized
+     * @return string The sanitized text
      */
     public static function sanitize_text_field(string $str): string
     {

@@ -1,6 +1,6 @@
 
-![Prestashop Version](https://img.shields.io/badge/Joomla-v1.7.0-blue)
-![Prestashop Version](https://img.shields.io/badge/Joomla-v8.2.0-blue)
+![Prestashop Version](https://img.shields.io/badge/Prestashop-v1.7.0-blue)
+![Prestashop Version](https://img.shields.io/badge/Prestashop-v8.2.0-blue)
 
 # SpectroCoin PrestaShop Crypto Payment Extension
 

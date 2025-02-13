@@ -19,8 +19,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author SpectroCoin
+ * @copyright 2014-2025 SpectroCoin
+ * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
-
 declare(strict_types=1);
 
 use SpectroCoin\SCMerchantClient\Exception\ApiError;
@@ -66,13 +67,13 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController
         );
 
         $order_data = [
-            'orderId'             => $this->module->currentOrder,
-            'description'         => 'Order #' . $this->module->currentOrder,
-            'receiveAmount'       => $total,
+            'orderId' => $this->module->currentOrder,
+            'description' => 'Order #' . $this->module->currentOrder,
+            'receiveAmount' => $total,
             'receiveCurrencyCode' => $currency->iso_code,
-            'callbackUrl'         => $this->context->link->getModuleLink('spectrocoin', 'callback'),
-            'successUrl'          => $this->context->link->getModuleLink('spectrocoin', 'validation'),
-            'failureUrl'          => $this->context->link->getModuleLink('spectrocoin', 'cancel'),
+            'callbackUrl' => $this->context->link->getModuleLink('spectrocoin', 'callback'),
+            'successUrl' => $this->context->link->getModuleLink('spectrocoin', 'validation'),
+            'failureUrl' => $this->context->link->getModuleLink('spectrocoin', 'cancel'),
         ];
 
         $response = $sc_merchant_client->createOrder($order_data);

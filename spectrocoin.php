@@ -19,6 +19,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author SpectroCoin
+ * @copyright 2014-2025 SpectroCoin
+ * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 declare(strict_types=1);
 
@@ -64,7 +66,6 @@ class SpectroCoin extends PaymentModule
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
 
-
         $config = Configuration::getMultiple([
             'SPECTROCOIN_PROJECT_ID',
             'SPECTROCOIN_CLIENT_ID',
@@ -103,9 +104,7 @@ class SpectroCoin extends PaymentModule
     public function install(): bool
     {
         if (
-            !parent::install()
-            || !$this->registerHook('payment')
-            || !$this->registerHook('paymentOptions')
+            !parent::install() || !$this->registerHook('payment') || !$this->registerHook('paymentOptions')
         ) {
 
             return false;
@@ -131,11 +130,7 @@ class SpectroCoin extends PaymentModule
     public function uninstall(): bool
     {
         if (
-            !Configuration::deleteByName('SPECTROCOIN_PROJECT_ID')
-            || !Configuration::deleteByName('SPECTROCOIN_CLIENT_ID')
-            || !Configuration::deleteByName('SPECTROCOIN_CLIENT_SECRET')
-            || !Configuration::deleteByName('SPECTROCOIN_CURRENCY_CODE')
-            || !parent::uninstall()
+            !Configuration::deleteByName('SPECTROCOIN_PROJECT_ID') || !Configuration::deleteByName('SPECTROCOIN_CLIENT_ID') || !Configuration::deleteByName('SPECTROCOIN_CLIENT_SECRET') || !Configuration::deleteByName('SPECTROCOIN_CURRENCY_CODE') || !parent::uninstall()
         ) {
 
             return false;
@@ -185,7 +180,6 @@ class SpectroCoin extends PaymentModule
     public function getContent(): string
     {
         $output = '';
-    
         if (\Tools::isSubmit('btnSubmit')) {
             $this->_postValidation();
             if (empty($this->_postErrors)) {
@@ -197,16 +191,13 @@ class SpectroCoin extends PaymentModule
                 }
             }
         }
-    
         $logoPath = $this->_path . 'views/img/spectrocoin-logo.svg';
-    
         $this->context->smarty->assign([
-            'logoPath'           => $logoPath,
-            'form'               => $this->renderForm(),
-            'style'              => $this->renderStyle(),
+            'logoPath' => $logoPath,
+            'form' => $this->renderForm(),
             'configurationTitle' => $this->l('Configuration'),
-            'introductionTitle'  => $this->l('Introduction'),
-            'introductionText'   => $this->l(
+            'introductionTitle' => $this->l('Introduction'),
+            'introductionText' => $this->l(
                 'The SpectroCoin plugin allows seamless integration of payment gateways into your website. '
                 . 'To get started, you\'ll need to obtain the essential credentials: "Project id", "Client id", and "Client secret". '
                 . 'These credentials are required to enable secure transactions between your website and the payment gateway. '
@@ -244,9 +235,7 @@ class SpectroCoin extends PaymentModule
                     . 'Lastly, save the settings.'
                 )
             ],
-            'note'               => $this->l(
-                'Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.'
-            ),
+            'note' => $this->l('Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.'),
             'contactInformation' => sprintf(
                 '%s<br>%s %s',
                 $this->l('Accept Bitcoin through SpectroCoin and receive payments in your chosen currency.'),
@@ -255,15 +244,13 @@ class SpectroCoin extends PaymentModule
                     '<a href="skype:spectrocoin_merchant?chat">%s</a> &middot; <a href="mailto:%s">%s</a>',
                     $this->l('skype: spectrocoin_merchant'),
                     'merchant@spectrocoin.com',
-                    $this->l('email: merchant@spectrocoin.com')
+                    $this->l('email: merchant@spectrocoin.com'),
                 )
             ),
         ]);
     
-        // Ensure a blank line before this statement for readability
         $output .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
     
-
         return $output;
     }
     
@@ -280,7 +267,6 @@ class SpectroCoin extends PaymentModule
             'this_path_ssl' => \Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/'
         ]);
     
-
         return $this->display(__FILE__, 'payment.tpl');
     }
 
@@ -339,53 +325,53 @@ class SpectroCoin extends PaymentModule
             'form' => [
                 'input' => [
                     [
-                        'type'  => 'text',
+                        'type' => 'text',
                         'label' => $this->l('Project id'),
-                        'name'  => 'SPECTROCOIN_PROJECT_ID',
-                        'hint'  => $this->l('Merchant id is obtained from SpectroCoin project settings.'),
+                        'name' => 'SPECTROCOIN_PROJECT_ID',
+                        'hint'=> $this->l('Merchant id is obtained from SpectroCoin project settings.'),
                     ],
                     [
-                        'type'  => 'text',
+                        'type' => 'text',
                         'label' => $this->l('Client id'),
-                        'name'  => 'SPECTROCOIN_CLIENT_ID',
-                        'hint'  => $this->l('Client id is obtained from SpectroCoin API settings.'),
+                        'name' => 'SPECTROCOIN_CLIENT_ID',
+                        'hint' => $this->l('Client id is obtained from SpectroCoin API settings.'),
                     ],
                     [
-                        'type'  => 'text',
+                        'type' => 'text',
                         'label' => $this->l('Client secret'),
-                        'name'  => 'SPECTROCOIN_CLIENT_SECRET',
-                        'hint'  => $this->l('Client secret is obtained from SpectroCoin API settings, but is visible once, when API is created.'),
+                        'name' => 'SPECTROCOIN_CLIENT_SECRET',
+                        'hint' => $this->l('Client secret is obtained from SpectroCoin API settings, but is visible once, when API is created.'),
                     ],
                     [
-                        'type'  => 'text',
+                        'type' => 'text',
                         'label' => $this->l('Title'),
-                        'name'  => 'SPECTROCOIN_TITLE',
-                        'hint'  => $this->l('This controls the title which the user sees during checkout. If left blank will display default title'),
-                        'desc'  => $this->l('Default: "Pay with SpectroCoin"')
+                        'name' => 'SPECTROCOIN_TITLE',
+                        'hint' => $this->l('This controls the title which the user sees during checkout. If left blank will display default title'),
+                        'desc' => $this->l('Default: "Pay with SpectroCoin"'),
                     ],
                     [
-                        'type'      => 'textarea',
-                        'label'     => $this->l('Description'),
-                        'name'      => 'SPECTROCOIN_DESCRIPTION',
-                        'desc'      => $this->l('Max: 80 characters.'),
-                        'hint'      => $this->l('This controls the description which the user sees during checkout. If left blank then will not be displayed'),
-                        'maxlength' => 80
+                        'type' => 'textarea',
+                        'label' => $this->l('Description'),
+                        'name' => 'SPECTROCOIN_DESCRIPTION',
+                        'desc' => $this->l('Max: 80 characters.'),
+                        'hint' => $this->l('This controls the description which the user sees during checkout. If left blank then will not be displayed'),
+                        'maxlength' => 80,
                     ],
                     [
-                        'type'    => 'switch',
-                        'label'   => $this->l('Display logo'),
-                        'name'    => 'SPECTROCOIN_CHECKBOX',
+                        'type' => 'switch',
+                        'label' => $this->l('Display logo'),
+                        'name' => 'SPECTROCOIN_CHECKBOX',
                         'is_bool' => true,
-                        'hint'    => $this->l('Check if you want the SpectroCoin logo to be displayed in checkout.'),
-                        'values'  => [
+                        'hint' => $this->l('Check if you want the SpectroCoin logo to be displayed in checkout.'),
+                        'values' => [
                             [
-                                'id'    => 'active_on',
+                                'id' => 'active_on',
                                 'value' => 1,
                             ],
                             [
-                                'id'    => 'active_off',
+                                'id' => 'active_off',
                                 'value' => 0,
-                            ]
+                            ],
                         ],
                     ],
                 ],
@@ -415,14 +401,14 @@ class SpectroCoin extends PaymentModule
         $helper->token = \Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = [
             'fields_value' => $this->getConfigFieldsValues(),
-            'languages'    => $this->context->controller->getLanguages(),
-            'id_language'  => $this->context->language->id
+            'languages' => $this->context->controller->getLanguages(),
+            'id_language' => $this->context->language->id
         ];
 
         return $helper->generateForm([$fields_form]);
     }
 
-    public function renderStyle(): string
+    public function renderStyle(): void
     {
         if (\Tools::getValue('configure') === $this->name) {
             $this->context->controller->addCSS($this->_path . '/views/css/settings.css', 'all');
@@ -431,15 +417,15 @@ class SpectroCoin extends PaymentModule
     
     public function getConfigFieldsValues(): array
     {
+
         return [
-            'SPECTROCOIN_PROJECT_ID'    => \Tools::getValue('SPECTROCOIN_PROJECT_ID', Configuration::get('SPECTROCOIN_PROJECT_ID')),
-            'SPECTROCOIN_CLIENT_ID'     => \Tools::getValue('SPECTROCOIN_CLIENT_ID', Configuration::get('SPECTROCOIN_CLIENT_ID')),
+            'SPECTROCOIN_PROJECT_ID' => \Tools::getValue('SPECTROCOIN_PROJECT_ID', Configuration::get('SPECTROCOIN_PROJECT_ID')),
+            'SPECTROCOIN_CLIENT_ID' => \Tools::getValue('SPECTROCOIN_CLIENT_ID', Configuration::get('SPECTROCOIN_CLIENT_ID')),
             'SPECTROCOIN_CLIENT_SECRET' => \Tools::getValue('SPECTROCOIN_CLIENT_SECRET', Configuration::get('SPECTROCOIN_CLIENT_SECRET')),
             'SPECTROCOIN_CURRENCY_CODE' => \Tools::getValue('SPECTROCOIN_CURRENCY_CODE', Configuration::get('SPECTROCOIN_CURRENCY_CODE', 'EUR')),
-            'SPECTROCOIN_TITLE'         => \Tools::getValue('SPECTROCOIN_TITLE', Configuration::get('SPECTROCOIN_TITLE', '')),
-            'SPECTROCOIN_DESCRIPTION'   => \Tools::getValue('SPECTROCOIN_DESCRIPTION', Configuration::get('SPECTROCOIN_DESCRIPTION', '')),
-            'SPECTROCOIN_CHECKBOX'      => \Tools::getValue('SPECTROCOIN_CHECKBOX', Configuration::get('SPECTROCOIN_CHECKBOX', 0)),
+            'SPECTROCOIN_TITLE' => \Tools::getValue('SPECTROCOIN_TITLE', Configuration::get('SPECTROCOIN_TITLE', '')),
+            'SPECTROCOIN_DESCRIPTION' => \Tools::getValue('SPECTROCOIN_DESCRIPTION', Configuration::get('SPECTROCOIN_DESCRIPTION', '')),
+            'SPECTROCOIN_CHECKBOX' => \Tools::getValue('SPECTROCOIN_CHECKBOX', Configuration::get('SPECTROCOIN_CHECKBOX', 0)),
         ];
     }
-    
 }

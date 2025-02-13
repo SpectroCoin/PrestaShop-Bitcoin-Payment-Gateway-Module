@@ -19,6 +19,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * @author SpectroCoin
+ * @copyright 2014-2025 SpectroCoin
+ * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 declare(strict_types=1);
 
@@ -57,18 +59,17 @@ class CreateOrderRequest
         $this->successUrl = isset($data['successUrl']) ? Utils::sanitizeUrl($data['successUrl']) : null;
         $this->failureUrl = isset($data['failureUrl']) ? Utils::sanitizeUrl($data['failureUrl']) : null;
 
-
         $validation = $this->validate();
         if (is_array($validation)) {
             $errorMessage = 'Invalid order creation payload. Failed fields: ' . implode(', ', $validation);
-            throw new InvalidArgumentException($errorMessage);
+            throw new \InvalidArgumentException($errorMessage);
         }
     }
 
     /**
      * Data validation for create order API request.
      *
-     * @return bool|array True if validation passes, otherwise an array of error messages.
+     * @return bool|array True if validation passes, otherwise an array of error messages
      */
     private function validate(): bool|array
     {
@@ -113,7 +114,7 @@ class CreateOrderRequest
             'receiveCurrencyCode' => $this->getReceiveCurrencyCode(),
             'callbackUrl' => $this->getCallbackUrl(),
             'successUrl' => $this->getSuccessUrl(),
-            'failureUrl' => $this->getFailureUrl()
+            'failureUrl' => $this->getFailureUrl(),
         ];
     }
 
