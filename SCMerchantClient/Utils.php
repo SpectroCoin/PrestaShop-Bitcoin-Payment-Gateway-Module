@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SpectroCoin Module
  *
@@ -18,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @author SpectroCoin
  */
 declare(strict_types=1);
 
@@ -36,8 +37,7 @@ class Utils
      */
     public static function getPluginFolderName(): string
     {
-        $plugin_folder = explode("/", plugin_basename(__FILE__))[0];
-        return $plugin_folder;
+        return basename(dirname(__FILE__));
     }
 
     /**
@@ -48,7 +48,7 @@ class Utils
      */
     public static function formatCurrency($amount): string
     {
-        $decimals = strlen(substr(strrchr(rtrim(sprintf('%.8f', $amount), '0'), "."), 1));
+        $decimals = strlen(substr(strrchr(rtrim(sprintf('%.8f', $amount), '0'), '.'), 1));
         $decimals = $decimals < 1 ? 1 : $decimals;
         return number_format((float)$amount, $decimals, '.', '');
     }

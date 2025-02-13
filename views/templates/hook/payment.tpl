@@ -17,7 +17,7 @@
 
 <p class="payment_module">
   <a href="{$link->getModuleLink('spectrocoin', 'payment')|escape:'html':'UTF-8'}">
-    <img src="{$this_path_bw|escape:'htmlall':'UTF-8'}spectrocoin-logo.svg" alt="{l s='Crypto provided by SpectroCoin' mod='spectrocoin'|escape:'html':'UTF-8'}" width="129" height="49"/>
+   <img src="{$this_path_bw|escape:'htmlall':'UTF-8'}spectrocoin-logo.svg" alt="{l s='Crypto provided by SpectroCoin' mod='spectrocoin'}" width="129" height="49"/>
     {l s='Crypto provided by SpectroCoin' mod='spectrocoin'}
   </a>
 </p>

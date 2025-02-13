@@ -90,6 +90,8 @@ _Added_ `.htaccess` for better security.
 
 _Ensured_ Compatibility with latest and older Prestashop versions.
 
+_Ensured_ [Prestashop validator](https://validator.prestashop.com/) to pass with no errors.
+
 ### 1.0.0 MAJOR (09/28/2023):
 
 _Updated_ module admin settings design for a more modern look inspired by spectrocoin.com.

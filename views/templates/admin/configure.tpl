@@ -18,29 +18,29 @@
 <div class="spectrocoin-settings flex-container">
     <div class="flex-col-1 flex-col">
         <div>
-            <h4><b>{$configurationTitle}</b></h4>
+            <h4><b>{$configurationTitle|escape:'html':'UTF-8'}</b></h4>
         </div>
         <div class="form">
-            {$form}
-            {$style}
+            {$form|escape:'html':'UTF-8'}
+            {$style|escape:'html':'UTF-8'}
         </div>
     </div>
     <div class="flex-col-2 flex-col">
         <div class="logo-container">
             <a href="https://spectrocoin.com/" target="_blank">
-                <img class="logo" src="{$logoPath}" alt="SpectroCoin Logo">
+                <img class="logo" src="{$logoPath|escape:'html':'UTF-8'}" alt="SpectroCoin Logo">
             </a>
         </div>
-        <h4>{$introductionTitle}</h4>
-        <p>{$introductionText}</p>
+        <h4>{$introductionTitle|escape:'html':'UTF-8'}</h4>
+        <p>{$introductionText|escape:'html':'UTF-8'}</p>
         <ol>
             {foreach from=$tutorialSteps item=step}
-                <li>{$step}</li>
+                <li>{$step|escape:'html':'UTF-8'}</li>
             {/foreach}
         </ol>
-        <p><strong>{l s='Note:' mod='spectrocoin'}</strong> {$note}</p>
+        <p><strong>{l s='Note:' mod='spectrocoin'}</strong> {$note|escape:'html':'UTF-8'}</p>
         <div class="contact-information">
-            {$contactInformation nofilter}
+            {$contactInformation|escape:'html':'UTF-8'}
         </div>
     </div>
 </div>

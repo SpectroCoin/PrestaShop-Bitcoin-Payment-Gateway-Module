@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SpectroCoin Module
  *
@@ -18,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * @author SpectroCoin
  */
 declare(strict_types=1);
 
@@ -31,7 +32,7 @@ class Config
 {
     public const MERCHANT_API_URL = 'https://spectrocoin.com/api/public';
     public const AUTH_URL = 'https://spectrocoin.com/api/public/oauth/token';
-    public const ACCEPTED_FIAT_CURRENCIES = ["EUR", "USD", "PLN", "CHF", "SEK", "GBP", "AUD", "CAD", "CZK", "DKK", "NOK"];
+    public const ACCEPTED_FIAT_CURRENCIES = ['EUR', 'USD', 'PLN', 'CHF', 'SEK', 'GBP', 'AUD', 'CAD', 'CZK', 'DKK', 'NOK'];
     public const PUBLIC_SPECTROCOIN_CERT_LOCATION = 'https://spectrocoin.com/files/merchant.public.pem';
 
     public const SPECTROCOIN_ACCESS_TOKEN_CONFIG_KEY = 'SPECTROCOIN_ACCESS_TOKEN';
