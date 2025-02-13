@@ -1,5 +1,24 @@
 <?php
 
+/**
+ * SpectroCoin Module
+ *
+ * Copyright (C) 2014-2025 SpectroCoin
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 declare(strict_types=1);
 
 if (!defined('_PS_VERSION_')) {
@@ -25,6 +44,11 @@ class SpectroCoin extends PaymentModule
         $base_URL = $shop->getBaseURL();
         define('MODULE_ROOT_DIR', $base_URL);
 
+        $this->ps_versions_compliancy = array(
+            'min' => '1.7.0.0',
+            'max' => '8.2.0.0'
+        );
+
         $this->name = 'spectrocoin';
         $this->tab = 'payments_gateways';
         $this->version = '2.0.0';
@@ -33,6 +57,7 @@ class SpectroCoin extends PaymentModule
 
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
+
 
         $config = Configuration::getMultiple([
             'SPECTROCOIN_PROJECT_ID',
@@ -137,7 +162,7 @@ class SpectroCoin extends PaymentModule
             }
 
             $title = (string) Tools::getValue('SPECTROCOIN_TITLE');
-            Configuration::updateValue('SPECTROCOIN_TITLE', $title ?: 'Pay with SpectroCoin', true);            
+            Configuration::updateValue('SPECTROCOIN_TITLE', $title ?: 'Pay with SpectroCoin', true);
 
 
             $description = (string) Tools::getValue('SPECTROCOIN_DESCRIPTION');
@@ -151,101 +176,61 @@ class SpectroCoin extends PaymentModule
 
     public function getContent(): string
     {
-        ob_start();
+        $output = '';
 
         if (Tools::isSubmit('btnSubmit')) {
             $this->_postValidation();
             if (empty($this->_postErrors)) {
                 $this->_postProcess();
+                $output .= $this->displayConfirmation($this->l('Settings updated'));
             } else {
                 foreach ($this->_postErrors as $err) {
-                    $this->displayError($err);
+                    $output .= $this->displayError($err);
                 }
             }
-        } else {
-            echo '<br />';
         }
 
-        $logoPath = $this->_path . '/views/img/spectrocoin-logo.svg';
+        $logoPath = $this->_path . 'views/img/spectrocoin-logo.svg';
 
-        if (!empty($this->_html)) {
-            echo $this->_html;
-        }
-        ?>
-        <div class="spectrocoin-settings flex-container">
-            <div class="flex-col-1 flex-col">
-                <div>
-                    <h4><b>Configuration</b></h4>
-                </div>
-                <div class="form">
-                    <?php
-                    echo $this->renderForm();
-                    echo $this->renderStyle();
-                    ?>
-                </div>
-            </div>
-            <div class="flex-col-2 flex-col">
-                <div class="logo-container">
-                    <a href="https://spectrocoin.com/" target="_blank">
-                        <img class="logo" src="<?php echo $logoPath; ?>" alt="SpectroCoin Logo">
-                    </a>
-                </div>
-                <h4><?php echo htmlspecialchars('Introduction', ENT_QUOTES, 'UTF-8'); ?></h4>
-                <p>
-                    <?php echo htmlspecialchars('The SpectroCoin plugin allows seamless integration of payment gateways into your WordPress website. To get started, you\'ll need to obtain the essential credentials: "Project id", "Client id", and "Client secret". These credentials are required to enable secure transactions between your website and the payment gateway. Follow the step-by-step tutorial below to acquire these credentials:', ENT_QUOTES, 'UTF-8'); ?>
-                </p>
-                <ol>
-                    <li>
-                        <?php echo sprintf('<a href="%s" target="_blank">%s</a> %s', htmlspecialchars('https://auth.spectrocoin.com/signup', ENT_QUOTES, 'UTF-8'), htmlspecialchars('Sign up', ENT_QUOTES, 'UTF-8'), htmlspecialchars('for a SpectroCoin Account.', ENT_QUOTES, 'UTF-8')); ?>
-                    </li>
-                    <li>
-                        <?php echo sprintf('<a href="%s" target="_blank">%s</a> %s', htmlspecialchars('https://auth.spectrocoin.com/login', ENT_QUOTES, 'UTF-8'), htmlspecialchars('Log in', ENT_QUOTES, 'UTF-8'), htmlspecialchars('to your SpectroCoin account.', ENT_QUOTES, 'UTF-8')); ?>
-                    </li>
-                    <li>
-                        <?php echo htmlspecialchars('On the dashboard, locate the Business tab and click on it.', ENT_QUOTES, 'UTF-8'); ?>
-                    </li>
-                    <li>
-                        <?php echo htmlspecialchars('Click on New project.', ENT_QUOTES, 'UTF-8'); ?>
-                    </li>
-                    <li>
-                        <?php echo htmlspecialchars('Fill in the project details and select desired settings (settings can be changed).', ENT_QUOTES, 'UTF-8'); ?>
-                    </li>
-                    <li>
-                        <?php echo htmlspecialchars('Click "Submit".', ENT_QUOTES, 'UTF-8'); ?>
-                    </li>
-                    <li>
-                        <?php echo htmlspecialchars('Copy and paste the "Project id".', ENT_QUOTES, 'UTF-8'); ?>
-                    </li>
-                    <li>
-                        <?php echo htmlspecialchars('Click on the user icon in the top right and navigate to Settings. Then click on API and choose Create New API.', ENT_QUOTES, 'UTF-8'); ?>
-                    </li>
-                    <li>
-                        <?php echo htmlspecialchars('Add "API name", in scope groups select "View merchant preorders", "Create merchant preorders", "View merchant orders", "Create merchant orders", "Cancel merchant orders" and click "Create API".', ENT_QUOTES, 'UTF-8'); ?>
-                    </li>
-                    <li>
-                        <?php echo htmlspecialchars('Copy and store "Client id" and "Client secret". Please be aware that the "Client secret" will be shown once, so it should be stored safely. Lastly, save the settings.', ENT_QUOTES, 'UTF-8'); ?>
-                    </li>
-                </ol>
-                <p><strong><?php echo htmlspecialchars('Note:', ENT_QUOTES, 'UTF-8'); ?></strong>
-                    <?php echo htmlspecialchars('Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.', ENT_QUOTES, 'UTF-8'); ?>
-                </p>
-                <div class="contact-information">
-                    <?php
-                    echo htmlspecialchars('Accept Bitcoin through the SpectroCoin and receive payments in your chosen currency.', ENT_QUOTES, 'UTF-8') . '<br>' .
-                         htmlspecialchars('Still have questions? Contact us via', ENT_QUOTES, 'UTF-8') . ' ' .
-                         sprintf('<a href="skype:spectrocoin_merchant?chat">%s</a> &middot; <a href="mailto:%s">%s</a>',
-                             htmlspecialchars('skype: spectrocoin_merchant', ENT_QUOTES, 'UTF-8'),
-                             htmlspecialchars('merchant@spectrocoin.com', ENT_QUOTES, 'UTF-8'),
-                             htmlspecialchars('email: merchant@spectrocoin.com', ENT_QUOTES, 'UTF-8'));
-                    ?>
-                </div>
-            </div>
-        </div>
-        <?php
+        $this->context->smarty->assign([
+            'logoPath'           => $logoPath,
+            'form'               => $this->renderForm(),
+            'style'              => $this->renderStyle(),
+            'configurationTitle' => $this->l('Configuration'),
+            'introductionTitle'  => $this->l('Introduction'),
+            'introductionText'   => $this->l('The SpectroCoin plugin allows seamless integration of payment gateways into your website. To get started, you\'ll need to obtain the essential credentials: "Project id", "Client id", and "Client secret". These credentials are required to enable secure transactions between your website and the payment gateway. Follow the step-by-step tutorial below to acquire these credentials:'),
+            'tutorialSteps'      => [
+                sprintf('<a href="%s" target="_blank">%s</a> %s', 'https://auth.spectrocoin.com/signup', $this->l('Sign up'), $this->l('for a SpectroCoin Account.')),
+                sprintf('<a href="%s" target="_blank">%s</a> %s', 'https://auth.spectrocoin.com/login', $this->l('Log in'), $this->l('to your SpectroCoin account.')),
+                $this->l('On the dashboard, locate the Business tab and click on it.'),
+                $this->l('Click on New project.'),
+                $this->l('Fill in the project details and select desired settings (settings can be changed).'),
+                $this->l('Click "Submit".'),
+                $this->l('Copy and paste the "Project id".'),
+                $this->l('Click on the user icon in the top right and navigate to Settings. Then click on API and choose Create New API.'),
+                $this->l('Add "API name", in scope groups select "View merchant preorders", "Create merchant preorders", "View merchant orders", "Create merchant orders", "Cancel merchant orders" and click "Create API".'),
+                $this->l('Copy and store "Client id" and "Client secret". Please be aware that the "Client secret" will be shown once, so it should be stored safely. Lastly, save the settings.')
+            ],
+            'note'               => $this->l('Keep in mind that if you want to use the business services of SpectroCoin, your account has to be verified.'),
+            'contactInformation' => sprintf(
+                '%s<br>%s %s',
+                $this->l('Accept Bitcoin through SpectroCoin and receive payments in your chosen currency.'),
+                $this->l('Still have questions? Contact us via'),
+                sprintf(
+                    '<a href="skype:spectrocoin_merchant?chat">%s</a> &middot; <a href="mailto:%s">%s</a>',
+                    $this->l('skype: spectrocoin_merchant'),
+                    'merchant@spectrocoin.com',
+                    $this->l('email: merchant@spectrocoin.com')
+                )
+            ),
+        ]);
 
-        $content = ob_get_clean();
-        return $content;
+        // Render the Smarty template and append its output
+        $output .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
+
+        return $output;
     }
+
 
     public function hookPayment(array $params): string
     {
@@ -268,20 +253,20 @@ class SpectroCoin extends PaymentModule
         if (!$this->active || !$this->checkFiatCurrency($params['cart'])) {
             return [];
         }
-        
+
         $langId = (int) Context::getContext()->language->id;
-        
+
         $title = Configuration::get('SPECTROCOIN_TITLE', $langId);
-        
+
         if (empty($title)) {
             $title = Configuration::get('SPECTROCOIN_TITLE');
         }
-        
+
         if (empty($title)) {
             $sql = "SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'SPECTROCOIN_TITLE'";
             $title = Db::getInstance()->getValue($sql);
         }
-        
+
         if (empty($title)) {
             $title = $this->l('Pay with SpectroCoin');
         }
@@ -290,31 +275,31 @@ class SpectroCoin extends PaymentModule
         if ($description === false || empty($description)) {
             $description = Configuration::get('SPECTROCOIN_DESCRIPTION');
         }
-        
+
         $iconUrl = $this->_path . '/views/img/spectrocoin-logo.svg';
         $show_logo = Configuration::get('SPECTROCOIN_CHECKBOX', 0) === '1';
-        
+
         $new_option = new PaymentOption();
         $new_option->setCallToActionText($title)
                    ->setAction($this->context->link->getModuleLink($this->name, 'redirect', [], true))
                    ->setAdditionalInformation($description);
-        
+
         if ($show_logo) {
             $new_option->setLogo($iconUrl);
         }
-        
+
         return [$new_option];
     }
-    
 
 
-    
+
+
     public function checkFiatCurrency($cart)
     {
         $current_currency_iso_code = (new Currency($cart->id_currency))->iso_code;
         return in_array($current_currency_iso_code, Config::ACCEPTED_FIAT_CURRENCIES);
     }
-    
+
     public function renderForm(): string
     {
         $fields_form = [

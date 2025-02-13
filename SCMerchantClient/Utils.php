@@ -1,5 +1,24 @@
 <?php
 
+/**
+ * SpectroCoin Module
+ *
+ * Copyright (C) 2014-2025 SpectroCoin
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 declare(strict_types=1);
 
 namespace SpectroCoin\SCMerchantClient;
@@ -29,10 +48,10 @@ class Utils
      */
     public static function formatCurrency($amount): string
     {
-		$decimals = strlen(substr(strrchr(rtrim(sprintf('%.8f', $amount), '0'), "."), 1));
-		$decimals = $decimals < 1 ? 1 : $decimals;
-		return number_format((float)$amount, $decimals, '.', '');
-	}
+        $decimals = strlen(substr(strrchr(rtrim(sprintf('%.8f', $amount), '0'), "."), 1));
+        $decimals = $decimals < 1 ? 1 : $decimals;
+        return number_format((float)$amount, $decimals, '.', '');
+    }
 
     /**
      * Encrypts the given data using the given encryption key.
@@ -103,15 +122,15 @@ class Utils
     }
 
     /**
-	 * Generate random string
-	 * @param int $length
-	 * @return string
-	 */
-	public static function generateRandomStr($length) : string
-	{
+     * Generate random string
+     * @param int $length
+     * @return string
+     */
+    public static function generateRandomStr($length): string
+    {
         $random_str = substr(md5((string)rand(1, pow(2, 16))), 0, $length);
-		return $random_str;
-	}
+        return $random_str;
+    }
 
     /**
      * 1. Checks for invalid UTF-8 characters.
@@ -124,7 +143,8 @@ class Utils
      * @param string $str The text to be sanitized.
      * @return string The sanitized text.
      */
-    public static function sanitize_text_field(string $str): string {
+    public static function sanitize_text_field(string $str): string
+    {
         $str = mb_check_encoding($str, 'UTF-8') ? $str : '';
         $str = preg_replace('/<(?=[^a-zA-Z\/\?\!\%])/u', '&lt;', $str);
         $str = strip_tags($str);
@@ -135,4 +155,3 @@ class Utils
         return $str;
     }
 }
-?>

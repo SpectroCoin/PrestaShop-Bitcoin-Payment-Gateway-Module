@@ -1,10 +1,28 @@
 <?php
 
+/**
+ * SpectroCoin Module
+ *
+ * Copyright (C) 2014-2025 SpectroCoin
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 declare(strict_types=1);
 
 use SpectroCoin\SCMerchantClient\Enum\OrderStatus;
 use SpectroCoin\SCMerchantClient\Http\OrderCallback;
-
 use GuzzleHttp\Exception\RequestException;
 
 if (!defined('_PS_VERSION_')) {
@@ -33,7 +51,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
         $post_data = [];
 
         foreach ($expected_keys as $key) {
-            if (isset($_POST[$key])) {
+            if (Tools::getIsset($key)) {
                 $post_data[$key] = $_POST[$key];
             } else {
                 PrestaShopLogger::addLog("SpectroCoin Callback: Missing expected key: " . $key, 3);
@@ -94,7 +112,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
     /**
      * Initializes the callback data from POST request.
-     * 
+     *
      * @return OrderCallback|null Returns an OrderCallback object if data is valid, null otherwise.
      */
     private function initCallbackFromPost(): ?OrderCallback
@@ -103,7 +121,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
         $callback_data = [];
         foreach ($expected_keys as $key) {
-            if (isset($_POST[$key])) {
+            if (Tools::getIsset($key)) {
                 $callback_data[$key] = $_POST[$key];
             }
         }
