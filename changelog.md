@@ -1,4 +1,4 @@
-### 2.0.0 MAJOR ():
+### 2.0.0 (13/02/2025):
 
 This major update introduces several improvements, including enhanced security, updated coding standards, and a streamlined integration process. **Important:** Users must generate new API credentials (Client ID and Client Secret) in their SpectroCoin account settings to continue using the Module. The previous private key and merchant ID functionality have been deprecated.
 
@@ -20,7 +20,9 @@ _Added_ _GenericError.php_ file has been added to handle generic errors.
 
 _Added_ Strict types have been added to all classes.
 
-## Version 1.0.0 MAJOR (09/28/2023):
+_Fixed_ Multilingual issue with title and description of module.
+
+## 1.0.0 (09/28/2023):
 
 - Updated module admin settings design for a more modern look inspired by spectrocoin.com.
 
