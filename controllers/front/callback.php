@@ -56,7 +56,7 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
         ];
 
         $post_data = [];
-        
+
         foreach ($expected_keys as $key) {
             if (\Tools::getIsset($key)) {
                 $post_data[$key] = $_POST[$key];
