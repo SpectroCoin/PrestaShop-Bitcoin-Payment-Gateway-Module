@@ -60,7 +60,7 @@ Order callbacks allow your Prestashop site to automatically process order status
 
 ## Changelog
 
-### 2.0.0 MAJOR ():
+### 2.0.0 MAJOR (13/02/2025):
 
 This major update introduces several improvements, including enhanced security, updated coding standards, and a streamlined integration process. **Important:** Users must generate new API credentials (Client ID and Client Secret) in their SpectroCoin account settings to continue using the Module. The previous private key and merchant ID functionality have been deprecated.
 
