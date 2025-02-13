@@ -24,7 +24,6 @@ Integrate cryptocurrency payments seamlessly into your PrestaShop store with the
 9. Add "API name", in scope groups select "View merchant preorders", "Create merchant preorders", "View merchant orders", "Create merchant orders", "Cancel merchant orders" and click "Create API".
 10. Copy and store "Client id" and "Client secret". Save the settings.
 
-
 ## Test order creation on localhost
 
 We gently suggest trying out the plugin in a server environment, as it will not be capable of receiving callbacks from SpectroCoin if it will be hosted on localhost. To successfully create an order on localhost for testing purposes, <b>change these 3 lines in <em>CreateOrderRequest.php</em></b>:
