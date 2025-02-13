@@ -64,16 +64,15 @@ jobs:
       - name: Create spectrocoin.zip
         if: env.TAG_EXISTS == 'false'
         run: |
-          zip -r spectrocoin.zip spectrocoin -x \
-            "spectrocoin/.git*" \
-            "spectrocoin/.github*" \
-            "spectrocoin/README.*" \
-            "spectrocoin/changelog.md" \
-            "spectrocoin/.gitignore" \
-            "spectrocoin/.vscode*" \
-            "spectrocoin/.DS_Store"
+          zip -r spectrocoin.zip . -x \
+            .git\* \
+            .github\* \
+            README.txt \
+            README.md \
+            changelog.md \
+            .gitignore \
+            .vscode
         shell: bash
-
 
       - name: Upload spectrocoin.zip as release asset
         if: env.TAG_EXISTS == 'false'
