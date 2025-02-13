@@ -22,8 +22,10 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
 
-      - name: Install GitHub CLI
-        run: sudo apt-get install gh
+      - name: Install GitHub CLI and zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh zip
 
       - name: Fetch Latest PR Info and Check for Existing Tag
         id: check_tag
@@ -33,7 +35,7 @@ jobs:
           # Fetch the latest merged PR title and body using GitHub CLI
           PR_TITLE=$(gh pr list --state merged --limit 1 --json title --jq '.[0].title')
           PR_BODY=$(gh pr list --state merged --limit 1 --json body --jq '.[0].body')
-          TAG_NAME=$(echo "$PR_TITLE" | sed 's/ /_/g') # Replace spaces with underscores in the tag name for consistency
+          TAG_NAME=$(echo "$PR_TITLE" | sed 's/ /_/g') # Replace spaces with underscores
 
           # Check if the tag already exists
           if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
@@ -46,7 +48,7 @@ jobs:
             echo "PR_BODY: $PR_BODY"
             echo "TAG_NAME: $TAG_NAME"
 
-            # Create the tag
+            # Create the tag and push it to origin
             git tag "$TAG_NAME"
             git push origin "$TAG_NAME"
 
@@ -60,27 +62,37 @@ jobs:
             UPLOAD_URL=$(gh release view "$TAG_NAME" --json uploadUrl --jq '.uploadUrl')
             echo "UPLOAD_URL: $UPLOAD_URL"
 
-            # Store the upload URL in an environment variable for the next step
+            # Store the upload URL for the next step
             echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
           fi
 
       - name: Create spectrocoin.zip with folder structure
         if: env.TAG_EXISTS == 'false'
         run: |
-          # Create a temporary directory for the release
-          mkdir release_folder
-          mkdir release_folder/spectrocoin
+          # Create a temporary directory for the release build
+          TMP_DIR=$(mktemp -d)
+          mkdir "$TMP_DIR/spectrocoin"
 
-          # Copy all desired files into release_folder/spectrocoin excluding unwanted files/directories
-          rsync -av --exclude='.git' --exclude='.github' --exclude='README.txt' --exclude='README.md' --exclude='changelog.md' --exclude='.gitignore' --exclude='.vscode' ./ release_folder/spectrocoin
+          # Copy all files into the temporary spectrocoin folder,
+          # excluding unwanted directories/files including any release_folder.
+          rsync -av \
+            --exclude='release_folder' \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='README.txt' \
+            --exclude='README.md' \
+            --exclude='changelog.md' \
+            --exclude='.gitignore' \
+            --exclude='.vscode' \
+            ./ "$TMP_DIR/spectrocoin"
 
-          # Create the zip file so that it contains a top-level 'spectrocoin' folder
-          cd release_folder
-          zip -r ../spectrocoin.zip spectrocoin
-          cd ..
+          # Create the zip file so that unzipping it produces a top-level "spectrocoin" folder.
+          (cd "$TMP_DIR" && zip -r ../spectrocoin.zip spectrocoin)
 
-          # Clean up the temporary release folder
-          rm -rf release_folder
+          # Clean up the temporary directory
+          rm -rf "$TMP_DIR"
+
+          ls -la spectrocoin.zip
 
       - name: Upload spectrocoin.zip as release asset
         if: env.TAG_EXISTS == 'false'
