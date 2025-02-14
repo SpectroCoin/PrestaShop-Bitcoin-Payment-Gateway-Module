@@ -41,10 +41,10 @@ class SpectroCoin extends PaymentModule
     private array $_postErrors = [];
     private ?string $currency_code = null;
 
-    protected string $project_id;
-    protected string $client_id;
-    protected string $client_secret;
-    protected array $fields_form = [];
+    public string $project_id;
+    public string $client_id;
+    public string $client_secret;
+    public array $fields_form = [];
 
     public function __construct()
     {
@@ -187,6 +187,7 @@ class SpectroCoin extends PaymentModule
                 }
             }
         }
+        $this->renderStyle();
         $logoPath = $this->_path . 'views/img/spectrocoin-logo.svg';
         $this->context->smarty->assign([
             'logoPath' => $logoPath,
