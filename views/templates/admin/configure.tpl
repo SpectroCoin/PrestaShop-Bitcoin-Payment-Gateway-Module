@@ -16,31 +16,52 @@
  *}
 
 <div class="spectrocoin-settings flex-container">
+    <!-- Left column: Configuration form -->
     <div class="flex-col-1 flex-col">
         <div>
             <h4><b>{$configurationTitle|escape:'html':'UTF-8'}</b></h4>
         </div>
         <div class="form">
-            {$form|escape:'html':'UTF-8'}
-            {$style|escape:'html':'UTF-8'}
+            {*
+              Use nofilter so the PrestaShop HelperForm HTML is rendered properly
+              (instead of showing literal <form> tags).
+            *}
+            {$form nofilter}
         </div>
     </div>
+
+    <!-- Right column: Intro, steps, contact info -->
     <div class="flex-col-2 flex-col">
         <div class="logo-container">
             <a href="https://spectrocoin.com/" target="_blank">
                 <img class="logo" src="{$logoPath|escape:'html':'UTF-8'}" alt="SpectroCoin Logo">
             </a>
         </div>
+
         <h4>{$introductionTitle|escape:'html':'UTF-8'}</h4>
         <p>{$introductionText|escape:'html':'UTF-8'}</p>
+
         <ol>
+            {*
+              Each step may contain HTML (links), so we use nofilter
+              to ensure <a href="..."> is rendered properly.
+            *}
             {foreach from=$tutorialSteps item=step}
-                <li>{$step|escape:'html':'UTF-8'}</li>
+                <li>{$step nofilter}</li>
             {/foreach}
         </ol>
-        <p><strong>{l s='Note:' mod='spectrocoin'}</strong> {$note|escape:'html':'UTF-8'}</p>
+
+        <p>
+            <strong>{l s='Note:' mod='spectrocoin'}</strong>
+            {$note|escape:'html':'UTF-8'}
+        </p>
+
         <div class="contact-information">
-            {$contactInformation|escape:'html':'UTF-8'}
+            {*
+              contactInformation may contain <br> or <a> tags,
+              so we use nofilter to render them.
+            *}
+            {$contactInformation nofilter}
         </div>
     </div>
 </div>
