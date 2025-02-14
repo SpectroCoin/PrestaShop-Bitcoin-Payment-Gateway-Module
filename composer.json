@@ -2,7 +2,7 @@
   "name": "spectrocoin/prestashop-merchant",
   "description": "SpectroCoin cryptocurrency payment gateway for Presta shop",
   "type": "prestashop-module",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "keywords": [
     "bitcoin",
     "btc",
