@@ -35,6 +35,12 @@ use SpectroCoin\SCMerchantClient\Exception\GenericError;
 use SpectroCoin\SCMerchantClient\Http\CreateOrderRequest;
 use SpectroCoin\SCMerchantClient\Http\CreateOrderResponse;
 
+use GuzzleHttp\Exception\RequestException;
+use InvalidArgumentException;
+use Exception;
+
+use RuntimeException;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -206,5 +212,39 @@ class SCMerchantClient
     private function isTokenValid(array $access_token_data, int $current_time): bool
     {
         return isset($access_token_data['expires_at']) && $current_time < $access_token_data['expires_at'];
+    }
+
+        /**
+     * Uses unique order's UUID and access token data to request GET /merchants/orders/{$id} and retrieve the data of the order in array format.
+     * @param string $order_id
+     * @param array $access_token_data
+     * 
+     * @return array|ApiError|GenericError The response array containing order details or an error object if an error occurs.
+     */
+    public function getOrderById(string $order_id)
+    {
+        try {
+            $access_token_data = $this->getAccessTokenData();
+            $response = $this->http_client->request(
+                'GET',
+                Config::MERCHANT_API_URL . '/merchants/orders/' . $order_id,
+                [
+                    RequestOptions::HEADERS => [
+                        'Authorization' => 'Bearer ' . $access_token_data['access_token'],
+                        'Content-Type'  => 'application/json',
+                    ],
+                ]
+            );
+
+            $order = json_decode($response->getBody()->getContents(), true);
+
+            return $order;
+        } catch (InvalidArgumentException $e) {
+            return new GenericError($e->getMessage(), $e->getCode());
+        } catch (RequestException $e) {
+            return new ApiError($e->getMessage(), $e->getCode());
+        } catch (Exception $e) {
+            return new GenericError($e->getMessage(), $e->getCode());
+        }
     }
 }

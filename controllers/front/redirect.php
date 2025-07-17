@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SpectroCoin Module
  *
@@ -22,6 +23,7 @@
  * @copyright 2014-2025 SpectroCoin
  * @license https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
+
 declare(strict_types=1);
 
 use SpectroCoin\SCMerchantClient\Exception\ApiError;
@@ -66,8 +68,14 @@ class SpectrocoinRedirectModuleFrontController extends ModuleFrontController
             $this->module->client_secret
         );
 
+        $suffix = substr(
+            str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'),
+            0,
+            5
+        );
+
         $order_data = [
-            'orderId' => $this->module->currentOrder,
+            'orderId' => $this->module->currentOrder . '-' . $suffix,
             'description' => 'Order #' . $this->module->currentOrder,
             'receiveAmount' => $total,
             'receiveCurrencyCode' => $currency->iso_code,

@@ -60,9 +60,13 @@ Order callbacks allow your Prestashop site to automatically process order status
 
 ## Changelog
 
+### 2.1.0 (17/02/2025):
+
+_Added_ support for new JSON and old URL-encoded form data callbacks format. New callbacks will be automatically enabled with new SpectroCoin merchant projects created. With old projects, old callback format will be used. In the future versions old callback format will be removed.
+
 ### 2.0.1 (13/02/2025):
 
-FIxed: Issues with plugin settings rendering
+Fixed: Issues with plugin settings rendering.
 
 ### 2.0.0 (13/02/2025):
 
