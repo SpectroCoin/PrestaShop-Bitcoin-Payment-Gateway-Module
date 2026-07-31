@@ -79,6 +79,10 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
                 $orderIdRaw = $orderData['orderId'];
                 $statusRaw  = $orderData['status'];
+                // MerchantOrderDTO reports the settlement side as
+                // receiveAmount / receiveCurrencyCode.
+                $receiveAmount   = $orderData['receiveAmount'] ?? null;
+                $receiveCurrency = $orderData['receiveCurrencyCode'] ?? null;
             } else {
                 $cb = $this->initCallbackFromPost();
                 if (! $cb) {
@@ -87,9 +91,51 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
 
                 $orderIdRaw = $cb->getOrderId();
                 $statusRaw  = $cb->getStatus();
+                $receiveAmount   = $cb->getReceiveAmount();
+                $receiveCurrency = $cb->getReceiveCurrency();
             }
-            $history            = new OrderHistory();
+
             $orderId = explode('-', $orderIdRaw, 2)[0];
+
+            // The order must exist and must actually have been placed through this
+            // module, so a callback for one order cannot settle an unrelated one.
+            $order = new Order((int) $orderId);
+            if (!Validate::isLoadedObject($order)) {
+                PrestaShopLogger::addLog('SpectroCoin Callback: order not found: ' . (int) $orderId, 3);
+                http_response_code(404);
+                exit;
+            }
+
+            if ($order->module !== $this->module->name) {
+                PrestaShopLogger::addLog('SpectroCoin Callback: order was not paid with this module: ' . (int) $orderId, 3);
+                http_response_code(400);
+                exit;
+            }
+
+            // The order was created with receiveAmount / receiveCurrencyCode taken
+            // from the order total, so they must still match. A missing field means
+            // an unexpected payload shape rather than a mismatch, so it is logged
+            // and the comparison is skipped.
+            if ($receiveCurrency === null || $receiveAmount === null) {
+                PrestaShopLogger::addLog('SpectroCoin Callback: no settlement amount to compare for order ' . (int) $orderId, 2);
+            } else {
+                $orderCurrency = new Currency((int) $order->id_currency);
+
+                if (strtoupper((string) $receiveCurrency) !== strtoupper((string) $orderCurrency->iso_code)) {
+                    PrestaShopLogger::addLog('SpectroCoin Callback: currency does not match order ' . (int) $orderId, 3);
+                    http_response_code(400);
+                    exit;
+                }
+                // Reported for now rather than rejected: it is not yet confirmed
+                // whether the settled amount is gross or net of fees, and
+                // rejecting a legitimate settlement would leave the order unpaid.
+                // Promote to a rejection once confirmed.
+                if ((float) $receiveAmount + 0.00000001 < (float) $order->total_paid) {
+                    PrestaShopLogger::addLog('SpectroCoin Callback: amount ' . $receiveAmount . ' does not cover order ' . (int) $orderId . ' total ' . $order->total_paid, 2);
+                }
+            }
+
+            $history            = new OrderHistory();
             $history->id_order  = (int) $orderId;
             $statusEnum = OrderStatus::normalize($statusRaw);
 
