@@ -81,6 +81,7 @@ jobs:
             --exclude='changelog.md' \
             --exclude='.gitignore' \
             --exclude='.vscode' \
+            --exclude='tests' \
             ./ "$TMP_DIR/spectrocoin"
 
           # Create the zip file so that unzipping it produces a top-level "spectrocoin" folder.
