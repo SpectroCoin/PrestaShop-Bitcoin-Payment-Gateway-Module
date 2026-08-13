@@ -139,6 +139,16 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
             $history->id_order  = (int) $orderId;
             $statusEnum = OrderStatus::normalize($statusRaw);
 
+            if ($statusEnum->isInformational()) {
+                PrestaShopLogger::addLog(
+                    'SpectroCoin Callback: order ' . (int) $orderId . ' reported '
+                        . $statusEnum->value . '; no status change applied.',
+                    2
+                );
+                http_response_code(200);
+                exit('*ok*');
+            }
+
             switch ($statusEnum) {
                 case $statusEnum::NEW:
                     break;
@@ -150,6 +160,9 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
                     );
                     break;
 
+                case $statusEnum::CANCELLED:
+                case $statusEnum::REJECTED:
+                case $statusEnum::INVALID_PAYMENT:
                 case $statusEnum::FAILED:
                     $history->changeIdOrderState(
                         (int) Configuration::get('PS_OS_ERROR'),
