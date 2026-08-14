@@ -150,7 +150,10 @@ class SpectrocoinCallbackModuleFrontController extends ModuleFrontController
             }
 
             switch ($statusEnum) {
+                // The payment is under way and the order already sits in the
+                // module's pending state, so there is nothing to change.
                 case $statusEnum::NEW:
+                case $statusEnum::PENDING:
                     break;
 
                 case $statusEnum::EXPIRED:
