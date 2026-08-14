@@ -1,0 +1,49 @@
+# Tier 1 smoke test: a real PrestaShop, into which the packaged module is
+# installed exactly as a merchant would install it.
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: prestashop
+    healthcheck:
+      # Asserts the DATABASE exists, not merely that the server answers.
+      # mariadb's own healthcheck passes while init scripts are still running,
+      # and PrestaShop's installer does not retry: it fails once on
+      # "Unknown database" and the shop is never installed.
+      test: ["CMD-SHELL", "mariadb -uroot -proot -e 'USE prestashop' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+
+  prestashop:
+    # Tracks the current 8.x line: pinning a patch release silently stops
+    # testing what merchants actually run.
+    image: prestashop/prestashop:8-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_SERVER: db
+      DB_NAME: prestashop
+      DB_USER: root
+      DB_PASSWD: root
+      PS_INSTALL_AUTO: 1
+      # NB: do NOT set PS_ERASE_DB. It drops the database during install and the
+      # installer then dies on "Unknown database", leaving the shop uninstalled.
+      PS_DEV_MODE: 1          # surface notices instead of a white screen
+      PS_DOMAIN: localhost:8081
+      PS_FOLDER_ADMIN: adminsmoke
+      PS_FOLDER_INSTALL: install
+      ADMIN_MAIL: smoke@example.com
+      ADMIN_PASSWD: smokesmoke1
+    ports:
+      - "8081:80"
+    healthcheck:
+      # The image installs PrestaShop on first boot; it is only usable once the
+      # front controller answers.
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 120s
