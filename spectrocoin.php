@@ -52,9 +52,12 @@ class SpectroCoin extends PaymentModule
         $base_URL = $shop->getBaseURL();
         define('MODULE_ROOT_DIR', $base_URL);
 
+        // The upper bound is the first UNSUPPORTED version, so the whole 8.x
+        // line installs. Pinning it to a released patch version blocks
+        // installation on every shop that has taken a later patch.
         $this->ps_versions_compliancy = [
             'min' => '1.7.0.0',
-            'max' => '8.2.0.0',
+            'max' => '9.0.0.0',
         ];
 
         $this->name = 'spectrocoin';
