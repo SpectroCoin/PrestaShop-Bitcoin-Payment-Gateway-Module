@@ -90,6 +90,16 @@ try {
     await setIf('input[name="city"]', 'Vilnius');
     await setIf('input[name="postcode"]', '01100');
     await setIf('input[name="phone"]', '0000000');
+
+    // Leave the country on the shop's default (United Kingdom): it is one of
+    // the countries every payment module here is restricted to, so it is the
+    // one address a shopper could use to reach any of them. tier3.sh gives
+    // that zone a carrier so delivery can actually clear.
+    const countrySelect = page.locator('#checkout-addresses-step select[name="id_country"]').first();
+    if (await countrySelect.count()) {
+      info(`delivery country left at: ${await countrySelect.inputValue().catch(() => '?')}`);
+    }
+
     await clickIf('#checkout-addresses-step button[type="submit"], button[name="confirm-addresses"]');
     await page.waitForTimeout(3000);
     info('submitted address');
@@ -106,6 +116,18 @@ try {
   await page.waitForTimeout(2000);
   const onPayment = await page.locator('#checkout-payment-step').count() > 0;
   info(`reached payment step: ${onPayment}`);
+
+  // Decisive control: if the payment step is empty for every module, that is
+  // a shop/fixture problem, not evidence against ours. A stock module has to
+  // show up too, or "ours is missing" tells us nothing.
+  const stockOffered = await page.getByText('bank wire', { exact: false }).count()
+    || await page.getByText('by Check', { exact: false }).count();
+  if (stockOffered > 0) {
+    pass('a stock payment module is offered too (control for an empty payment step)');
+  } else {
+    fail('no payment module is offered, not even a stock one - this is a fixture problem, not our module');
+    await shot('payment-step-empty');
+  }
 
   const offered = await page.getByText(TITLE, { exact: false }).count();
   if (offered > 0) {

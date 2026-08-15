@@ -123,10 +123,28 @@ ps_exec sh -c 'rm -rf /var/www/html/var/cache/* 2>/dev/null; \
                chown -R www-data:www-data /var/www/html/var' >/dev/null 2>&1 || true
 # Asked for through the shop's own hostname: PrestaShop redirects anything else
 # to its configured domain, so curling localhost only proves it can redirect.
-if stub curl -fsS http://shop.test/ 2>/dev/null | grep -qi "product"; then
+# The cache wipe above means the first hit pays for a Symfony/Twig rebuild, so
+# give it a few tries rather than judging the shop dead on one slow response.
+#
+# The homepage is one very long single-line JSON blob followed by markup;
+# `grep -q` (short-circuit-on-first-match) is unreliable against lines that
+# long on BSD grep, so count matches instead of asking for a quiet yes/no.
+front_office_ok=0
+last_attempt=""
+for _ in 1 2 3 4 5; do
+  last_attempt=$(stub curl -sS -w '\nHTTPSTATUS:%{http_code} ERR:%{exitcode}' http://shop.test/ 2>&1)
+  if [ "$(echo "$last_attempt" | grep -ci "product")" -gt 0 ]; then
+    front_office_ok=1
+    break
+  fi
+  sleep 3
+done
+if [ "$front_office_ok" -eq 1 ]; then
   pass "the front office renders"
 else
   fail "the front office does not render - a shopper cannot reach checkout"
+  echo "        --- last attempt ---"
+  echo "$last_attempt" | tail -c 500 | sed 's/^/        /'
 fi
 ps_exec php -r '
   require "/var/www/html/config/config.inc.php";
@@ -139,6 +157,22 @@ ps_exec php -r '
 products=$(q "SELECT COUNT(*) FROM ps_product WHERE active=1;")
 [ "${products:-0}" -gt 0 ] && pass "catalogue has $products products to buy" \
                            || fail "no active products to buy"
+
+# The shop's default country (United Kingdom, out of the box) sits in a zone
+# ("Europe (non-EU)") that ships with no carrier assigned to it. Left as-is,
+# an address on that default country can never get a shipping option, so
+# checkout dies at the delivery step before payment is ever reached - for
+# every payment module alike, not just this one. That is shop configuration,
+# not something the module controls, so fix it here rather than steering the
+# test around a country the shop wasn't set up to sell to.
+ps_exec php -r '
+  require "/var/www/html/config/config.inc.php";
+  $idZone = (int) Country::getIdZone((int) Configuration::get("PS_COUNTRY_DEFAULT"));
+  $carrier = new Carrier(1);
+  $carrier->addZone($idZone);
+  echo "ok";' >/dev/null 2>&1 \
+  && pass "a carrier now serves the default country's zone" \
+  || fail "could not assign a carrier to the default country's zone"
 
 # The shop must trust the CA this harness minted, or the module cannot reach
 # the stub and checkout fails with a cURL error the shopper never sees.
