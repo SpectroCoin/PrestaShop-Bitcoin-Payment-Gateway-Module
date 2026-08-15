@@ -1,0 +1,39 @@
+name: Checkout journey
+
+# Walks a real shopper through a real PrestaShop checkout in a real browser:
+# add to cart, personal information, address, delivery, payment, place order.
+#
+# This is the layer tiers 1 and 2 cannot reach. Tier 2 calls the module's
+# client directly, so it proves the payload and the callback contract but
+# never that the module appears at checkout - PrestaShop renders payment
+# options from the paymentOptions hook at the last step of a multi-step
+# checkout, so "is it offered" is only answerable by walking there.
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  tier3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run the checkout journey
+        run: ./tests/e2e/tier3/tier3.sh
+
+      - name: Screenshots of any failing step
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tier3-screenshots
+          path: tests/e2e/tier3/artifacts/
+          if-no-files-found: ignore
+
+      - name: Container logs on failure
+        if: failure()
+        run: cd tests/e2e/tier3 && docker compose logs --tail=150 || true
